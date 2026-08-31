@@ -1,40 +1,55 @@
 import type { TemplateId } from "@anonletter/shared";
 import { create } from "zustand";
 
+export type Step = 1 | 2 | 3 | 4;
+
 interface ComposerState {
-  step: number;
-  selectedTemplate: TemplateId;
+  step: Step;
+  mood: TemplateId;
   message: string;
-  recipientEmail: string;
   fromHint: string;
+  recipientEmail: string;
+  /** Accent override. Null keeps the room's own accent. */
+  accent: string | null;
   isSubmitting: boolean;
   submitError: string | null;
-  sentSlug: string | null;
-  setStep: (step: number) => void;
-  setSelectedTemplate: (template: TemplateId) => void;
+
+  setStep: (step: Step) => void;
+  next: () => void;
+  back: () => void;
+  setMood: (mood: TemplateId) => void;
   setMessage: (message: string) => void;
-  setRecipientEmail: (email: string) => void;
   setFromHint: (hint: string) => void;
-  setSubmitting: (isSubmitting: boolean) => void;
+  setRecipientEmail: (email: string) => void;
+  setAccent: (accent: string | null) => void;
+  setSubmitting: (value: boolean) => void;
   setSubmitError: (error: string | null) => void;
-  setSentSlug: (slug: string | null) => void;
+  reset: () => void;
 }
 
-export const useComposerStore = create<ComposerState>((set) => ({
-  step: 1,
-  selectedTemplate: "night-thought",
+const initial = {
+  step: 1 as Step,
+  mood: "night-thought" as TemplateId,
   message: "",
-  recipientEmail: "",
   fromHint: "",
+  recipientEmail: "",
+  accent: null,
   isSubmitting: false,
   submitError: null,
-  sentSlug: null,
+};
+
+export const useComposerStore = create<ComposerState>((set) => ({
+  ...initial,
   setStep: (step) => set({ step }),
-  setSelectedTemplate: (selectedTemplate) => set({ selectedTemplate }),
+  next: () => set((s) => ({ step: Math.min(4, s.step + 1) as Step })),
+  back: () => set((s) => ({ step: Math.max(1, s.step - 1) as Step })),
+  // switching mood never touches the message — the words stay, the room changes
+  setMood: (mood) => set({ mood, accent: null }),
   setMessage: (message) => set({ message }),
-  setRecipientEmail: (recipientEmail) => set({ recipientEmail }),
   setFromHint: (fromHint) => set({ fromHint }),
+  setRecipientEmail: (recipientEmail) => set({ recipientEmail }),
+  setAccent: (accent) => set({ accent }),
   setSubmitting: (isSubmitting) => set({ isSubmitting }),
   setSubmitError: (submitError) => set({ submitError }),
-  setSentSlug: (sentSlug) => set({ sentSlug })
+  reset: () => set(initial),
 }));

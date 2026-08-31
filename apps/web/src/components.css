@@ -1,0 +1,742 @@
+/* ============================================================================
+   09 · UTILITIES + PICKER
+   Continues styles.css. Split for file size only; same token system throughout.
+   ========================================================================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.btn-label {
+  position: relative;
+  z-index: 1;
+}
+
+.picker {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--s3);
+}
+
+@media (max-width: 1024px) {
+  .picker {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .picker {
+    grid-template-columns: 1fr;
+    gap: var(--s2);
+  }
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  aspect-ratio: 3 / 4;
+  padding: var(--s4);
+  border: none;
+  border-radius: var(--r-control);
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  transition: transform var(--d-ui) var(--ease-enter), box-shadow var(--d-ui) var(--ease-enter);
+}
+
+@media (max-width: 640px) {
+  .card {
+    aspect-ratio: 16 / 7;
+  }
+}
+
+.card-art {
+  position: absolute;
+  top: -8%;
+  left: -6%;
+  width: 112%;
+  height: 76%;
+  object-fit: contain;
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+.card-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(
+      circle at 22% 24%,
+      rgba(226, 228, 255, 0.9) 0.9px,
+      transparent 1.4px
+    ), radial-gradient(circle at 68% 16%, rgba(226, 228, 255, 0.7) 0.7px, transparent 1.2px),
+    radial-gradient(circle at 42% 46%, rgba(226, 228, 255, 0.85) 1px, transparent 1.6px),
+    radial-gradient(circle at 82% 58%, rgba(226, 228, 255, 0.6) 0.7px, transparent 1.2px),
+    radial-gradient(circle at 14% 66%, rgba(226, 228, 255, 0.75) 0.8px, transparent 1.3px);
+}
+
+/* the scrim carries the use-case line — hidden at rest, revealed on hover */
+.card-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(to top, rgba(12, 10, 16, 0.74) 0%, transparent 58%);
+  transition: opacity var(--d-ui) var(--ease-enter);
+}
+
+.card-meta {
+  position: relative;
+  display: block;
+}
+
+.card-name {
+  display: block;
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: #4a2030;
+  transition: color var(--d-ui) var(--ease-enter);
+}
+
+.card-name-old-letter {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-style: normal;
+  font-size: 1.08rem;
+  color: #3a2410;
+}
+
+.card-name-night-thought {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  color: #e6e7ff;
+}
+
+.card-name-quiet-garden {
+  color: #12240a;
+}
+
+/* Bricolage Grotesque, not Teko — wide and wonky, not condensed signage */
+.card-name-confetti-love {
+  font-family: "Bricolage Grotesque", Archivo, system-ui, sans-serif;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 1.3rem;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  color: #4a3010;
+}
+
+.card-use {
+  display: block;
+  margin-top: 3px;
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0;
+  color: rgba(255, 255, 255, 0.82);
+  transform: translateY(4px);
+  transition: opacity var(--d-ui) var(--ease-enter), transform var(--d-ui) var(--ease-enter);
+}
+
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 44px rgba(0, 0, 0, 0.5);
+  }
+
+  .card:hover .card-scrim,
+  .card:hover .card-use {
+    opacity: 1;
+  }
+
+  .card:hover .card-use {
+    transform: translateY(0);
+  }
+
+  .card:hover .card-name {
+    color: #fff;
+  }
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--gold-lift);
+  outline-offset: 3px;
+}
+
+.card:focus-visible .card-scrim,
+.card:focus-visible .card-use {
+  opacity: 1;
+}
+
+.card:focus-visible .card-use {
+  transform: translateY(0);
+}
+
+.card:focus-visible .card-name {
+  color: #fff;
+}
+
+/* selection is a gold ring plus a check, never a colour change */
+.card.is-selected {
+  box-shadow: 0 0 0 1px var(--void), 0 0 0 2px var(--gold), 0 22px 44px rgba(0, 0, 0, 0.5);
+}
+
+.card-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+/* ============================================================================
+   10 · LETTER ROOM
+   ========================================================================= */
+
+.room-inner {
+  position: relative;
+  z-index: var(--z-ui);
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  width: 100%;
+  max-width: 60rem;
+  margin-inline: auto;
+  padding: clamp(3rem, 8vh, 6rem) var(--gutter) clamp(2rem, 5vh, 3rem);
+}
+
+.room-eyebrow {
+  font-family: var(--room-body);
+  font-size: 0.5938rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--room-muted);
+  margin-bottom: var(--s8);
+}
+
+/* Motif art is photographic and arrives on its own cream ground with a hard edge. Without
+   a fade it reads as a sticker pasted on the room, and it lands on top of the Report
+   control. The mask dissolves its edges and clears the footer rail. */
+.room-motif {
+  position: absolute;
+  z-index: var(--z-motif);
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 78% 72% at 58% 40%, #000 42%, transparent 82%);
+  mask-image: radial-gradient(ellipse 78% 72% at 58% 40%, #000 42%, transparent 82%);
+}
+
+.room-motif-soft-bloom {
+  right: -12%;
+  bottom: 8%;
+  width: 54%;
+  height: 54%;
+  opacity: 0.42;
+}
+
+.room-motif-old-letter {
+  right: -10%;
+  bottom: 10%;
+  width: 46%;
+  height: 46%;
+  opacity: 0.72;
+  /* the asset arrives on its own cream ground; multiply drops that ground into the page
+     and leaves only the engraved flourish */
+  mix-blend-mode: multiply;
+}
+
+.room-motif-quiet-garden {
+  right: -12%;
+  top: -6%;
+  width: 50%;
+  height: 64%;
+  opacity: 0.8;
+  -webkit-mask-image: radial-gradient(ellipse 82% 80% at 56% 46%, #000 54%, transparent 88%);
+  mask-image: radial-gradient(ellipse 82% 80% at 56% 46%, #000 54%, transparent 88%);
+}
+
+.room-motif-confetti-love {
+  right: -22%;
+  top: -18%;
+  width: 64%;
+  height: 64%;
+  opacity: 0.26;
+}
+
+@media (max-width: 640px) {
+  .room-motif {
+    opacity: 0.24 !important;
+  }
+}
+
+/* the preview card is a fifth of a room's area; a corner motif sized for the room lands on
+   the message instead of beside it */
+.preview-card .room-motif {
+  width: 34%;
+  height: 34%;
+  opacity: 0.4;
+}
+
+.preview-card .room-motif-quiet-garden {
+  width: 38%;
+  height: 44%;
+  opacity: 0.65;
+}
+
+.letter-stack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.letter-lead {
+  font-size: clamp(1.9rem, 5.2vw, 3.1rem);
+  margin: 0 0 var(--s6);
+  text-wrap: balance;
+}
+
+[data-mood="confetti-love"] .letter-lead {
+  font-size: clamp(2.4rem, 6.6vw, 4rem);
+  text-transform: uppercase;
+}
+
+.letter-salutation {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 0.9375rem;
+  color: var(--room-muted);
+  margin: 0 0 var(--s6);
+}
+
+.letter-greeting {
+  font-family: var(--room-display);
+  font-style: italic;
+  font-size: 0.9375rem;
+  color: color-mix(in srgb, var(--room-accent) 68%, var(--room-text));
+  margin: 0 0 var(--s6);
+}
+
+.letter-body {
+  font-family: var(--room-body);
+  /* 300 on tinted paper reads as grey mush; only the dark room keeps the light weight */
+  font-weight: 400;
+  font-size: clamp(1.0625rem, 1.5vw, 1.25rem);
+  line-height: var(--room-letter-lh);
+  color: var(--room-text);
+  max-width: 46ch;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* Old Letter types its message; every other room sets it */
+[data-mood="old-letter"] .letter-body {
+  font-family: "Courier Prime", "Courier New", monospace;
+  font-weight: 400;
+  font-size: clamp(0.95rem, 1.3vw, 1.03rem);
+  line-height: 1.95;
+}
+
+[data-mood="night-thought"] .letter-body {
+  font-weight: 300;
+}
+
+/* Every room's accent finally carries an object: a short rule between the message and the
+   signature. The accent is never a text colour on its own background. */
+.letter-rule {
+  width: 48px;
+  height: 2px;
+  margin: var(--s8) 0 0;
+  border: none;
+  /* The raw accent is 1.5:1 on cream — the rule would be invisible in three of the five
+     rooms. Mixing toward the room's ink keeps the accent's hue and clears 3:1 everywhere. */
+  background: color-mix(in srgb, var(--room-accent) 55%, var(--room-text));
+  transition: opacity 900ms var(--ease-enter);
+}
+
+.letter-sign {
+  margin: var(--s6) 0 0;
+  font-family: var(--room-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--room-muted);
+  transition: opacity 1.5s var(--ease-enter);
+}
+
+[data-mood="night-thought"] .letter-sign,
+[data-mood="confetti-love"] .letter-sign {
+  font-family: var(--room-body);
+  font-style: normal;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+[data-mood="confetti-love"] .letter-sign {
+  font-weight: 600;
+}
+
+/* ============================================================================
+   11 · SHELL PAGE FURNITURE
+   ========================================================================= */
+
+.topbar {
+  position: relative;
+  z-index: var(--z-sticky);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s6);
+  padding: var(--s6) var(--gutter);
+  font-size: 0.5938rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+
+.wordmark {
+  color: var(--gold);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: 0.3em;
+}
+
+.hero {
+  position: relative;
+  z-index: var(--z-ui);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 82svh;
+  padding: var(--s8) var(--gutter) var(--s24);
+  text-align: center;
+}
+
+/* A column flex container with align-items:center sizes its children to max-content, and
+   min-width:auto stops them shrinking — so the headline overflows the viewport instead of
+   wrapping. Both halves of that have to be undone. */
+.hero > * {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.hero-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.hero-word-inner {
+  display: inline-block;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  justify-content: center;
+  margin-top: var(--s12);
+}
+
+.scroll-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s2);
+  margin-top: var(--s16);
+  font-size: 0.5625rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 230, 0.28);
+}
+
+.scroll-rule {
+  width: 1px;
+  height: 38px;
+  background: linear-gradient(to bottom, rgba(200, 169, 110, 0.45), transparent);
+}
+
+.step-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1px;
+  background: var(--hairline);
+  border-block: 1px solid var(--hairline);
+}
+
+.step-cell {
+  background: var(--void);
+  padding: var(--s8) var(--s6);
+}
+
+.step-index {
+  font-family: "Courier Prime", monospace;
+  font-size: 0.6875rem;
+  color: var(--gold);
+}
+
+/* ---- composer ----------------------------------------------------------- */
+
+.compose-shell {
+  position: relative;
+  z-index: var(--z-ui);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+.compose-body {
+  flex: 1;
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding: var(--s6) var(--gutter) var(--s16);
+}
+
+.compose-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.86fr);
+  gap: clamp(2rem, 5vw, 3.5rem);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .compose-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.compose-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-top: var(--s12);
+  padding-top: var(--s6);
+  border-top: 1px solid var(--hairline);
+}
+
+.swatches {
+  display: flex;
+  gap: var(--s3);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform var(--d-micro) var(--ease-enter), box-shadow var(--d-micro)
+    var(--ease-enter);
+}
+
+.swatch:hover {
+  transform: scale(1.08);
+}
+
+.swatch[aria-checked="true"] {
+  box-shadow: 0 0 0 1px var(--void), 0 0 0 2px var(--paper);
+}
+
+.preview-card {
+  position: relative;
+  border-radius: var(--r-sheet);
+  padding: clamp(1.75rem, 4vw, 2.6rem);
+  overflow: hidden;
+  background: var(--room-bg);
+  color: var(--room-text);
+  border: 1px solid var(--room-border);
+  box-shadow: 0 50px 100px rgba(0, 0, 0, 0.5);
+  min-height: 300px;
+  transition: background-color 600ms var(--ease-enter), border-color 600ms var(--ease-enter);
+}
+
+.preview-card .letter-body {
+  font-size: 1.0625rem;
+}
+
+.review-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.45fr) 1fr;
+  gap: var(--s4);
+  padding: var(--s4) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.review-row dt {
+  font-size: 0.625rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+
+.review-row dd {
+  margin: 0;
+  color: var(--paper);
+  overflow-wrap: anywhere;
+}
+
+.link-row {
+  display: flex;
+  align-items: stretch;
+  max-width: 100%;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-control);
+  overflow: hidden;
+}
+
+.link-row code {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 18px;
+  font-family: "Courier Prime", monospace;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.link-row .btn {
+  border-radius: 0;
+  padding-inline: 22px;
+}
+
+.state-page {
+  position: relative;
+  z-index: var(--z-ui);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s6);
+  min-height: 100svh;
+  padding: var(--gutter);
+  text-align: center;
+}
+
+.success-page {
+  position: relative;
+  z-index: var(--z-ui);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  padding: var(--s16) var(--gutter);
+  text-align: center;
+}
+
+.progress-rail {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+
+/* ============================================================================
+   12 · COMPACT
+   Below 640 the shell loses its two-column chrome; nothing is allowed to force
+   the page wider than the viewport.
+   ========================================================================= */
+
+@media (max-width: 640px) {
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s2);
+    padding-block: var(--s4);
+  }
+
+  .topbar span:last-child,
+  .topbar span[style] {
+    max-width: none !important;
+    text-align: left !important;
+    line-height: 1.7 !important;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-bottom: var(--s16);
+  }
+
+  .hero-actions .btn,
+  .hero-actions a {
+    width: 100%;
+  }
+
+  .hero-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .room-inner {
+    padding-top: var(--s12);
+  }
+
+  .room-rail {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s2);
+  }
+
+  .room-rail-actions {
+    margin-left: -12px;
+  }
+
+  .compose-actions .btn {
+    flex: 1;
+  }
+
+  .link-row {
+    flex-direction: column;
+  }
+
+  .link-row .btn {
+    width: 100%;
+  }
+
+  .review-row {
+    grid-template-columns: 1fr;
+    gap: var(--s1);
+  }
+
+  /* 0.34em tracking is a desktop luxury; on a narrow screen it turns a one-line label into
+     three. Tighten it rather than let the eyebrow dominate the fold. */
+  .t-label,
+  .room-eyebrow {
+    letter-spacing: 0.22em;
+  }
+
+  .hero .t-label {
+    letter-spacing: 0.16em;
+  }
+}
+
+/* long words in a room headline must never push the page sideways */
+.letter-lead,
+.letter-body,
+.t-display,
+.t-h1 {
+  overflow-wrap: break-word;
+}
