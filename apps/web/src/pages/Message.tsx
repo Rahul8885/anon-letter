@@ -8,6 +8,7 @@ import { useReducedMotion } from "../hooks/useReducedMotion";
 import { useTypewriter } from "../hooks/useTypewriter";
 import { api } from "../lib/api";
 import { SAMPLE_MESSAGE, room } from "../lib/moods";
+import { useComposerStore } from "../store/composerStore";
 
 type Data = Omit<MessageData, "id">;
 
@@ -68,17 +69,18 @@ export function Message() {
 
 /* -------------------------------------------------------------------------- */
 
-function Reveal({ data }: { data: Data }) {
+export function Reveal({ data, preview = false }: { data: Data; preview?: boolean }) {
   const reduced = useReducedMotion();
   const r = room(data.template_id);
 
   const [phase, setPhase] = useState(() => (reduced ? 6 : 0));
   const [reported, setReported] = useState(false);
   const [reporting, setReporting] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   const typing = useTypewriter(data.message, {
     start: phase >= 5,
-    instant: reduced,
+    instant: reduced || phase >= 6,
     onDone: () => setPhase((p) => Math.max(p, 6)),
   });
 
@@ -95,7 +97,7 @@ function Reveal({ data }: { data: Data }) {
       window.setTimeout(() => setPhase((p) => Math.max(p, 2)), CUE.seal),
       window.setTimeout(() => setPhase((p) => Math.max(p, 3)), CUE.flap),
       window.setTimeout(() => setPhase((p) => Math.max(p, 4)), CUE.letter),
-      window.setTimeout(() => setPhase((p) => Math.max(p, 5)), CUE.greeting),
+      window.setTimeout(() => setPhase((p) => Math.max(p, 5)), CUE.typing),
     ];
     return () => timers.forEach(window.clearTimeout);
   }, [reduced]);
@@ -103,23 +105,35 @@ function Reveal({ data }: { data: Data }) {
   useEffect(() => {
     if (reduced || phase >= 6) return;
     const onKey = (e: KeyboardEvent) => {
+      if ((e.target as Element)?.closest?.("[data-preview-controls]")) return;
       // let people tab through without detonating the sequence
       if (e.key === "Tab" || e.key === "Shift") return;
       skip();
     };
+    const onPointer = (e: PointerEvent) => {
+      if ((e.target as Element)?.closest?.("[data-preview-controls]")) return;
+      skip();
+    };
     window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", skip);
+    window.addEventListener("pointerdown", onPointer);
     return () => {
       window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", skip);
+      window.removeEventListener("pointerdown", onPointer);
     };
   }, [reduced, phase, skip]);
 
   async function report() {
+    if (preview) {
+      setReported(true);
+      return;
+    }
     setReporting(true);
+    setReportError(null);
     try {
       await api.reportMessage(data.slug);
       setReported(true);
+    } catch {
+      setReportError("Could not report this letter. Please try again.");
     } finally {
       setReporting(false);
     }
@@ -133,14 +147,19 @@ function Reveal({ data }: { data: Data }) {
   });
 
   return (
-    <LetterRoom mood={data.template_id} eyebrow={`${r.name} — ${time}`} burst={phase >= 4}>
+    <LetterRoom
+      mood={data.template_id}
+      eyebrow={`${r.name} — ${time}`}
+      burst={phase >= 4}
+      style={data.accent ? { ["--room-accent" as string]: data.accent } : undefined}
+    >
       {/* the envelope owns the stage until the letter clears it, then unmounts */}
       {!reduced && phase < 5 && (
         <div
           style={{
             position: "absolute",
             inset: 0,
-            zIndex: 60,
+            zIndex: "var(--z-fore)",
             display: "grid",
             placeItems: "center",
             opacity: phase >= 4 ? 0 : 1,
@@ -163,7 +182,8 @@ function Reveal({ data }: { data: Data }) {
             transition: "opacity 800ms var(--ease-enter)",
           }}
         >
-          {typing.visible}
+          <span aria-hidden="true">{typing.visible}</span>
+          <span className="sr-only">{data.message}</span>
           {phase >= 5 && !typing.done && <span className="caret" />}
         </p>
 
@@ -180,16 +200,28 @@ function Reveal({ data }: { data: Data }) {
 
       <div
         className="room-rail"
+        hidden={!typing.done}
         style={{
           opacity: typing.done ? 1 : 0,
           transition: "opacity 900ms var(--ease-enter)",
         }}
       >
-        <span>{reported ? "Reported · thank you" : r.railNote}</span>
+        <output>
+          {reportError ||
+            (reported
+              ? preview
+                ? "Preview only · no report sent"
+                : "Reported · thank you"
+              : r.railNote)}
+        </output>
 
         {/* no upsell, no modal — the reply lives in the rail, beside the report control */}
         <span className="room-rail-actions">
-          <Link className="rail-link" to="/compose">
+          <Link
+            className="rail-link"
+            to="/compose"
+            onClick={preview ? undefined : () => useComposerStore.getState().reset()}
+          >
             Write one back
           </Link>
           <button
@@ -241,7 +273,7 @@ function LetterError({ message }: { message: string }) {
       <h1 className="t-h1">This letter isn&rsquo;t here.</h1>
       <p className="measure-caption" style={{ color: "var(--text-dim)" }}>
         {message} Letters expire thirty days after they are sent, and a link only works once it has
-        been delivered.
+        been created.
       </p>
       <Link to="/compose">
         <Button>Write one of your own</Button>

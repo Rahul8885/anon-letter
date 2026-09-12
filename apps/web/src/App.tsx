@@ -6,6 +6,7 @@ import { useReducedMotion } from "./hooks/useReducedMotion";
 import { Compose } from "./pages/Compose";
 import { Home } from "./pages/Home";
 import { Message } from "./pages/Message";
+import { Preview } from "./pages/Preview";
 import { Success } from "./pages/Success";
 
 export function App() {
@@ -30,6 +31,7 @@ export function App() {
         <Routes location={location}>
           <Route path="/" element={<Home />} />
           <Route path="/compose" element={<Compose />} />
+          <Route path="/preview" element={<Preview />} />
           <Route path="/success/:slug" element={<Success />} />
           <Route path="/m/:slug" element={<Message />} />
           <Route path="*" element={<NotFound />} />
@@ -45,7 +47,7 @@ function NotFound() {
       <h1 className="t-h1">Nothing was sent here.</h1>
       <p className="measure-caption" style={{ color: "var(--text-dim)" }}>
         This address doesn&rsquo;t point at a letter. If someone sent you one, the link will have
-        come by email.
+        come by email or a shared link.
       </p>
       <Link to="/">
         <Button>Go to AnonLetter</Button>

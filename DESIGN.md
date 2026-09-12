@@ -217,6 +217,21 @@ message whole, and every ambient field on its resting frame.
 
 ## Performance
 
+### Letter composition and preview refinement — September 2026
+
+Reading surfaces now reserve an outer margin for one motif: three photographed petals for
+Soft Bloom, a single pressed rose stem for Quiet Garden, and a small wax seal for Old Letter.
+The generated PNGs preserve transparency; their prompts are in `apps/web/public/assets/GENERATED.md`.
+The previous collage assets remain in the template gallery but no longer sit behind letter text.
+Night Thought keeps its stars. Confetti Love uses small paper shapes, with a single burst that
+clears after 2.5 seconds; reduced motion keeps the pieces in the outer margins.
+
+On phones, the motif moves into a short header area, clear of the letter. The composer preview
+uses the same `LetterRoom` and `LetterLead` as the recipient page. Full preview runs the actual
+reveal with local draft data, including replay and skip, without API requests or delivery.
+Email remains the default delivery option; link-only delivery skips email entirely.
+
+
 One canvas per page, capped at 90 nodes, DPR clamped to 2, paused off-screen via
 IntersectionObserver and on `visibilitychange`. Only `transform` and `opacity` animate. Below
 1024px or on a coarse pointer: no parallax, particle counts halved. Two missed frame budgets in

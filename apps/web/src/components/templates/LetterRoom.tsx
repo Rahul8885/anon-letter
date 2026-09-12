@@ -39,24 +39,24 @@ export function LetterRoom({
   className?: string;
   style?: CSSProperties;
 }) {
-  const r = room(mood);
-
   return (
     <div className={`room ${className ?? ""}`} data-mood={mood} style={style}>
-      <AmbientField mood={mood} burst={burst} />
-
-      {/* one corner motif, never a border frame */}
-      {r.motifArt && mood !== "confetti-love" && (
-        <img className={`room-motif room-motif-${mood}`} src={r.motifArt} alt="" loading="lazy" />
-      )}
-      {mood === "confetti-love" && r.motifArt && (
-        <img
-          className="room-motif room-motif-confetti-love"
-          src={r.motifArt}
-          alt=""
-          loading="lazy"
-        />
-      )}
+      <div className="room-ambience" aria-hidden="true">
+        {(mood === "night-thought" || mood === "old-letter" || mood === "confetti-love") && (
+          <AmbientField mood={mood} burst={burst} density={0.6} />
+        )}
+      </div>
+      <div className="room-decoration" aria-hidden="true">
+        {mood === "soft-bloom" && (
+          <img className="room-art room-art-petals" src="/assets/soft-bloom-petals.png" alt="" />
+        )}
+        {mood === "quiet-garden" && (
+          <img className="room-art room-art-stem" src="/assets/quiet-garden-stem.png" alt="" />
+        )}
+        {mood === "old-letter" && (
+          <img className="room-art room-art-seal" src="/assets/wax-seal.webp" alt="" />
+        )}
+      </div>
 
       <div className="room-inner">
         {eyebrow && <p className="room-eyebrow">{eyebrow}</p>}
@@ -79,7 +79,7 @@ export function LetterLead({ mood, show }: { mood: TemplateId; show: boolean }) 
   if (lead.kind === "display") {
     return (
       <h1 className="letter-lead t-room-display" style={style}>
-        {lead.lines?.map((line, i) => (
+        {lead.lines?.map((line) => (
           <span key={line} style={{ display: "block" }}>
             {line}
           </span>

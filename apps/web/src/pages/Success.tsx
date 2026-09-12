@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { Envelope } from "../components/envelope/Envelope";
 import { Button } from "../components/ui/Button";
 import { useReducedMotion } from "../hooks/useReducedMotion";
@@ -12,13 +12,21 @@ import { useComposerStore } from "../store/composerStore";
  */
 export function Success() {
   const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
+  const receipt = location.state as {
+    deliveryMethod?: "email" | "link";
+    messageUrl?: string;
+  } | null;
+  const emailDelivery = receipt?.deliveryMethod === "email";
   const reduced = useReducedMotion();
   const mood = useComposerStore((s) => s.mood);
   const reset = useComposerStore((s) => s.reset);
   const [sealed, setSealed] = useState(reduced);
   const [copied, setCopied] = useState(false);
+  const [shareStatus, setShareStatus] = useState("");
+  const linkInput = useRef<HTMLInputElement>(null);
 
-  const url = `${window.location.origin}/m/${slug ?? ""}`;
+  const url = receipt?.messageUrl || `${window.location.origin}/m/${slug ?? ""}`;
   const r = room(mood);
   const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
@@ -38,8 +46,22 @@ export function Success() {
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      setShareStatus("Link copied. Ready to share.");
     } catch {
       setCopied(false);
+      linkInput.current?.focus();
+      linkInput.current?.select();
+      setShareStatus("Copy was unavailable. The link is selected so you can copy it manually.");
+    }
+  }
+
+  async function share() {
+    try {
+      await navigator.share({ title: "A letter for you", url });
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        setShareStatus("Sharing was unavailable. Copy the link instead.");
+      }
     }
   }
 
@@ -53,29 +75,53 @@ export function Success() {
         </div>
 
         <p className="t-label" style={{ color: "rgba(200,169,110,0.62)" }}>
-          Sent — {time}
+          {emailDelivery ? "Sent" : "Link ready"} — {time}
         </p>
 
         <h1 className="t-h1" style={{ margin: "var(--s4) 0 var(--s4)" }}>
-          It&rsquo;s out of
-          <br />
-          <em className="t-em">your hands now.</em>
+          {emailDelivery ? (
+            <>
+              It&rsquo;s out of
+              <br />
+              <em className="t-em">your hands now.</em>
+            </>
+          ) : (
+            <>
+              Your letter is sealed.
+              <br />
+              <em className="t-em">Pass it along.</em>
+            </>
+          )}
         </h1>
 
         <p
           className="measure-caption"
           style={{ color: "var(--text-dim)", marginBottom: "var(--s8)" }}
         >
-          Their address was used for delivery and discarded. The link below is yours to keep or to
-          forget — the letter expires in thirty days either way.
+          {emailDelivery
+            ? "Their address was used for delivery and discarded. You can also share the link below."
+            : "Copy the link and send it wherever you like. Anyone with the link can open your letter."}{" "}
+          The letter expires in thirty days.
         </p>
 
         <div className="link-row">
-          <code>{url}</code>
+          <input
+            ref={linkInput}
+            aria-label="Letter link"
+            readOnly
+            value={url}
+            onFocus={(event) => event.target.select()}
+          />
           <Button variant="primary" magnetic={false} onClick={copy}>
-            {copied ? "Copied" : "Copy"}
+            {copied ? "Copied" : "Copy link"}
           </Button>
         </div>
+        <output className="share-status t-caption">{shareStatus}</output>
+        {typeof navigator.share === "function" && (
+          <Button variant="secondary" onClick={share}>
+            Share letter
+          </Button>
+        )}
 
         <div className="hero-actions">
           <Link to="/compose" onClick={reset}>

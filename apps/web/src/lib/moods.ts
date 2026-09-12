@@ -97,7 +97,7 @@ export const ROOMS: Record<TemplateId, Room> = {
     cardGradient: "linear-gradient(165deg,#eaf7f0 0%,#a9c99a 60%,#3b6d11 100%)",
     greeting: "Grown quietly, and on purpose.",
     signature: "someone proud of you",
-    railNote: "Drawn as you read",
+    railNote: "Grown quietly · sent with care",
     headline: null,
     dark: false,
   },

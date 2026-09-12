@@ -395,7 +395,7 @@ function ConfettiField({ burst, density }: { burst: boolean; density: number }) 
       angle: -Math.PI / 2 + (Math.random() - 0.5) * 1.9,
       speed: 380 + Math.random() * 240,
       vr: (Math.random() - 0.5) * 1080,
-      settleX: 6 + Math.random() * 88,
+      settleX: i % 2 === 0 ? 3 + (i % 4) * 2 : 92 + (i % 4),
       settleY: 24 + Math.random() * 66,
       settleRot: Math.random() * 360,
     }));
@@ -448,7 +448,7 @@ function ConfettiField({ burst, density }: { burst: boolean; density: number }) 
         raf = requestAnimationFrame(step);
       } else {
         for (const node of nodes) {
-          node.style.opacity = "0.5";
+          node.style.opacity = "0";
           node.style.zIndex = "var(--z-motif)";
         }
       }

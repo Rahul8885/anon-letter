@@ -24,10 +24,7 @@ const HEADINGS: Record<number, [string, string]> = {
     "Write what you couldn't say.",
     "Eight hundred characters. Long enough to be honest, short enough to send.",
   ],
-  3: [
-    "Where should it arrive?",
-    "Their address goes straight to delivery. It is never written to our database.",
-  ],
+  3: ["Where should it arrive?", "Send it to their inbox, or make a link to share yourself."],
   4: ["Read it once more.", "After this it belongs to them, and there is no way to take it back."],
 };
 
@@ -68,28 +65,36 @@ export function Compose() {
   const canAdvance =
     (store.step === 1 && Boolean(store.mood)) ||
     (store.step === 2 && store.message.trim().length > 0 && store.message.length <= 800) ||
-    (store.step === 3 && emailValid) ||
+    (store.step === 3 && (store.deliveryMethod === "link" || emailValid)) ||
     store.step === 4;
 
   async function send() {
+    if (store.isSubmitting) return;
     store.setSubmitting(true);
     store.setSubmitError(null);
     try {
       const result = await api.createMessage({
         template_id: store.mood,
         message: store.message.trim(),
-        recipient_email: store.recipientEmail.trim(),
+        delivery_method: store.deliveryMethod,
+        recipient_email: store.deliveryMethod === "email" ? store.recipientEmail.trim() : undefined,
         from_hint: store.fromHint.trim() || undefined,
         accent: store.accent ?? undefined,
       });
-      navigate(`/success/${result.slug}`);
+      navigate(`/success/${result.slug}`, {
+        state: {
+          deliveryMethod: store.deliveryMethod,
+          messageUrl: result.message_url,
+          mood: store.mood,
+        },
+      });
     } catch (error) {
       const detail = error instanceof Error ? error.message : "Could not send this letter.";
       store.setSubmitError(detail);
       setToast({
         id: Date.now(),
         tone: "error",
-        title: "That didn't send.",
+        title: store.deliveryMethod === "email" ? "That didn't send." : "The link wasn't created.",
         detail: `${detail} Your draft is still here.`,
       });
     } finally {
@@ -181,18 +186,51 @@ export function Compose() {
               {store.step === 3 && (
                 <div className="compose-split">
                   <div style={{ display: "flex", flexDirection: "column", gap: "var(--s8)" }}>
-                    <Field
-                      label="Their email"
-                      type="email"
-                      inputMode="email"
-                      autoComplete="off"
-                      value={store.recipientEmail}
-                      error={emailError}
-                      hint="Used once, for delivery. Never stored, never shown to them as yours."
-                      onBlur={() => setEmailTouched(true)}
-                      onChange={(e) => store.setRecipientEmail(e.target.value)}
-                      placeholder="their@email.com"
-                    />
+                    <fieldset className="delivery-options">
+                      <legend>How would you like to deliver it?</legend>
+                      <label className="delivery-option">
+                        <input
+                          type="radio"
+                          name="delivery"
+                          value="email"
+                          checked={store.deliveryMethod === "email"}
+                          onChange={() => store.setDeliveryMethod("email")}
+                        />
+                        <span>
+                          <strong>
+                            Send by email <small>Recommended</small>
+                          </strong>
+                          <span>We deliver the letter straight to their inbox.</span>
+                        </span>
+                      </label>
+                      <label className="delivery-option">
+                        <input
+                          type="radio"
+                          name="delivery"
+                          value="link"
+                          checked={store.deliveryMethod === "link"}
+                          onChange={() => store.setDeliveryMethod("link")}
+                        />
+                        <span>
+                          <strong>Share a link</strong>
+                          <span>No email needed. Copy the link and share it yourself.</span>
+                        </span>
+                      </label>
+                    </fieldset>
+                    {store.deliveryMethod === "email" && (
+                      <Field
+                        label="Their email"
+                        type="email"
+                        inputMode="email"
+                        autoComplete="off"
+                        value={store.recipientEmail}
+                        error={emailError}
+                        hint="Used once, for delivery. Never stored, never shown to them as yours."
+                        onBlur={() => setEmailTouched(true)}
+                        onChange={(e) => store.setRecipientEmail(e.target.value)}
+                        placeholder="their@email.com"
+                      />
+                    )}
                     <Field
                       label="Sign it (optional)"
                       maxLength={60}
@@ -221,8 +259,12 @@ export function Compose() {
                       </dd>
                     </div>
                     <div className="review-row">
-                      <dt>Arrives at</dt>
-                      <dd>{store.recipientEmail.trim()}</dd>
+                      <dt>{store.deliveryMethod === "email" ? "Arrives at" : "Delivery"}</dt>
+                      <dd>
+                        {store.deliveryMethod === "email"
+                          ? store.recipientEmail.trim()
+                          : "A link for you to copy and share. No email will be sent."}
+                      </dd>
                     </div>
                     <div className="review-row">
                       <dt>Signed</dt>
@@ -272,7 +314,13 @@ export function Compose() {
               </Button>
             ) : (
               <Button loading={store.isSubmitting} onClick={send}>
-                {store.isSubmitting ? "Sending" : "Send it"}
+                {store.deliveryMethod === "email"
+                  ? store.isSubmitting
+                    ? "Sending"
+                    : "Send by email"
+                  : store.isSubmitting
+                    ? "Creating link"
+                    : "Create share link"}
               </Button>
             )}
           </div>

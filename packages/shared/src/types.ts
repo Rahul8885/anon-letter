@@ -41,7 +41,9 @@ export interface Message {
 export interface CreateMessageRequest {
   template_id: TemplateId;
   message: string;
-  recipient_email: string;
+  /** Email is the default; link delivery never contacts an email provider. */
+  delivery_method?: "email" | "link";
+  recipient_email?: string;
   from_hint?: string;
   bg_color?: string;
   accent?: string;

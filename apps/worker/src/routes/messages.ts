@@ -1,4 +1,4 @@
-import { TEMPLATES, type Message } from "@anonletter/shared";
+import { type Message, TEMPLATES } from "@anonletter/shared";
 import { Hono } from "hono";
 import type { Env } from "../env";
 import { sendLetterEmail } from "../lib/email";
@@ -24,7 +24,7 @@ messages.post("/", async (c) => {
     return c.json(
       { success: false, code: "RATE_LIMITED", error: "Too many letters. Try again later." },
       429,
-      { "Retry-After": String(limit.retryAfter ?? 3600) }
+      { "Retry-After": String(limit.retryAfter ?? 3600) },
     );
   }
 
@@ -37,7 +37,7 @@ messages.post("/", async (c) => {
   await c.env.DB.prepare(
     `INSERT INTO messages
       (id, slug, template_id, message, from_hint, bg_color, accent, font_key, expires_at, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   )
     .bind(
       id,
@@ -49,25 +49,28 @@ messages.post("/", async (c) => {
       input.accent ?? null,
       input.font_key ?? null,
       expiresAt,
-      now
+      now,
     )
     .run();
 
-  await sendLetterEmail({
-    apiKey: c.env.RESEND_API_KEY,
-    to: input.recipient_email,
-    slug,
-    templateId: input.template_id,
-    fromHint: input.from_hint,
-    baseUrl: c.env.PUBLIC_BASE_URL
-  });
+  if (input.delivery_method === "email" && input.recipient_email)
+    await sendLetterEmail({
+      apiKey: c.env.RESEND_API_KEY,
+      to: input.recipient_email,
+      slug,
+      templateId: input.template_id,
+      fromHint: input.from_hint,
+      baseUrl: c.env.PUBLIC_BASE_URL,
+    });
 
   return c.json({ success: true, slug, message_url: `${c.env.PUBLIC_BASE_URL}/m/${slug}` });
 });
 
 messages.get("/:slug", async (c) => {
   const slug = c.req.param("slug");
-  const row = await c.env.DB.prepare("SELECT * FROM messages WHERE slug = ?").bind(slug).first<Message>();
+  const row = await c.env.DB.prepare("SELECT * FROM messages WHERE slug = ?")
+    .bind(slug)
+    .first<Message>();
 
   if (!row) {
     return c.json({ success: false, code: "NOT_FOUND", error: "Letter not found." }, 404);
@@ -94,7 +97,7 @@ messages.post("/:slug/report", async (c) => {
   const slug = c.req.param("slug");
   const now = Math.floor(Date.now() / 1000);
   const result = await c.env.DB.prepare(
-    "UPDATE messages SET status = 'reported', report_at = ? WHERE slug = ?"
+    "UPDATE messages SET status = 'reported', report_at = ? WHERE slug = ?",
   )
     .bind(now, slug)
     .run();

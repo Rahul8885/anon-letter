@@ -42,6 +42,7 @@ ehthumbs.db
 *.sw?
 
 # Temporary archives and backups
+.tmp/
 *.tmp
 *.temp
 *.bak

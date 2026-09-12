@@ -1,7 +1,8 @@
 import type { TemplateId } from "@anonletter/shared";
 import type { CSSProperties } from "react";
+import { Link } from "react-router-dom";
 import { room } from "../../lib/moods";
-import { AmbientField } from "../ambient/AmbientField";
+import { LetterLead, LetterRoom } from "../templates/LetterRoom";
 
 /**
  * What they'll see. Types in sync at 1:1 — no debounce beyond a frame — so the writer feels
@@ -26,26 +27,26 @@ export function LivePreview({
       <p className="t-label" style={{ color: "rgba(200,169,110,0.6)", marginBottom: "var(--s4)" }}>
         What they&rsquo;ll see
       </p>
-      <article
-        className="preview-card"
-        data-mood={mood}
+      <LetterRoom
+        className="preview-card room-compact"
+        mood={mood}
+        burst={false}
         style={accent ? ({ "--room-accent": accent } as CSSProperties) : undefined}
-        aria-live="polite"
       >
-        <AmbientField mood={mood} burst={false} density={0.3} />
-        {r.motifArt && (
-          <img className={`room-motif room-motif-${mood}`} src={r.motifArt} alt="" loading="lazy" />
-        )}
-
-        <div style={{ position: "relative", zIndex: 100 }}>
-          <p className="letter-greeting">{r.greeting}</p>
+        <div className="letter-stack">
+          <LetterLead mood={mood} show />
           <p className="letter-body">
             {message || "Your words will settle here as you write them."}
           </p>
           <hr className="letter-rule" />
           <p className="letter-sign">— from {fromHint.trim() || r.signature}</p>
         </div>
-      </article>
+      </LetterRoom>
+      {message.trim() && (
+        <Link className="preview-link" to="/preview">
+          Preview the full opening <span aria-hidden="true">↗</span>
+        </Link>
+      )}
       <p className="t-caption" style={{ marginTop: "var(--s4)", color: "var(--text-mute)" }}>
         Switch mood at any time — your words stay exactly where they are.
       </p>
