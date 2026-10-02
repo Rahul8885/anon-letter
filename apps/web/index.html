@@ -3,23 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0b0a08" />
+    <meta name="theme-color" content="#F7F2EA" />
     <meta
       name="description"
       content="Send someone a beautiful anonymous letter in under two minutes. No account. Their address is never stored."
     />
-    <title>AnonLetter — letters sent by no one</title>
+    <title>SAYLESS — for the things you couldn’t say out loud</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lato:wght@300;400;700&family=Inter:wght@300;400;500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Archivo:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lato:wght@300;400;700&family=Inter:wght@300;400;500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Archivo:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
 
-    <link rel="preload" as="image" href="/assets/wax-seal.webp" />
+    <link rel="preload" as="font" href="/fonts/chubbo-700.woff2" type="font/woff2" crossorigin />
+    <link rel="preload" as="font" href="/fonts/supreme-400.woff2" type="font/woff2" crossorigin />
   </head>
   <body>
+    <noscript>
+      <main style="max-width: 680px; margin: 80px auto; padding: 24px">
+        <h1>For the things you couldn’t say out loud.</h1>
+        <p>Write a private letter to someone. We’ll deliver it without your name.</p>
+        <p>No account · No signature · No saved email</p>
+        <img src="/assets/letter-world/envelope-open.webp" alt="An open blush paper envelope" />
+        <p>Enable JavaScript in your browser to write or open a private letter.</p>
+      </main>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

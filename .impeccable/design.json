@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-02T18:06:11Z",
+  "title": "Design System: SAYLESS",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Ivory desk",
+        "canonical": "#f7f2ea",
+        "tonalRamp": [
+          "oklch(15% 0.013 75)",
+          "oklch(26% 0.013 75)",
+          "oklch(38% 0.013 75)",
+          "oklch(50% 0.013 75)",
+          "oklch(62% 0.013 75)",
+          "oklch(74% 0.013 75)",
+          "oklch(86% 0.013 75)",
+          "oklch(95% 0.013 75)"
+        ]
+      },
+      "paper-warm": {
+        "role": "neutral",
+        "displayName": "Warm paper",
+        "canonical": "#efe4da",
+        "tonalRamp": [
+          "oklch(15% 0.018 65)",
+          "oklch(26% 0.018 65)",
+          "oklch(38% 0.018 65)",
+          "oklch(50% 0.018 65)",
+          "oklch(62% 0.018 65)",
+          "oklch(74% 0.018 65)",
+          "oklch(86% 0.018 65)",
+          "oklch(95% 0.018 65)"
+        ]
+      },
+      "paper-white": {
+        "role": "neutral",
+        "displayName": "White paper",
+        "canonical": "#fffdfc",
+        "tonalRamp": [
+          "oklch(15% 0.004 50)",
+          "oklch(26% 0.004 50)",
+          "oklch(38% 0.004 50)",
+          "oklch(50% 0.004 50)",
+          "oklch(62% 0.004 50)",
+          "oklch(74% 0.004 50)",
+          "oklch(86% 0.004 50)",
+          "oklch(95% 0.004 50)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Black ink",
+        "canonical": "#171514",
+        "tonalRamp": [
+          "oklch(15% 0.003 55)",
+          "oklch(26% 0.003 55)",
+          "oklch(38% 0.003 55)",
+          "oklch(50% 0.003 55)",
+          "oklch(62% 0.003 55)",
+          "oklch(74% 0.003 55)",
+          "oklch(86% 0.003 55)",
+          "oklch(95% 0.003 55)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Soft ink",
+        "canonical": "#403b37",
+        "tonalRamp": [
+          "oklch(15% 0.01 55)",
+          "oklch(26% 0.01 55)",
+          "oklch(38% 0.01 55)",
+          "oklch(50% 0.01 55)",
+          "oklch(62% 0.01 55)",
+          "oklch(74% 0.01 55)",
+          "oklch(86% 0.01 55)",
+          "oklch(95% 0.01 55)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted ink",
+        "canonical": "#756d67",
+        "tonalRamp": [
+          "oklch(15% 0.012 55)",
+          "oklch(26% 0.012 55)",
+          "oklch(38% 0.012 55)",
+          "oklch(50% 0.012 55)",
+          "oklch(62% 0.012 55)",
+          "oklch(74% 0.012 55)",
+          "oklch(86% 0.012 55)",
+          "oklch(95% 0.012 55)"
+        ]
+      },
+      "rose": {
+        "role": "primary",
+        "displayName": "Rose action",
+        "canonical": "#b94a5d",
+        "tonalRamp": [
+          "oklch(15% 0.13 12)",
+          "oklch(26% 0.13 12)",
+          "oklch(38% 0.13 12)",
+          "oklch(50% 0.13 12)",
+          "oklch(62% 0.13 12)",
+          "oklch(74% 0.13 12)",
+          "oklch(86% 0.13 12)",
+          "oklch(95% 0.13 12)"
+        ]
+      },
+      "rose-deep": {
+        "role": "primary",
+        "displayName": "Deep rose",
+        "canonical": "#963746",
+        "tonalRamp": [
+          "oklch(15% 0.12 14)",
+          "oklch(26% 0.12 14)",
+          "oklch(38% 0.12 14)",
+          "oklch(50% 0.12 14)",
+          "oklch(62% 0.12 14)",
+          "oklch(74% 0.12 14)",
+          "oklch(86% 0.12 14)",
+          "oklch(95% 0.12 14)"
+        ]
+      },
+      "blush": {
+        "role": "secondary",
+        "displayName": "Blush selection",
+        "canonical": "#e9b9be",
+        "tonalRamp": [
+          "oklch(15% 0.055 10)",
+          "oklch(26% 0.055 10)",
+          "oklch(38% 0.055 10)",
+          "oklch(50% 0.055 10)",
+          "oklch(62% 0.055 10)",
+          "oklch(74% 0.055 10)",
+          "oklch(86% 0.055 10)",
+          "oklch(95% 0.055 10)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Ink hairline",
+        "canonical": "rgba(23, 21, 20, 0.12)",
+        "tonalRamp": [
+          "oklch(15% 0.003 55)",
+          "oklch(26% 0.003 55)",
+          "oklch(38% 0.003 55)",
+          "oklch(50% 0.003 55)",
+          "oklch(62% 0.003 55)",
+          "oklch(74% 0.003 55)",
+          "oklch(86% 0.003 55)",
+          "oklch(95% 0.003 55)"
+        ]
+      },
+      "success": {
+        "role": "semantic",
+        "displayName": "Delivery success",
+        "canonical": "#3f7357",
+        "tonalRamp": [
+          "oklch(15% 0.065 155)",
+          "oklch(26% 0.065 155)",
+          "oklch(38% 0.065 155)",
+          "oklch(50% 0.065 155)",
+          "oklch(62% 0.065 155)",
+          "oklch(74% 0.065 155)",
+          "oklch(86% 0.065 155)",
+          "oklch(95% 0.065 155)"
+        ]
+      },
+      "error": {
+        "role": "semantic",
+        "displayName": "Error rose",
+        "canonical": "#a3304a",
+        "tonalRamp": [
+          "oklch(15% 0.13 8)",
+          "oklch(26% 0.13 8)",
+          "oklch(38% 0.13 8)",
+          "oklch(50% 0.13 8)",
+          "oklch(62% 0.13 8)",
+          "oklch(74% 0.13 8)",
+          "oklch(86% 0.13 8)",
+          "oklch(95% 0.13 8)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Shell display",
+        "purpose": "Home headline; responsive Chubbo Bold."
+      },
+      "headline": {
+        "displayName": "Section headline",
+        "purpose": "Home section headings; Chubbo Bold."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Supreme body copy and live message content in the shell."
+      },
+      "label": {
+        "displayName": "Quiet label",
+        "purpose": "Supreme sentence-case interface labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "elev-lift",
+        "value": "0 16px 36px rgba(64, 59, 55, 0.12)",
+        "purpose": "Declared soft interface elevation."
+      },
+      {
+        "name": "elev-sheet",
+        "value": "0 12px 30px rgba(64, 59, 55, 0.08)",
+        "purpose": "Writing-sheet depth; photographic objects keep their own shadows."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-enter",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Calm object settling and direct opening."
+      },
+      {
+        "name": "d-micro",
+        "value": "160ms",
+        "purpose": "Primary-action hover response."
+      },
+      {
+        "name": "d-ui",
+        "value": "300ms",
+        "purpose": "Stationery selection and hover responses."
+      },
+      {
+        "name": "d-object",
+        "value": "700ms",
+        "purpose": "Photograph crossfade and recipient-paper entrance."
+      },
+      {
+        "name": "hero-object-transform",
+        "value": "1000ms",
+        "purpose": "Hero paper and envelope transform; one settle, no loops."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "final-open",
+        "purpose": "Start with the whole letter visible; native scrolling becomes immediate and animations are removed."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tablet",
+        "value": "1100px"
+      },
+      {
+        "name": "mobile",
+        "value": "760px"
+      },
+      {
+        "name": "narrow-mobile",
+        "value": "360px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Write a letter",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Canonical home action; rose fill with a small lift on hover.",
+      "html": "<button class=\"ds-primary\">Write a letter <svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15M13 6l6 6-6 6\"/></svg></button>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;gap:38px;min-height:54px;padding:14px 25px;border:0;border-radius:5px;background:var(--rose,#b94a5d);color:var(--paper-white,#fffdfc);font-family:var(--font-body,Supreme,sans-serif);font-size:1rem;font-weight:500;cursor:pointer;transition:background 160ms,transform 160ms}.ds-primary:hover{background:var(--rose-deep,#963746);transform:translateY(-2px)}.ds-primary:active{transform:translateY(0)}.ds-primary:disabled{opacity:.45;cursor:default}.ds-primary:focus-visible,.ds-outline:focus-visible,.ds-link:focus-visible,.ds-nav a:focus-visible,.ds-field input:focus-visible,.ds-quiet:focus-visible{outline:2px solid var(--rose-deep,#963746);outline-offset:5px;border-radius:4px}"
+    },
+    {
+      "name": "Navigation write action",
+      "kind": "button",
+      "refersTo": "button-nav",
+      "description": "Quiet outlined action sharing the desk surface.",
+      "html": "<a class=\"ds-outline\" href=\"#compose\">Write a letter <svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15M13 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-outline{display:inline-flex;gap:20px;align-items:center;min-height:44px;padding:9px 17px;border:1px solid #ab817f;border-radius:5px;color:var(--ink,#171514);font-family:var(--font-body,Supreme,sans-serif);font-size:.9rem;font-weight:500;text-decoration:none}.ds-outline:hover{border-color:var(--rose,#b94a5d);color:var(--rose-deep,#963746)}.ds-primary:focus-visible,.ds-outline:focus-visible,.ds-link:focus-visible,.ds-nav a:focus-visible,.ds-field input:focus-visible,.ds-quiet:focus-visible{outline:2px solid var(--rose-deep,#963746);outline-offset:5px;border-radius:4px}"
+    },
+    {
+      "name": "Text action",
+      "kind": "button",
+      "description": "Restrained secondary link for mood writing or recipient preview.",
+      "html": "<a class=\"ds-link\" href=\"#preview\">See it through their eyes <svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 12h15M13 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-link{display:inline-flex;align-items:center;gap:15px;min-height:44px;color:var(--rose-deep,#963746);font-family:var(--font-body,Supreme,sans-serif);font-size:.9375rem;font-weight:500;text-decoration:none}.ds-link:hover{color:var(--rose,#b94a5d);text-decoration:underline;text-underline-offset:5px}.ds-primary:focus-visible,.ds-outline:focus-visible,.ds-link:focus-visible,.ds-nav a:focus-visible,.ds-field input:focus-visible,.ds-quiet:focus-visible{outline:2px solid var(--rose-deep,#963746);outline-offset:5px;border-radius:4px}"
+    },
+    {
+      "name": "Desk navigation",
+      "kind": "nav",
+      "description": "Wordmark and compact anchor links on the continuous paper surface.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"SAYLESS preview\"><a class=\"ds-wordmark\" href=\"#home\">SAYLESS<span>.</span></a><a href=\"#moods\">Moods</a><a href=\"#how\">How it works</a><a href=\"#privacy\">Privacy</a></nav>",
+      "css": ".ds-nav{display:flex;align-items:center;flex-wrap:wrap;gap:36px;background:var(--paper,#f7f2ea);font-family:var(--font-body,Supreme,sans-serif)}.ds-nav a{display:inline-flex;align-items:center;min-height:44px;font-size:.9375rem;color:var(--ink-soft,#403b37);text-decoration:none}.ds-nav a:hover{color:var(--rose-deep,#963746)}.ds-nav .ds-wordmark{font-family:var(--font-display,Chubbo,Georgia,serif);font-size:1.65rem;font-weight:700;letter-spacing:-.035em;color:var(--ink,#171514)}.ds-wordmark span{color:var(--rose,#b94a5d)}.ds-primary:focus-visible,.ds-outline:focus-visible,.ds-link:focus-visible,.ds-nav a:focus-visible,.ds-field input:focus-visible,.ds-quiet:focus-visible{outline:2px solid var(--rose-deep,#963746);outline-offset:5px;border-radius:4px}"
+    },
+    {
+      "name": "Recipient field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "White-paper input with soft border and clear focus.",
+      "html": "<label class=\"ds-field\">Their email<input type=\"email\" placeholder=\"someone@example.com\"/></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;color:var(--ink-soft,#403b37);font-family:var(--font-body,Supreme,sans-serif);font-weight:500}.ds-field input{font-family:var(--font-body,Supreme,sans-serif);color:var(--ink,#171514);background:var(--paper-white,#fffdfc);border:1px solid #b6a39a;border-radius:5px;caret-color:var(--rose-deep,#963746)}.ds-field input:focus{border-color:var(--rose-deep,#963746);box-shadow:none}.ds-primary:focus-visible,.ds-outline:focus-visible,.ds-link:focus-visible,.ds-nav a:focus-visible,.ds-field input:focus-visible,.ds-quiet:focus-visible{outline:2px solid var(--rose-deep,#963746);outline-offset:5px;border-radius:4px}"
+    },
+    {
+      "name": "Writing sheet",
+      "kind": "card",
+      "refersTo": "sheet",
+      "description": "Soft paper writing surface; focus outlines the whole sheet without moving it.",
+      "html": "<div class=\"ds-sheet\"><textarea class=\"ds-message\" aria-label=\"Your letter\" placeholder=\"Write what you have been holding.\"></textarea></div>",
+      "css": ".ds-sheet{background:var(--paper-white,#fffdfc);border:0;border-radius:6px;box-shadow:var(--elev-sheet,0 12px 30px rgba(64,59,55,.08))}.ds-sheet:focus-within{outline:2px solid var(--rose-deep,#963746);outline-offset:4px}.ds-message{width:100%;background:transparent;border:0;resize:vertical;color:var(--ink-soft,#403b37);font-family:var(--font-body,Supreme,sans-serif);font-size:1.15rem;line-height:1.8;caret-color:var(--rose-deep,#963746)}.ds-message::placeholder{color:var(--muted,#756d67)}.ds-message:focus-visible{outline:2px solid var(--rose-deep,#963746);outline-offset:5px}"
+    },
+    {
+      "name": "Quiet action",
+      "kind": "button",
+      "description": "Low-emphasis composer action with a warm-paper hover.",
+      "html": "<button class=\"ds-quiet\">Back</button>",
+      "css": ".ds-quiet{min-height:46px;border:0;border-radius:5px;background:transparent;color:var(--muted,#756d67);font-family:var(--font-body,Supreme,sans-serif);font-size:.9rem;font-weight:500;cursor:pointer}.ds-quiet:hover:not(:disabled){background:var(--paper-warm,#efe4da);color:var(--ink,#171514)}.ds-quiet:disabled{opacity:.45;cursor:default}.ds-primary:focus-visible,.ds-outline:focus-visible,.ds-link:focus-visible,.ds-nav a:focus-visible,.ds-field input:focus-visible,.ds-quiet:focus-visible{outline:2px solid var(--rose-deep,#963746);outline-offset:5px;border-radius:4px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A private letter left on a desk.",
+    "overview": "The shell is quiet, human, contemporary and tactile. One continuous ivory desk carries live type, photographed stationery and restrained rose controls. The object supplies material character; readable DOM text supplies the message.",
+    "keyCharacteristics": [
+      "continuous paper",
+      "headline-first hierarchy",
+      "real photographic objects",
+      "direct, skippable ceremony",
+      "distinct mood rooms"
+    ],
+    "rules": [
+      {
+        "name": "The Paper Ink Rule",
+        "body": "Text on photographed paper uses ink or soft ink, including signatures and small supporting lines.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do keep messages as selectable live DOM text over photographed material.",
+      "Do preserve the five mood identities and the writer's words when switching moods.",
+      "Do provide visible focus, generous targets and a final-open reduced-motion path."
+    ],
+    "donts": [
+      "Don't add looping motion, scroll hijacking or hard home-section background cuts.",
+      "Don't synthesize physical envelope or paper geometry with CSS."
+    ]
+  }
+}

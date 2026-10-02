@@ -3,9 +3,8 @@ import { useRef } from "react";
 import { ROOM_LIST } from "../../lib/moods";
 
 /**
- * 3:4 always. Rest shows the palette and the name; hover raises 4px and reveals the
- * use-case line; selection is a gold ring plus a check — never a colour change, because
- * the colour is the content.
+ * Photographic stationery samples retain their own materials and palettes. Hover lifts
+ * the object; selection adds an underlined name and a check without recoloring the art.
  *
  * Radiogroup with roving tabindex: arrows move, space or enter selects.
  */
@@ -41,7 +40,7 @@ export function TemplatePicker({
   return (
     <div
       ref={listRef}
-      className="picker"
+      className="picker stationery-picker"
       role="radiogroup"
       aria-label="Letter mood"
       onPointerLeave={() => onPreview?.(null)}
@@ -58,16 +57,19 @@ export function TemplatePicker({
             aria-checked={selected}
             tabIndex={selected || (!value && i === 0) ? 0 : -1}
             className={`card ${selected ? "is-selected" : ""} ${r.dark ? "is-dark" : ""}`}
-            style={{ background: r.cardGradient }}
+            data-stationery={r.id}
             onClick={() => onChange(r.id)}
             onKeyDown={(e) => onKeyDown(e, i)}
             onPointerEnter={() => onPreview?.(r.id)}
             onFocus={() => onPreview?.(r.id)}
           >
-            {r.motifArt && <img className="card-art" src={r.motifArt} alt="" loading="lazy" />}
-            {r.id === "night-thought" && <span className="card-stars" />}
-
-            <span className="card-scrim" />
+            <img
+              className="stationery-sample"
+              src={`/assets/letter-world/${r.id}.webp`}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+            />
 
             {selected && (
               <span className="card-check" aria-hidden="true">
@@ -76,7 +78,7 @@ export function TemplatePicker({
                   height="10"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#0b0a08"
+                  stroke="currentColor"
                   strokeWidth="2.6"
                   strokeLinecap="round"
                   strokeLinejoin="round"

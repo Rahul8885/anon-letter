@@ -114,7 +114,7 @@ export function Compose() {
       <div className="compose-shell">
         <header className="topbar">
           <button type="button" className="wordmark" onClick={() => navigate("/")}>
-            AnonLetter
+            SAYLESS
           </button>
           <span>Nothing about you is saved</span>
         </header>

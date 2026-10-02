@@ -1,0 +1,87 @@
+{
+  "errors": [],
+  "geometry": [
+    {
+      "mood": "soft-bloom",
+      "width": 1440,
+      "overflow": false,
+      "paperBottom": 619.9010009765625,
+      "stageHeight": 780,
+      "paperInStage": true
+    },
+    {
+      "mood": "old-letter",
+      "width": 1440,
+      "overflow": false,
+      "paperBottom": 619.9010009765625,
+      "stageHeight": 780,
+      "paperInStage": true
+    },
+    {
+      "mood": "night-thought",
+      "width": 1440,
+      "overflow": false,
+      "paperBottom": 642.6283874511719,
+      "stageHeight": 780,
+      "paperInStage": true
+    },
+    {
+      "mood": "quiet-garden",
+      "width": 1440,
+      "overflow": false,
+      "paperBottom": 619.9010009765625,
+      "stageHeight": 780,
+      "paperInStage": true
+    },
+    {
+      "mood": "confetti-love",
+      "width": 1440,
+      "overflow": false,
+      "paperBottom": 619.9010009765625,
+      "stageHeight": 780,
+      "paperInStage": true
+    },
+    {
+      "mood": "soft-bloom",
+      "width": 390,
+      "overflow": false,
+      "paperBottom": 485.7144775390625,
+      "stageHeight": 660,
+      "paperInStage": true
+    },
+    {
+      "mood": "old-letter",
+      "width": 390,
+      "overflow": false,
+      "paperBottom": 485.7144775390625,
+      "stageHeight": 660,
+      "paperInStage": true
+    },
+    {
+      "mood": "night-thought",
+      "width": 390,
+      "overflow": false,
+      "paperBottom": 517.2433624267578,
+      "stageHeight": 660,
+      "paperInStage": true
+    },
+    {
+      "mood": "quiet-garden",
+      "width": 390,
+      "overflow": false,
+      "paperBottom": 502.1663818359375,
+      "stageHeight": 660,
+      "paperInStage": true
+    },
+    {
+      "mood": "confetti-love",
+      "width": 390,
+      "overflow": false,
+      "paperBottom": 507.7752685546875,
+      "stageHeight": 660,
+      "paperInStage": true
+    }
+  ],
+  "states": "pass",
+  "noJavaScript": "readable"
+}

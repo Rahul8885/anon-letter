@@ -1,0 +1,8 @@
+Use case: product-mockup
+Asset type: photoreal transparent PNG cutout for interactive physical letter website, confetti-love.png
+Subject: one closed warm butter-yellow cotton-paper envelope seen from the back. A clearly asymmetric flap has its tip offset left of center. A single short coral torn washi-tape strip seals that flap across its edge. Exactly three tiny gold-foil paper pieces are attached in a sparse cluster near the lower right corner. Restrained tactile celebration, warm and personal. No wax or hearts.
+Style: true macro product photography, tactile cotton-paper fibers, natural folded paper thickness and slight imperfections, real translucent washi tape with torn ends and fibrous texture, tiny foil pieces with subtle glints. Not illustration or CGI.
+Composition: landscape 3:2 canvas, strict top-down orthographic view, envelope perfectly horizontal and axis aligned, rectangle x5%-95%, y12%-88%. Full object visible no crop, very little perspective. Asymmetric flap must be visible and distinct from a standard centered flap.
+Background: genuinely transparent alpha PNG with clean mask no white halos. Only subtle soft contact shadow immediately near the envelope, no environment or surface.
+Lighting: soft diffuse daylight with restrained realistic shading.
+Avoid: words, labels, logos, watermarks, borders, wax, ribbons, flowers, loose confetti outside envelope, hearts, collage, large decorations.

@@ -1,7 +1,7 @@
 import type { Message as MessageData, TemplateId } from "@anonletter/shared";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Envelope } from "../components/envelope/Envelope";
+import { TactileLetter } from "../components/envelope/TactileLetter";
 import { LetterLead, LetterRoom } from "../components/templates/LetterRoom";
 import { Button } from "../components/ui/Button";
 import { useReducedMotion } from "../hooks/useReducedMotion";
@@ -12,16 +12,6 @@ import { useComposerStore } from "../store/composerStore";
 
 type Data = Omit<MessageData, "id">;
 
-/** The reveal timeline, in ms. Absolute cues on one clock, per DESIGN.md. */
-const CUE = {
-  envelope: 1200,
-  seal: 2600,
-  flap: 3000,
-  letter: 3900,
-  greeting: 4600,
-  typing: 5000,
-};
-
 export function Message() {
   const { slug } = useParams<{ slug: string }>();
   const [data, setData] = useState<Data | null>(null);
@@ -31,13 +21,13 @@ export function Message() {
   useEffect(() => {
     if (!slug) return;
 
-    // /m/demo renders a local sample so the reveal can be reviewed without a backend
     if (slug === "demo" || slug.startsWith("demo-")) {
       const mood = (slug.replace("demo-", "") || "night-thought") as TemplateId;
+      const templateId = SAMPLE_MESSAGE[mood] ? mood : "night-thought";
       setData({
         slug,
-        template_id: SAMPLE_MESSAGE[mood] ? mood : "night-thought",
-        message: SAMPLE_MESSAGE[SAMPLE_MESSAGE[mood] ? mood : "night-thought"],
+        template_id: templateId,
+        message: SAMPLE_MESSAGE[templateId],
         from_hint: null,
         bg_color: null,
         accent: null,
@@ -63,64 +53,33 @@ export function Message() {
   if (loading) return <LetterLoading />;
   if (error) return <LetterError message={error} />;
   if (!data) return null;
-
   return <Reveal key={data.slug} data={data} />;
 }
-
-/* -------------------------------------------------------------------------- */
 
 export function Reveal({ data, preview = false }: { data: Data; preview?: boolean }) {
   const reduced = useReducedMotion();
   const r = room(data.template_id);
-
-  const [phase, setPhase] = useState(() => (reduced ? 6 : 0));
+  const [opened, setOpened] = useState(reduced);
   const [reported, setReported] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
+  const handleOpened = useCallback(() => setOpened(true), []);
 
   const typing = useTypewriter(data.message, {
-    start: phase >= 5,
-    instant: reduced || phase >= 6,
-    onDone: () => setPhase((p) => Math.max(p, 6)),
+    start: opened,
+    instant: reduced,
   });
 
-  /** The ceremony is never a hostage: any tap or key jumps to the resting state. */
-  const skip = useCallback(() => {
-    setPhase(6);
-    typing.skip();
-  }, [typing]);
-
   useEffect(() => {
-    if (reduced) return;
-    const timers = [
-      window.setTimeout(() => setPhase((p) => Math.max(p, 1)), CUE.envelope),
-      window.setTimeout(() => setPhase((p) => Math.max(p, 2)), CUE.seal),
-      window.setTimeout(() => setPhase((p) => Math.max(p, 3)), CUE.flap),
-      window.setTimeout(() => setPhase((p) => Math.max(p, 4)), CUE.letter),
-      window.setTimeout(() => setPhase((p) => Math.max(p, 5)), CUE.typing),
-    ];
-    return () => timers.forEach(window.clearTimeout);
-  }, [reduced]);
-
-  useEffect(() => {
-    if (reduced || phase >= 6) return;
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.target as Element)?.closest?.("[data-preview-controls]")) return;
-      // let people tab through without detonating the sequence
-      if (e.key === "Tab" || e.key === "Shift") return;
-      skip();
-    };
-    const onPointer = (e: PointerEvent) => {
-      if ((e.target as Element)?.closest?.("[data-preview-controls]")) return;
-      skip();
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onPointer);
+    if (!opened || typing.done) return;
+    const skip = () => typing.skip();
+    window.addEventListener("pointerdown", skip, { once: true });
+    window.addEventListener("keydown", skip, { once: true });
     return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onPointer);
+      window.removeEventListener("pointerdown", skip);
+      window.removeEventListener("keydown", skip);
     };
-  }, [reduced, phase, skip]);
+  }, [opened, typing.done, typing.skip]);
 
   async function report() {
     if (preview) {
@@ -139,73 +98,38 @@ export function Reveal({ data, preview = false }: { data: Data; preview?: boolea
     }
   }
 
-  const envelopeState = phase >= 3 ? "open" : phase >= 2 ? "opening" : "sealed";
-  const letterOut = phase >= 4;
-  const time = new Date(data.created_at * 1000).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
   return (
     <LetterRoom
       mood={data.template_id}
-      eyebrow={`${r.name} — ${time}`}
-      burst={phase >= 4}
+      burst={opened}
+      className="room-tactile"
       style={data.accent ? { ["--room-accent" as string]: data.accent } : undefined}
     >
-      {/* the envelope owns the stage until the letter clears it, then unmounts */}
-      {!reduced && phase < 5 && (
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            zIndex: "var(--z-fore)",
-            display: "grid",
-            placeItems: "center",
-            opacity: phase >= 4 ? 0 : 1,
-            transform: phase === 0 ? "translateY(-80px)" : "none",
-            transition: "opacity 600ms var(--ease-object), transform 1.4s var(--ease-object)",
-            pointerEvents: "none",
-          }}
-        >
-          <Envelope state={envelopeState} size="clamp(240px, 34vw, 420px)" />
+      <TactileLetter mood={data.template_id} onOpened={handleOpened}>
+        <div className="letter-stack">
+          <LetterLead mood={data.template_id} show={opened} />
+          <p className="letter-body">
+            <span aria-hidden="true">{typing.visible}</span>
+            <span className="sr-only">{data.message}</span>
+            {opened && !typing.done && <span className="caret" />}
+          </p>
+          {opened && !typing.done && (
+            <button type="button" className="letter-reading-skip" onClick={typing.skip}>
+              Read the whole letter
+            </button>
+          )}
+          <hr className="letter-rule" style={{ opacity: typing.done ? 1 : 0 }} />
+          <p
+            className="letter-sign"
+            style={{ opacity: typing.done ? 1 : 0 }}
+            aria-hidden={!typing.done}
+          >
+            — from {data.from_hint?.trim() || r.signature}
+          </p>
         </div>
-      )}
+      </TactileLetter>
 
-      <div className="letter-stack">
-        <LetterLead mood={data.template_id} show={letterOut} />
-
-        <p
-          className="letter-body"
-          style={{
-            opacity: letterOut ? 1 : 0,
-            transition: "opacity 800ms var(--ease-enter)",
-          }}
-        >
-          <span aria-hidden="true">{typing.visible}</span>
-          <span className="sr-only">{data.message}</span>
-          {phase >= 5 && !typing.done && <span className="caret" />}
-        </p>
-
-        <hr className="letter-rule" style={{ opacity: typing.done ? 1 : 0 }} />
-
-        <p
-          className="letter-sign"
-          style={{ opacity: typing.done ? 1 : 0 }}
-          aria-hidden={!typing.done}
-        >
-          — from {data.from_hint?.trim() || r.signature}
-        </p>
-      </div>
-
-      <div
-        className="room-rail"
-        hidden={!typing.done}
-        style={{
-          opacity: typing.done ? 1 : 0,
-          transition: "opacity 900ms var(--ease-enter)",
-        }}
-      >
+      <div className="room-rail" hidden={!typing.done} style={{ opacity: typing.done ? 1 : 0 }}>
         <output>
           {reportError ||
             (reported
@@ -214,8 +138,6 @@ export function Reveal({ data, preview = false }: { data: Data; preview?: boolea
                 : "Reported · thank you"
               : r.railNote)}
         </output>
-
-        {/* no upsell, no modal — the reply lives in the rail, beside the report control */}
         <span className="room-rail-actions">
           <Link
             className="rail-link"
@@ -251,15 +173,12 @@ export function Reveal({ data, preview = false }: { data: Data; preview?: boolea
   );
 }
 
-/* -------------------------------------------------------------------------- */
-
-/** Skeleton parchment at letter measure. No spinners anywhere in the product. */
 function LetterLoading() {
   return (
     <div className="state-page">
-      <div style={{ display: "flex", flexDirection: "column", gap: 9, width: "min(280px, 70vw)" }}>
-        {[78, 100, 92, 64].map((w) => (
-          <span key={w} className="skeleton-line" style={{ width: `${w}%` }} />
+      <div className="loading-letter">
+        {[78, 100, 92, 64].map((width) => (
+          <span key={width} className="skeleton-line" style={{ width: `${width}%` }} />
         ))}
       </div>
       <p className="sr-only">Opening the letter</p>
@@ -271,7 +190,7 @@ function LetterError({ message }: { message: string }) {
   return (
     <div className="state-page">
       <h1 className="t-h1">This letter isn&rsquo;t here.</h1>
-      <p className="measure-caption" style={{ color: "var(--text-dim)" }}>
+      <p className="measure-caption">
         {message} Letters expire thirty days after they are sent, and a link only works once it has
         been created.
       </p>

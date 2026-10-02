@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0a08">
+  <title>AnonLetter — Physical correspondence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,500&family=Courier+Prime&family=DM+Sans:wght@400;500&family=Inter:wght@400&family=Lato:wght@400&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --void: #0b0a08;
+      --ink: #f2ede6;
+      --muted: #aaa399;
+      --gold: #c8a96e;
+      --rule: #38352f;
+      --ease: cubic-bezier(.22,1,.36,1);
+      --z-back: 1;
+      --z-letter: 2;
+      --z-pocket: 3;
+      --z-closed: 4;
+      --z-control: 5;
+      font-family: "DM Sans", sans-serif;
+      font-size: 16px;
+      background: var(--void);
+      color: var(--ink);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scrollbar-color: #746650 var(--void); }
+    body { margin: 0; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; color: inherit; cursor: pointer; }
+    button:disabled { cursor: default; opacity: .45; }
+    a { color: inherit; text-underline-offset: 5px; }
+    ::selection { color: var(--void); background: var(--gold); }
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 6px; }
+    h1, h2, h3, p, figure { margin: 0; }
+    h1, h2, h3 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+    img { display: block; max-width: 100%; height: auto; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .skip { position: absolute; top: -80px; left: 24px; padding: 16px; background: var(--ink); color: var(--void); z-index: var(--z-control); }
+    .skip:focus { top: 12px; }
+    .page-width { width: min(1320px, calc(100% - 112px)); margin-inline: auto; }
+    .masthead { display: flex; justify-content: space-between; align-items: center; min-height: 100px; gap: 24px; }
+    .wordmark { font-family: "Cormorant Garamond", Georgia, serif; font-size: 30px; text-decoration: none; }
+    .prototype-note { font-size: 12px; color: var(--muted); }
+    .intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; padding: 30px 0 12px; }
+    .intro h1 { font: 400 clamp(34px, 3.5vw, 50px)/1.1 "Cormorant Garamond", Georgia, serif; letter-spacing: -.02em; }
+    .intro p { max-width: 350px; color: var(--muted); font-size: 13px; line-height: 1.8; }
+    .collection { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px; padding: 26px 0 34px; }
+    .stationery { border: 0; background: none; padding: 10px 0 16px; text-align: center; position: relative; min-width: 0; }
+    .stationery::after { content: ""; position: absolute; width: 30px; height: 1px; bottom: 0; left: calc(50% - 15px); background: var(--gold); opacity: 0; }
+    .stationery[aria-pressed="true"]::after { opacity: 1; }
+    .stationery .object { aspect-ratio: 3 / 2; display: grid; align-items: center; perspective: 900px; }
+    .stationery img { width: 100%; transform: rotate(var(--angle, 0deg)); filter: drop-shadow(1px 12px 8px #0008); transition: transform 500ms var(--ease), filter 500ms var(--ease); }
+    .stationery:nth-child(1) { --angle: -7deg; }
+    .stationery:nth-child(2) { --angle: 3deg; }
+    .stationery:nth-child(3) { --angle: -3deg; }
+    .stationery:nth-child(4) { --angle: 5deg; }
+    .stationery:nth-child(5) { --angle: -5deg; }
+    .stationery:nth-child(2) img { width: 98%; }
+    .stationery:nth-child(3) img { width: 90%; margin: auto; }
+    .stationery:nth-child(4) img { width: 94%; margin: auto; }
+    .stationery strong { display: block; margin-top: 12px; font-weight: 400; font-size: 14px; }
+    .stationery small { display: block; font-size: 11px; color: var(--muted); margin-top: 5px; }
+    .stationery[aria-pressed="true"] strong { color: var(--gold); }
+    @media (hover: hover) and (pointer: fine) {
+      .stationery:hover img, .stationery:focus-visible img { transform: translateY(-8px) rotate(0deg) rotateX(7deg); filter: drop-shadow(1px 19px 12px #0009); }
+    }
+
+    .correspondence { border-top: 1px solid var(--rule); }
+    .desk-heading { display: flex; align-items: center; justify-content: space-between; padding: 27px 0; gap: 28px; }
+    .desk-heading h2 { font: 400 29px/1.15 "Cormorant Garamond", Georgia, serif; }
+    .desk-heading p { font-size: 11px; margin-top: 6px; color: var(--muted); }
+    .state-controls { display: flex; gap: 6px; flex-wrap: wrap; }
+    .state-controls button { min-height: 44px; padding: 10px 16px; border: 1px solid transparent; background: none; color: var(--muted); font-size: 12px; }
+    .state-controls button[aria-pressed="true"] { border-color: #6d5d44; color: var(--gold); }
+    .state-controls button:hover { color: var(--ink); }
+    .desk {
+      --paper-color: #fdf6ec; --paper-ink: #3a2410; --paper-muted: #725639;
+      --envelope-color: #d3bc95; --body-font: "Courier Prime", monospace;
+      --display-font: Georgia, serif; --room-accent: #986641;
+      position: relative; isolation: isolate; min-height: 780px;
+      display: grid; grid-template-columns: 220px minmax(0, 1fr);
+      background: #252722;
+      background-image: radial-gradient(ellipse at 25% 10%, #4a4a3d55, transparent 70%);
+      overflow: hidden;
+    }
+    .desk::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url("assets/letter-paper.png") center / 200% 400% no-repeat; opacity: .025; mix-blend-mode: screen; }
+    .desk[data-mood="soft-bloom"] { --paper-color: #fdf0f5; --paper-ink: #4a2030; --paper-muted: #795261; --envelope-color: #d8a7b5; --body-font: "Lato", sans-serif; --display-font: "Playfair Display", Georgia, serif; --room-accent: #ab617c; background-color: #332a2b; }
+    .desk[data-mood="night-thought"] { --paper-color: #1a1b2e; --paper-ink: #c8caf0; --paper-muted: #b0b4d8; --envelope-color: #232638; --body-font: "DM Sans", sans-serif; --display-font: "Cormorant Garamond", Georgia, serif; --room-accent: #a0a6d9; background-color: #191c22; }
+    .desk[data-mood="quiet-garden"] { --paper-color: #eaf7f0; --paper-ink: #1a3208; --paper-muted: #506544; --envelope-color: #bec7ab; --body-font: "Inter", sans-serif; --display-font: "Playfair Display", Georgia, serif; --room-accent: #3b6d11; background-color: #292e27; }
+    .desk[data-mood="confetti-love"] { --paper-color: #fff8e7; --paper-ink: #4a3010; --paper-muted: #745535; --envelope-color: #e2cda0; --body-font: "Archivo", sans-serif; --display-font: "Bricolage Grotesque", sans-serif; --room-accent: #b56a4b; background-color: #332e26; }
+    .material-note { position: relative; z-index: var(--z-control); padding: 42px 0 40px 36px; align-self: end; }
+    .material-note h3 { font-size: 13px; font-weight: 500; color: #e7dfd1; }
+    .material-note p { font-size: 12px; color: #c2b9ab; line-height: 1.9; margin-top: 12px; max-width: 22ch; }
+    .material-note .gesture { padding-top: 22px; color: #dfc69a; }
+    .stage { position: relative; min-width: 0; min-height: 780px; perspective: 1600px; }
+    .envelope-layer { position: absolute; width: min(600px, 89%); aspect-ratio: 3/2; left: 49%; top: 34%; transform: translateX(-50%) rotate(-5deg); transition: transform 950ms var(--ease), top 950ms var(--ease), left 950ms var(--ease), opacity 550ms var(--ease); pointer-events: none; }
+    .envelope-back { z-index: var(--z-back); }
+    .envelope-back .pocket-back { position: absolute; inset: 12% 5%; background: var(--envelope-color) url("assets/letter-paper.png") center / 100% 160%; background-blend-mode: multiply; box-shadow: 1px 8px 16px #0004; }
+    .envelope-back .open-flap { position: absolute; top: 12%; left: 5%; width: 90%; height: 48%; background: var(--envelope-color) url("assets/letter-paper.png") center / 100% 190%; background-blend-mode: multiply; clip-path: polygon(0 0,100% 0,50% 100%); transform-origin: top; transform: rotateX(0); transition: transform 900ms var(--ease); }
+    .envelope-back .inner-fold { position: absolute; inset: 13% 6% 67%; background: #0002; clip-path: polygon(0 0,100% 0,50% 100%); }
+    .envelope-front { z-index: var(--z-pocket); }
+    .envelope-front img { width: 100%; filter: drop-shadow(0 3px 2px #0003); clip-path: polygon(0 26%,50% 64%,100% 26%,100% 100%,0 100%); }
+    .closed-envelope { z-index: var(--z-closed); filter: drop-shadow(2px 18px 13px #0006); }
+    .closed-envelope img { width: 100%; }
+    .desk:not([data-state="sealed"]) .closed-envelope { opacity: 0; }
+    .desk:not([data-state="sealed"]) .open-flap { transform: rotateX(180deg); }
+    .desk[data-state="sealed"] .envelope-back, .desk[data-state="sealed"] .envelope-front { opacity: 0; }
+    .paper {
+      position: absolute; width: min(440px, 72%); min-height: 550px; left: 49%; top: 22%;
+      padding: 64px 52px 55px; color: var(--paper-ink); z-index: var(--z-letter);
+      transform: translateX(-50%) rotate(-5deg) scale(.83); transform-origin: center;
+      transition: transform 1000ms var(--ease), top 1000ms var(--ease), left 1000ms var(--ease), opacity 350ms ease;
+      font-family: var(--body-font); pointer-events: none;
+    }
+    .paper-surface { position: absolute; inset: 0; z-index: -1; filter: drop-shadow(1px 2px 1px #0006) drop-shadow(6px 16px 16px #0004); }
+    .paper::before { content: ""; position: absolute; inset: 3%; background: var(--paper-color); z-index: -2; }
+    .paper-surface::before { content: ""; position: absolute; inset: 0; background: var(--paper-color) url("assets/letter-paper.png") center / 100% 100%; background-blend-mode: multiply; mask: url("assets/letter-paper.png") center / 100% 100% no-repeat; }
+    .paper-topline { display: flex; align-items: center; justify-content: space-between; gap: 15px; color: var(--paper-muted); font-family: "DM Sans", sans-serif; font-size: 11px; letter-spacing: .1em; padding-bottom: 28px; }
+    .paper-topline svg { width: 25px; height: 25px; opacity: .7; }
+    .salutation { font: italic 400 24px/1.35 var(--display-font); margin: 12px 0 29px; }
+    .message { font-size: 16px; line-height: 1.9; overflow-wrap: anywhere; }
+    .signature { color: var(--paper-muted); font: italic 400 19px/1.5 "Cormorant Garamond", Georgia, serif; margin: 38px 0 0; max-width: 24ch; }
+    .paper-rule { width: 32px; height: 1px; background: var(--room-accent); margin-top: 34px; }
+    .paper-bottom { font: 11px/1.4 "DM Sans", sans-serif; color: var(--paper-muted); margin-top: 28px; letter-spacing: .08em; }
+    .desk[data-mood="night-thought"] .paper-surface::before { background-color: #25283d; }
+    .desk[data-mood="night-thought"] .paper-topline svg { color: #d4d3e9; }
+    .desk[data-mood="soft-bloom"] .salutation, .desk[data-mood="quiet-garden"] .salutation { font-size: 25px; }
+    .desk[data-mood="confetti-love"] .salutation { font-style: normal; font-weight: 700; font-size: 30px; line-height: 1.1; }
+    .desk[data-mood="old-letter"] .message { font-size: 15px; }
+    .desk[data-state="sealed"] .paper { opacity: 0; top: 35%; transform: translateX(-50%) rotate(-5deg) scale(.72); }
+    .desk[data-state="opened"] .paper { top: 28%; transform: translateX(-50%) rotate(-5deg) scale(.76); }
+    .desk[data-state="peek"] .paper { top: 9%; transform: translateX(-50%) rotate(-5deg) scale(.84); }
+    .desk[data-state="read"] .paper { pointer-events: auto; top: 8%; left: 40%; transform: translateX(-50%) rotate(-2deg); z-index: var(--z-closed); }
+    .desk[data-state="read"] .envelope-layer { top: 57%; left: 69%; transform: translateX(-50%) rotate(9deg) scale(.73); }
+    .desk[data-state="read"] .open-flap { transform: rotateX(172deg); }
+    .object-action { position: absolute; bottom: 29px; left: 50%; transform: translateX(-50%); z-index: var(--z-control); min-height: 44px; padding: 12px 24px; background: #eee5d5; border: 0; color: #29241b; font-size: 12px; white-space: nowrap; transition: background 180ms ease; }
+    .object-action:hover { background: #fff8ea; }
+    .desk-footer { display: flex; justify-content: space-between; gap: 24px; padding: 21px 0 32px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+    .desk-footer a { color: var(--ink); flex-shrink: 0; }
+    .state-caption { max-width: 62ch; }
+    .paper-study { padding: 64px 0 90px; display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; border-top: 1px solid var(--rule); }
+    .paper-detail { position: relative; aspect-ratio: 1.45; overflow: hidden; background: #282922; }
+    .paper-detail > img { position: absolute; width: 116%; max-width: none; left: -8%; top: -40%; transform: rotate(-9deg); filter: drop-shadow(4px 10px 8px #0005); }
+    .paper-detail figcaption { position: absolute; bottom: 21px; left: 26px; color: #eee7db; font-size: 11px; }
+    .study-copy h2 { font: 400 35px/1.15 "Cormorant Garamond", Georgia, serif; }
+    .study-copy > p { margin-top: 18px; max-width: 42ch; color: var(--muted); font-size: 14px; line-height: 1.85; }
+    .study-copy dl { margin: 28px 0 0; }
+    .study-copy dl > div { display: flex; gap: 32px; padding: 12px 0; border-top: 1px solid var(--rule); font-size: 12px; }
+    .study-copy dt { color: var(--muted); min-width: 100px; }
+    .study-copy dd { margin: 0; color: #d7cfc0; line-height: 1.7; }
+    .endnote { border-top: 1px solid var(--rule); padding: 22px 0 35px; display: flex; justify-content: space-between; gap: 24px; color: var(--muted); font-size: 11px; line-height: 1.8; }
+    .endnote a { color: #cfc4b3; }
+    @media (max-width: 1100px) {
+      .page-width { width: calc(100% - 64px); }
+      .collection { gap: 8px; }
+      .desk { grid-template-columns: 175px minmax(0,1fr); }
+      .material-note { padding-left: 25px; }
+      .paper { padding: 55px 40px 45px; min-height: 520px; }
+      .desk[data-state="read"] .paper { left: 43%; }
+      .state-controls button { padding-inline: 10px; }
+    }
+    @media (max-width: 760px) {
+      .page-width { width: calc(100% - 40px); }
+      .masthead { min-height: 78px; gap: 12px; }
+      .wordmark { font-size: 27px; }
+      .prototype-note { font-size: 11px; text-align: right; max-width: 120px; }
+      .intro { padding-top: 18px; display: block; }
+      .intro p { margin-top: 17px; font-size: 12px; max-width: 38ch; }
+      .collection { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px 20px; padding-top: 16px; }
+      .stationery:last-child { grid-column: 1 / -1; width: calc(50% - 10px); justify-self: center; }
+      .stationery .object { max-height: 122px; }
+      .stationery strong { font-size: 13px; margin-top: 4px; }
+      .stationery small { font-size: 11px; }
+      .desk-heading { align-items: flex-start; flex-direction: column; gap: 18px; padding-top: 25px; }
+      .state-controls { width: 100%; display: grid; grid-template-columns: repeat(4,1fr); gap: 0; }
+      .state-controls button { padding: 10px 4px; font-size: 11px; }
+      .desk { display: flex; flex-direction: column; min-height: auto; overflow: hidden; }
+      .stage { min-height: 660px; order: 0; }
+      .material-note { order: 1; align-self: stretch; padding: 20px 25px 26px; border-top: 1px solid #ffffff17; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 22px; }
+      .material-note h3 { grid-column: 1 / -1; }
+      .material-note p { margin: 0; font-size: 11px; max-width: none; }
+      .material-note .gesture { padding: 0; }
+      .envelope-layer { width: 97%; left: 50%; top: 40%; }
+      .paper { width: 90%; min-height: 450px; padding: 43px 35px 37px; left: 50%; top: 20%; }
+      .paper-topline { padding-bottom: 13px; font-size: 11px; }
+      .salutation { font-size: 21px; margin-top: 15px; margin-bottom: 23px; }
+      .message { font-size: 14px; line-height: 1.85; }
+      .desk[data-mood="old-letter"] .message { font-size: 13px; }
+      .signature { font-size: 18px; margin-top: 23px; }
+      .paper-rule { margin-top: 24px; }
+      .paper-bottom { font-size: 11px; margin-top: 22px; }
+      .desk[data-state="opened"] .paper { top: 31%; transform: translateX(-50%) rotate(-5deg) scale(.76); }
+      .desk[data-state="peek"] .paper { top: 14%; transform: translateX(-50%) rotate(-5deg) scale(.85); }
+      .desk[data-state="read"] .paper { top: 5%; left: 50%; transform: translateX(-50%) rotate(-1deg); }
+      .desk[data-state="read"] .envelope-layer { top: 62%; left: 57%; transform: translateX(-50%) rotate(8deg) scale(.72); }
+      .object-action { bottom: 18px; }
+      .desk-footer { display: block; font-size: 11px; }
+      .desk-footer a { display: inline-block; min-height: 44px; padding-top: 18px; }
+      .paper-study { grid-template-columns: 1fr; gap: 30px; padding: 38px 0 45px; }
+      .study-copy h2 { font-size: 30px; }
+      .study-copy > p { font-size: 13px; }
+      .endnote { flex-direction: column; gap: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+      .stationery:hover img { transform: rotate(var(--angle,0deg)); }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#correspondence">Skip to the letter</a>
+  <header class="masthead page-width">
+    <a class="wordmark" href="#collection">AnonLetter</a>
+    <p class="prototype-note">Physical stationery<br>Visual prototype</p>
+  </header>
+  <main class="page-width">
+    <section id="collection" aria-labelledby="collection-title">
+      <div class="intro">
+        <h1 id="collection-title">Start with a feeling.</h1>
+        <p>The room does half the work. Pick the one that matches what you have to say.</p>
+      </div>
+      <div class="collection" role="group" aria-label="Choose your stationery">
+        <button class="stationery" type="button" data-mood="soft-bloom" aria-pressed="false"><span class="object"><img src="assets/soft-bloom.png" alt="Blush cotton envelope closed with a loosely tied satin ribbon" width="1536" height="1024"></span><strong>Soft Bloom</strong><small>Cotton &amp; satin</small></button>
+        <button class="stationery" type="button" data-mood="old-letter" aria-pressed="true"><span class="object"><img src="assets/old-letter.png" alt="Ivory laid-paper envelope with a small rust wax seal and a faded postmark" width="1536" height="1024"></span><strong>Old Letter</strong><small>Laid paper &amp; wax</small></button>
+        <button class="stationery" type="button" data-mood="night-thought" aria-pressed="false"><span class="object"><img src="assets/night-thought.png" alt="Indigo envelope with a button-and-thread closure" width="1536" height="1024"></span><strong>Night Thought</strong><small>Ink paper &amp; thread</small></button>
+        <button class="stationery" type="button" data-mood="quiet-garden" aria-pressed="false"><span class="object"><img src="assets/quiet-garden.png" alt="Sage recycled-paper envelope with a pressed fern held under a glassine band" width="1536" height="1024"></span><strong>Quiet Garden</strong><small>Pressed leaf &amp; glassine</small></button>
+        <button class="stationery" type="button" data-mood="confetti-love" aria-pressed="false"><span class="object"><img src="assets/confetti-love.png" alt="Butter paper envelope sealed with torn coral tape and a few gold paper flecks" width="1536" height="1024"></span><strong>Confetti Love</strong><small>Washi tape &amp; foil</small></button>
+      </div>
+    </section>
+
+    <section class="correspondence" id="correspondence" aria-labelledby="room-name">
+      <div class="desk-heading">
+        <div><h2 id="room-name">Old Letter</h2><p id="room-purpose">Apology · gratitude</p></div>
+        <div class="state-controls" role="group" aria-label="Inspect the opening states">
+          <button type="button" data-state="sealed" aria-pressed="false">Sealed</button>
+          <button type="button" data-state="opened" aria-pressed="false">Opened</button>
+          <button type="button" data-state="peek" aria-pressed="false">A glimpse</button>
+          <button type="button" data-state="read" aria-pressed="true">Read</button>
+        </div>
+      </div>
+      <div class="desk" data-mood="old-letter" data-state="read">
+        <aside class="material-note" aria-label="Stationery details">
+          <h3 id="material-title">Laid paper. A little time.</h3>
+          <p id="material-description">Ivory fibers, a faded postmark, and a thumb-pressed seal. Two folds hold the words.</p>
+          <p class="gesture" id="gesture-description">One gesture:<br>lift the wax seal.</p>
+        </aside>
+        <div class="stage">
+          <div class="envelope-layer envelope-back" aria-hidden="true"><div class="pocket-back"></div><div class="open-flap"></div><div class="inner-fold"></div></div>
+          <article class="paper" aria-labelledby="salutation">
+            <div class="paper-surface" aria-hidden="true"></div>
+            <div class="paper-topline"><span>AnonLetter</span><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width=".8" aria-hidden="true"><rect x="4" y="8" width="24" height="17" rx="1"/><path d="m4 8 12 10L28 8"/></svg></div>
+            <h3 class="salutation" id="salutation">To whoever opens this,</h3>
+            <p class="message" id="letter-message">I owe you an apology that has been sitting in a drawer for two years. I am not asking for anything back. I only wanted the record to be honest.</p>
+            <div class="paper-rule" aria-hidden="true"></div>
+            <p class="signature" id="letter-signature">— from someone who remembers</p>
+            <p class="paper-bottom">Sealed · unsigned</p>
+          </article>
+          <div class="envelope-layer envelope-front" aria-hidden="true"><img src="assets/old-letter.png" alt="" width="1536" height="1024"></div>
+          <div class="envelope-layer closed-envelope" aria-hidden="true"><img src="assets/old-letter.png" alt="" width="1536" height="1024"></div>
+          <button class="object-action" type="button" id="next-state">Seal it again</button>
+        </div>
+      </div>
+      <div class="desk-footer">
+        <p class="state-caption" id="state-caption" aria-live="polite">The whole letter, resting beside its envelope. Take your time.</p>
+        <a href="#collection">Choose another mood</a>
+      </div>
+    </section>
+
+    <section class="paper-study" aria-labelledby="material-heading">
+      <figure class="paper-detail"><img src="assets/letter-paper.png" alt="Close-up of cotton fibers, a pressed fold, and the imperfect edge of the letter paper" loading="lazy"><figcaption>The fold remembers.</figcaption></figure>
+      <div class="study-copy">
+        <h2 id="material-heading">The words belong to the paper.</h2>
+        <p>A quiet surface, with enough grain to catch the light. A little wear at the edge. Nothing between you and what someone wanted to say.</p>
+        <dl><div><dt>Surface</dt><dd>Cotton fibers, softened fold lines</dd></div><div><dt>Light</dt><dd>Upper-left light, close contact shadows</dd></div><div><dt>Reading</dt><dd>Generous margins. Real, selectable text.</dd></div></dl>
+      </div>
+    </section>
+  </main>
+  <footer class="endnote page-width"><p>Visual study only. Sample letters from the existing AnonLetter moods.<br>State changes are simple previews; nothing is sent.</p><a href="https://www.trevornoah.com/books" target="_blank" rel="noopener noreferrer">Object-presentation reference: Trevor Noah / Books</a></footer>
+  <noscript><p class="page-width">This static view shows Old Letter, fully extracted. Enable JavaScript to switch stationery and opening states.</p></noscript>
+  <script>
+    const moods = {
+      'soft-bloom': {name:'Soft Bloom', purpose:'Confession · admiration', title:'Cotton paper. A loose ribbon.', material:'Blush cotton with a softly rounded flap. A satin knot gives way without a sound.', gesture:'untie the ribbon.', greeting:'Be gentle with this one.', message:"I have admired you quietly for longer than is reasonable, and I've decided that saying it badly is better than not saying it at all.", signature:'someone who noticed', action:'Untie the ribbon'},
+      'old-letter': {name:'Old Letter', purpose:'Apology · gratitude', title:'Laid paper. A little time.', material:'Ivory fibers, a faded postmark, and a thumb-pressed seal. Two folds hold the words.', gesture:'lift the wax seal.', greeting:'To whoever opens this,', message:'I owe you an apology that has been sitting in a drawer for two years. I am not asking for anything back. I only wanted the record to be honest.', signature:'someone who remembers', action:'Lift the seal'},
+      'night-thought': {name:'Night Thought', purpose:'Honest truth · 2am', title:'Dark stock. A single thread.', material:'Deep indigo paper with an uncoated tooth. Ivory thread winds once around two paper buttons.', gesture:'unwind the thread.', greeting:"For you — whenever you're ready to read this.", message:"I keep drafting this at hours no one should be awake. You were kind to me when it cost you something, and I never said so. I'm saying it now, into the dark, where it's easier.", signature:'someone who wanted you to know', action:'Unwind the thread'},
+      'quiet-garden': {name:'Quiet Garden', purpose:'Birthday · pride', title:'A pressed leaf. Held gently.', material:'Recycled sage paper, visible fibers, a real pressed fern. A translucent band holds it all together.', gesture:'slide off the band.', greeting:'Grown quietly, and on purpose.', message:'You made it through a year that asked a great deal of you. Someone noticed, and thought the noticing should reach you.', signature:'someone proud of you', action:'Slide off the band'},
+      'confetti-love': {name:'Confetti Love', purpose:'Celebration · hype', title:'Warm paper. A little occasion.', material:'Butter cotton, an off-center flap, torn coral tape. Three gold flecks are enough.', gesture:'peel back the tape.', greeting:'Somebody wanted today to be loud.', message:'Not a soul is surprised except you. Somebody wanted today to be loud about it, so here it is, loud.', signature:'someone celebrating you', action:'Peel back the tape'}
+    };
+    const desk = document.querySelector('.desk');
+    const paper = document.querySelector('.paper');
+    const action = document.querySelector('#next-state');
+    const states = ['sealed','opened','peek','read'];
+    const captions = {
+      sealed:'A closed envelope. A small weight, and something inside.',
+      opened:'The closure gives way. The flap opens, and the edge of a letter appears.',
+      peek:'A first glimpse. The letter is still held inside its envelope.',
+      read:'The whole letter, resting beside its envelope. Take your time.'
+    };
+    function setState(state) {
+      desk.dataset.state = state;
+      document.querySelectorAll('.state-controls button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.state === state)));
+      action.textContent = state === 'sealed' ? moods[desk.dataset.mood].action : state === 'opened' ? 'Take a glimpse' : state === 'peek' ? 'Take out the letter' : 'Seal it again';
+      document.querySelector('#state-caption').textContent = captions[state];
+      paper.setAttribute('aria-hidden', String(state !== 'read'));
+    }
+    function setMood(mood) {
+      const item = moods[mood];
+      desk.dataset.mood = mood;
+      document.querySelectorAll('.stationery').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mood === mood)));
+      for (const [id, value] of Object.entries({'room-name':item.name,'room-purpose':item.purpose,'material-title':item.title,'material-description':item.material,'salutation':item.greeting,'letter-message':item.message,'letter-signature':'— from '+item.signature})) document.getElementById(id).textContent = value;
+      document.querySelector('#gesture-description').textContent = 'One gesture: ' + item.gesture;
+      document.querySelectorAll('.envelope-layer img').forEach(img => { img.src = 'assets/' + mood + '.png'; });
+      setState('sealed');
+    }
+    document.querySelectorAll('.stationery').forEach(button => button.addEventListener('click', () => setMood(button.dataset.mood)));
+    document.querySelectorAll('.state-controls button').forEach(button => button.addEventListener('click', () => setState(button.dataset.state)));
+    action.addEventListener('click', () => setState(states[(states.indexOf(desk.dataset.state) + 1) % states.length]));
+    setState(window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'read' : 'peek');
+  </script>
+</body>
+</html>

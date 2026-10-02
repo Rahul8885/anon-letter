@@ -1,0 +1,8 @@
+Use case: product-mockup
+Asset type: photoreal transparent PNG cutout for interactive physical letter website, quiet-garden.png
+Subject: one closed pale sage recycled-fiber envelope with a distinctive folded wrap closure, back side visible. One real delicate pressed fern sprig is tucked underneath a narrow translucent glassine belly band wrapping vertically around the envelope, slightly right of center. The fern is dry, fine and botanically realistic, lies flat, attached to the envelope within its bounds. The band can slide away in one gesture. No wax.
+Style: true macro product photography, tactile recycled paper fibers and tiny flecks, natural fold depth and slight handmade imperfections, semi-translucent smooth glassine with visible layer edges, real preserved fern. Not illustration or CGI.
+Composition: landscape 3:2 canvas, strictly top-down orthographic camera. Envelope horizontal and axis aligned, rectangle x5%-95%, y12%-88%. Whole envelope and fern fully visible no crop, minimal perspective. Distinct folded wrap geometry rather than a traditional triangular envelope flap.
+Background: genuinely transparent alpha PNG, clean mask no white halos. Faint soft contact shadow only, no environment or surface.
+Lighting: soft diffuse daylight, restrained natural shading.
+Avoid: words, labels, logos, watermarks, borders, wax, ribbons, extra flowers, loose props or surroundings.

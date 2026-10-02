@@ -24,7 +24,7 @@ export function LivePreview({
 
   return (
     <div>
-      <p className="t-label" style={{ color: "rgba(200,169,110,0.6)", marginBottom: "var(--s4)" }}>
+      <p className="t-label" style={{ color: "var(--text-dim)", marginBottom: "var(--s4)" }}>
         What they&rsquo;ll see
       </p>
       <LetterRoom

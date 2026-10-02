@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { Envelope } from "../components/envelope/Envelope";
 import { Button } from "../components/ui/Button";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { room } from "../lib/moods";
@@ -70,8 +69,8 @@ export function Success() {
       <div className="glow" />
 
       <main className="success-page">
-        <div style={{ marginBottom: "var(--s12)" }}>
-          <Envelope state={sealed ? "sealed" : "open"} size="clamp(200px, 26vw, 300px)" />
+        <div className={`success-envelope ${sealed ? "is-sealed" : ""}`} aria-hidden="true">
+          <img src={`/assets/letter-world/${mood}.webp`} alt="" />
         </div>
 
         <p className="t-label" style={{ color: "rgba(200,169,110,0.62)" }}>
