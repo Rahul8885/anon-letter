@@ -1618,3 +1618,429 @@ svg {
     transform: translateY(130px) rotate(-9deg);
   }
 }
+
+/* Three recipient gestures, using the existing photographed materials. */
+.ceremony-staged {
+  position: relative;
+  isolation: isolate;
+  min-height: 710px;
+}
+.ceremony-intro {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding-top: 24px;
+  transition: opacity .25s;
+}
+.ceremony-intro p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  line-height: 1.12;
+  color: var(--room-text);
+}
+.ceremony-intro > span {
+  display: block;
+  margin-top: 14px;
+  font-size: .875rem;
+  color: var(--room-muted);
+}
+.ceremony-envelope-stage {
+  position: relative;
+  width: min(700px, 100%);
+  margin: 54px auto 0;
+  aspect-ratio: 3 / 2;
+  perspective: 1400px;
+  pointer-events: none;
+}
+.ceremony-photo {
+  position: absolute;
+  inset: 0;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+  transition: transform .8s cubic-bezier(0.22, 1, 0.36, 1), opacity .65s;
+}
+.ceremony-photo-original,
+.ceremony-photo-layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+.ceremony-photo-original {
+  z-index: 55;
+  transition: opacity .1s;
+}
+.ceremony-staged[data-ready="true"]:not([data-stage="0"]) .ceremony-photo-original {
+  opacity: 0;
+}
+.ceremony-photo-layer {
+  opacity: 0;
+}
+.ceremony-staged[data-ready="true"] .ceremony-photo-layer {
+  opacity: 1;
+}
+.photo-interior {
+  z-index: 10;
+}
+.photo-pocket {
+  z-index: 30;
+}
+.photo-flap {
+  z-index: 40;
+  transform-origin: 50% var(--flap-hinge);
+  transition: transform .85s cubic-bezier(0.22, 1, 0.36, 1), filter .85s;
+  backface-visibility: hidden;
+  filter: drop-shadow(0 2px 2px rgba(25, 18, 15, 0.18));
+}
+.photo-closure-left,
+.photo-closure-right {
+  z-index: 50;
+  transition: transform .7s cubic-bezier(0.22, 1, 0.36, 1), opacity .55s .12s;
+}
+.ceremony-staged:not([data-stage="0"]) .photo-closure-left,
+.ceremony-staged:not([data-stage="0"]) .photo-closure-right {
+  opacity: 0;
+}
+.ceremony-staged[data-gesture="wax"]:not([data-stage="0"]) .photo-closure-left {
+  transform: translate(-5%, 7%) rotate(-14deg);
+}
+.ceremony-staged[data-gesture="wax"]:not([data-stage="0"]) .photo-closure-right {
+  transform: translate(5%, 9%) rotate(18deg);
+}
+.ceremony-staged[data-gesture="ribbon"]:not([data-stage="0"]) .photo-closure-left {
+  transform: translate(-18%, 8%) rotate(-12deg);
+}
+.ceremony-staged[data-gesture="ribbon"]:not([data-stage="0"]) .photo-closure-right {
+  transform: translate(22%, 6%) rotate(16deg);
+}
+.ceremony-staged[data-gesture="thread"]:not([data-stage="0"]) .photo-closure-left {
+  transform: translate(-8%, 10%) rotate(-32deg);
+}
+.ceremony-staged[data-gesture="thread"]:not([data-stage="0"]) .photo-closure-right {
+  transform: translate(12%, 12%) rotate(38deg);
+}
+.ceremony-staged[data-gesture="band"]:not([data-stage="0"]) .photo-closure-left,
+.ceremony-staged[data-gesture="band"]:not([data-stage="0"]) .photo-closure-right {
+  transform: translate(37%, 4%) rotate(8deg);
+}
+.ceremony-staged[data-gesture="tape"]:not([data-stage="0"]) .photo-closure-left,
+.ceremony-staged[data-gesture="tape"]:not([data-stage="0"]) .photo-closure-right {
+  transform: translate(-8%, -15%) rotate(-22deg) rotateY(42deg);
+}
+.ceremony-staged[data-stage="2"] .photo-flap,
+.ceremony-staged[data-stage="3"] .photo-flap {
+  z-index: 12;
+  transform: rotateX(162deg);
+  filter: brightness(0.92);
+}
+.ceremony-hotspot {
+  position: absolute;
+  z-index: 60;
+  padding: 0;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+.ceremony-hotspot:focus-visible {
+  outline: 2px solid var(--room-text);
+  outline-offset: 6px;
+}
+.flap-hotspot {
+  left: 8%;
+  top: 12%;
+  width: 84%;
+  height: 43%;
+  border-radius: 4px;
+}
+.ceremony-folded-letter {
+  position: absolute;
+  z-index: 20;
+  left: 27%;
+  top: 35%;
+  width: 46%;
+  height: 56%;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  opacity: 0;
+  transform: translateY(16%);
+  transition: transform .65s .15s cubic-bezier(0.22, 1, 0.36, 1), opacity .3s;
+  pointer-events: none;
+  cursor: pointer;
+  color: #403b37;
+}
+.ceremony-folded-letter img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+.ceremony-folded-letter span {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  right: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3vw, 2rem);
+}
+.ceremony-staged[data-stage="2"] .ceremony-folded-letter {
+  opacity: 1;
+  transform: translateY(-21%);
+  pointer-events: none;
+}
+.ceremony-controls {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 14px;
+  margin: -8px auto 0;
+  text-align: center;
+}
+.ceremony-cue {
+  font-size: .875rem;
+  color: var(--room-muted);
+}
+.ceremony-controls .ceremony-open {
+  margin: 0;
+  min-height: 48px;
+}
+.ceremony-controls .ceremony-skip {
+  margin: 0;
+}
+.ceremony-staged[data-stage="3"] {
+  min-height: 0;
+}
+.ceremony-staged[data-stage="3"] .ceremony-intro {
+  position: absolute;
+  inset: 0 0 auto;
+  opacity: 0;
+  pointer-events: none;
+}
+.ceremony-staged[data-stage="3"] .ceremony-envelope-stage {
+  position: absolute;
+  top: 169px;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+.ceremony-staged[data-stage="3"] .ceremony-photo {
+  transform: translate(36%, 14%) rotate(12deg) scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+}
+.ceremony-staged .ceremony-letter {
+  position: relative;
+  z-index: 2;
+  transform-origin: 50% 25%;
+}
+.ceremony-staged .ceremony-letter:focus {
+  outline: none;
+}
+.ceremony-paper-folds {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  perspective: 1400px;
+}
+.ceremony-paper-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 33.3334%;
+  overflow: hidden;
+  transform-origin: center top;
+  backface-visibility: hidden;
+}
+.ceremony-paper-panel img {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 300%;
+  object-fit: fill;
+}
+.paper-panel-0 {
+  top: 0;
+}
+.paper-panel-0 img {
+  top: 0;
+}
+.paper-panel-1 {
+  top: 33.3333%;
+  animation: letter-unfold .75s .12s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.paper-panel-1 img {
+  top: -100%;
+}
+.paper-panel-2 {
+  top: 66.6666%;
+  animation: letter-unfold .7s .35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.paper-panel-2 img {
+  top: -200%;
+}
+.ceremony-paper-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: fold-light .7s .15s both;
+  background: linear-gradient(180deg, rgba(75, 59, 43, 0.18), transparent 28%);
+}
+.ceremony-staged .ceremony-letter-content {
+  opacity: 0;
+  transition: opacity .3s;
+}
+.ceremony-staged[data-settled="true"] .ceremony-letter-content {
+  opacity: 1;
+}
+.ceremony-staged[data-instant="true"] .ceremony-envelope-stage {
+  display: none;
+}
+.ceremony-staged[data-instant="true"] .ceremony-paper-panel,
+.ceremony-staged[data-instant="true"] .ceremony-paper-panel::after {
+  animation: none;
+}
+.ceremony-staged[data-instant="true"] .ceremony-letter-content {
+  transition: none;
+}
+@keyframes letter-unfold {
+  from {
+    transform: rotateX(-178deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+@keyframes fold-light {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@media (max-width: 760px) {
+  .ceremony-staged {
+    min-height: 580px;
+  }
+  .ceremony-intro {
+    padding-top: 30px;
+  }
+  .ceremony-intro p {
+    max-width: 13ch;
+    margin-inline: auto;
+  }
+  .ceremony-intro > span {
+    max-width: 28ch;
+    margin-inline: auto;
+    line-height: 1.5;
+  }
+  .ceremony-envelope-stage {
+    margin-top: 76px;
+    margin-bottom: 34px;
+  }
+  .ceremony-controls {
+    margin-top: 0;
+    gap: 12px;
+  }
+  .ceremony-cue {
+    max-width: 31ch;
+    line-height: 1.5;
+  }
+  .ceremony-staged[data-stage="3"] .ceremony-envelope-stage {
+    top: 140px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ceremony-staged *,
+  .ceremony-staged *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.ceremony-staged[data-stage="2"] .ceremony-intro {
+  opacity: 0;
+}
+
+.ceremony-staged[data-ready="true"] .photo-flap-inner {
+  z-index: 12;
+  opacity: 0;
+  transform: rotateX(0deg);
+  transform-origin: 50% var(--flap-hinge);
+  backface-visibility: visible;
+  transition: transform .85s cubic-bezier(0.22, 1, 0.36, 1), opacity .1s;
+}
+.ceremony-staged[data-ready="true"][data-stage="2"] .photo-flap-inner,
+.ceremony-staged[data-ready="true"][data-stage="3"] .photo-flap-inner {
+  opacity: 1;
+  transform: rotateX(162deg);
+}
+
+.ceremony-staged[data-stage="2"] .ceremony-photo {
+  transform: translateY(80px);
+}
+.ceremony-controls {
+  transition: transform .85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ceremony-staged[data-stage="2"] .ceremony-controls {
+  transform: translateY(80px);
+}
+.ceremony-staged[data-stage="2"] {
+  min-height: 790px;
+}
+@media (max-width: 760px) {
+  .ceremony-staged[data-stage="2"] .ceremony-photo,
+  .ceremony-staged[data-stage="2"] .ceremony-controls {
+    transform: translateY(24px);
+  }
+  .ceremony-staged[data-stage="2"] {
+    min-height: 604px;
+  }
+}
+
+.ceremony-unfolding-skip {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+  min-height: 44px;
+  padding: 10px;
+  border: 0;
+  background: var(--room-bg);
+  color: var(--room-text);
+  cursor: pointer;
+  font-size: .8rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.letter-hotspot {
+  left: 29%;
+  top: 24%;
+  width: 42%;
+  height: 18%;
+  border-radius: 3px;
+}
+.ceremony-photo:has(.letter-hotspot:hover) .ceremony-folded-letter {
+  transform: translateY(-25%);
+}
+
+.ceremony-staged[data-instant="true"] .ceremony-letter-content * {
+  animation: none;
+  transition: none !important;
+}
+
+.ceremony-folded-letter span { text-align: center; }
+.flap-hotspot { height: 78%; }

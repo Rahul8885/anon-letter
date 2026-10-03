@@ -9,4 +9,6 @@
 - `envelope-rose.webp`: Pre-existing ImageGen concept artwork from apps/web/public/assets/editorial/blush-envelope.png. Original source record: apps/web/public/assets/editorial/GENERATED.md. Optimized to WebP; composition and alpha preserved.
 - `flower-stem.webp`: Pre-existing ImageGen concept artwork from apps/web/public/assets/quiet-garden-stem.png; original source record apps/web/public/assets/GENERATED.md. Optimized to WebP; composition and alpha preserved.
 
-- `envelope-open.webp` and `envelope-open.png`: matching open-flap edit made with the built-in ImageGen tool; reference `apps/web/public/assets/editorial/blush-envelope.png`; exact prompt in `envelope-open.prompt.txt`.
+- `envelope-open.webp`: matching open-flap edit made with the built-in ImageGen tool; reference `apps/web/public/assets/editorial/blush-envelope.png`; exact prompt in `envelope-open.prompt.txt`.
+
+The original PNG duplicates and abandoned editorial artwork were removed after the recipient interaction update. Original prompt records remain in `prototypes/physical-letter/assets` and adjacent `.webp.json` files. All opening layers are cut and restored in browser memory from these WebP photos; no animation frame images are shipped.

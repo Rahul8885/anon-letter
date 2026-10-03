@@ -17,7 +17,6 @@ export interface Room {
   /** Which ambient field this room runs. */
   ambient: "petals" | "dust" | "stars" | "botanical" | "confetti";
   /** Composed motif art, for picker cards and room corners. */
-  motifArt: string;
   /** Card gradient — the palette is the content, so the card shows the palette. */
   cardGradient: string;
   /** Greeting above the message on the reveal page. */
@@ -42,7 +41,6 @@ export const ROOMS: Record<TemplateId, Room> = {
     border: "#f3d3de",
     glow: "rgba(240,160,186,0.16)",
     ambient: "petals",
-    motifArt: "/assets/soft-bloom-petals-ribbon.webp",
     cardGradient: "linear-gradient(165deg,#fdf0f5 0%,#f6cbd9 60%,#e8a8c0 100%)",
     greeting: "Be gentle with this one.",
     signature: "someone who noticed",
@@ -59,7 +57,6 @@ export const ROOMS: Record<TemplateId, Room> = {
     border: "#e3cdb0",
     glow: "rgba(196,151,106,0.16)",
     ambient: "dust",
-    motifArt: "/assets/old-letter-parchment-flourish.webp",
     cardGradient: "linear-gradient(165deg,#fdf6ec 0%,#e8cfa8 60%,#c4976a 100%)",
     greeting: "To whoever opens this,",
     signature: "someone who remembers",
@@ -76,7 +73,6 @@ export const ROOMS: Record<TemplateId, Room> = {
     border: "#33375e",
     glow: "rgba(139,144,208,0.18)",
     ambient: "stars",
-    motifArt: "",
     cardGradient: "linear-gradient(165deg,#1a1b2e 0%,#2a2d52 60%,#3a3d6e 100%)",
     greeting: "For you — whenever you're ready to read this.",
     signature: "someone who wanted you to know",
@@ -93,7 +89,6 @@ export const ROOMS: Record<TemplateId, Room> = {
     border: "#c9e3d5",
     glow: "rgba(59,109,17,0.14)",
     ambient: "botanical",
-    motifArt: "/assets/quiet-garden-rose-vine.webp",
     cardGradient: "linear-gradient(165deg,#eaf7f0 0%,#a9c99a 60%,#3b6d11 100%)",
     greeting: "Grown quietly, and on purpose.",
     signature: "someone proud of you",
@@ -110,7 +105,6 @@ export const ROOMS: Record<TemplateId, Room> = {
     border: "#ecdcbb",
     glow: "rgba(232,201,154,0.2)",
     ambient: "confetti",
-    motifArt: "/assets/confetti-love-collage-burst.webp",
     cardGradient: "linear-gradient(165deg,#fff8e7 0%,#f2dcb6 60%,#e8c99a 100%)",
     greeting: "Somebody wanted today to be loud.",
     signature: "someone celebrating you",

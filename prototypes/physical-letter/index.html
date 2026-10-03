@@ -89,7 +89,7 @@
       background-image: radial-gradient(ellipse at 25% 10%, #4a4a3d55, transparent 70%);
       overflow: hidden;
     }
-    .desk::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url("assets/letter-paper.png") center / 200% 400% no-repeat; opacity: .025; mix-blend-mode: screen; }
+    .desk::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: url("../../apps/web/public/assets/letter-world/letter-paper.webp") center / 200% 400% no-repeat; opacity: .025; mix-blend-mode: screen; }
     .desk[data-mood="soft-bloom"] { --paper-color: #fdf0f5; --paper-ink: #4a2030; --paper-muted: #795261; --envelope-color: #d8a7b5; --body-font: "Lato", sans-serif; --display-font: "Playfair Display", Georgia, serif; --room-accent: #ab617c; background-color: #332a2b; }
     .desk[data-mood="night-thought"] { --paper-color: #1a1b2e; --paper-ink: #c8caf0; --paper-muted: #b0b4d8; --envelope-color: #232638; --body-font: "DM Sans", sans-serif; --display-font: "Cormorant Garamond", Georgia, serif; --room-accent: #a0a6d9; background-color: #191c22; }
     .desk[data-mood="quiet-garden"] { --paper-color: #eaf7f0; --paper-ink: #1a3208; --paper-muted: #506544; --envelope-color: #bec7ab; --body-font: "Inter", sans-serif; --display-font: "Playfair Display", Georgia, serif; --room-accent: #3b6d11; background-color: #292e27; }
@@ -101,8 +101,8 @@
     .stage { position: relative; min-width: 0; min-height: 780px; perspective: 1600px; }
     .envelope-layer { position: absolute; width: min(600px, 89%); aspect-ratio: 3/2; left: 49%; top: 34%; transform: translateX(-50%) rotate(-5deg); transition: transform 950ms var(--ease), top 950ms var(--ease), left 950ms var(--ease), opacity 550ms var(--ease); pointer-events: none; }
     .envelope-back { z-index: var(--z-back); }
-    .envelope-back .pocket-back { position: absolute; inset: 12% 5%; background: var(--envelope-color) url("assets/letter-paper.png") center / 100% 160%; background-blend-mode: multiply; box-shadow: 1px 8px 16px #0004; }
-    .envelope-back .open-flap { position: absolute; top: 12%; left: 5%; width: 90%; height: 48%; background: var(--envelope-color) url("assets/letter-paper.png") center / 100% 190%; background-blend-mode: multiply; clip-path: polygon(0 0,100% 0,50% 100%); transform-origin: top; transform: rotateX(0); transition: transform 900ms var(--ease); }
+    .envelope-back .pocket-back { position: absolute; inset: 12% 5%; background: var(--envelope-color) url("../../apps/web/public/assets/letter-world/letter-paper.webp") center / 100% 160%; background-blend-mode: multiply; box-shadow: 1px 8px 16px #0004; }
+    .envelope-back .open-flap { position: absolute; top: 12%; left: 5%; width: 90%; height: 48%; background: var(--envelope-color) url("../../apps/web/public/assets/letter-world/letter-paper.webp") center / 100% 190%; background-blend-mode: multiply; clip-path: polygon(0 0,100% 0,50% 100%); transform-origin: top; transform: rotateX(0); transition: transform 900ms var(--ease); }
     .envelope-back .inner-fold { position: absolute; inset: 13% 6% 67%; background: #0002; clip-path: polygon(0 0,100% 0,50% 100%); }
     .envelope-front { z-index: var(--z-pocket); }
     .envelope-front img { width: 100%; filter: drop-shadow(0 3px 2px #0003); clip-path: polygon(0 26%,50% 64%,100% 26%,100% 100%,0 100%); }
@@ -120,7 +120,7 @@
     }
     .paper-surface { position: absolute; inset: 0; z-index: -1; filter: drop-shadow(1px 2px 1px #0006) drop-shadow(6px 16px 16px #0004); }
     .paper::before { content: ""; position: absolute; inset: 3%; background: var(--paper-color); z-index: -2; }
-    .paper-surface::before { content: ""; position: absolute; inset: 0; background: var(--paper-color) url("assets/letter-paper.png") center / 100% 100%; background-blend-mode: multiply; mask: url("assets/letter-paper.png") center / 100% 100% no-repeat; }
+    .paper-surface::before { content: ""; position: absolute; inset: 0; background: var(--paper-color) url("../../apps/web/public/assets/letter-world/letter-paper.webp") center / 100% 100%; background-blend-mode: multiply; mask: url("../../apps/web/public/assets/letter-world/letter-paper.webp") center / 100% 100% no-repeat; }
     .paper-topline { display: flex; align-items: center; justify-content: space-between; gap: 15px; color: var(--paper-muted); font-family: "DM Sans", sans-serif; font-size: 11px; letter-spacing: .1em; padding-bottom: 28px; }
     .paper-topline svg { width: 25px; height: 25px; opacity: .7; }
     .salutation { font: italic 400 24px/1.35 var(--display-font); margin: 12px 0 29px; }
@@ -227,11 +227,11 @@
         <p>The room does half the work. Pick the one that matches what you have to say.</p>
       </div>
       <div class="collection" role="group" aria-label="Choose your stationery">
-        <button class="stationery" type="button" data-mood="soft-bloom" aria-pressed="false"><span class="object"><img src="assets/soft-bloom.png" alt="Blush cotton envelope closed with a loosely tied satin ribbon" width="1536" height="1024"></span><strong>Soft Bloom</strong><small>Cotton &amp; satin</small></button>
-        <button class="stationery" type="button" data-mood="old-letter" aria-pressed="true"><span class="object"><img src="assets/old-letter.png" alt="Ivory laid-paper envelope with a small rust wax seal and a faded postmark" width="1536" height="1024"></span><strong>Old Letter</strong><small>Laid paper &amp; wax</small></button>
-        <button class="stationery" type="button" data-mood="night-thought" aria-pressed="false"><span class="object"><img src="assets/night-thought.png" alt="Indigo envelope with a button-and-thread closure" width="1536" height="1024"></span><strong>Night Thought</strong><small>Ink paper &amp; thread</small></button>
-        <button class="stationery" type="button" data-mood="quiet-garden" aria-pressed="false"><span class="object"><img src="assets/quiet-garden.png" alt="Sage recycled-paper envelope with a pressed fern held under a glassine band" width="1536" height="1024"></span><strong>Quiet Garden</strong><small>Pressed leaf &amp; glassine</small></button>
-        <button class="stationery" type="button" data-mood="confetti-love" aria-pressed="false"><span class="object"><img src="assets/confetti-love.png" alt="Butter paper envelope sealed with torn coral tape and a few gold paper flecks" width="1536" height="1024"></span><strong>Confetti Love</strong><small>Washi tape &amp; foil</small></button>
+        <button class="stationery" type="button" data-mood="soft-bloom" aria-pressed="false"><span class="object"><img src="../../apps/web/public/assets/letter-world/soft-bloom.webp" alt="Blush cotton envelope closed with a loosely tied satin ribbon" width="1536" height="1024"></span><strong>Soft Bloom</strong><small>Cotton &amp; satin</small></button>
+        <button class="stationery" type="button" data-mood="old-letter" aria-pressed="true"><span class="object"><img src="../../apps/web/public/assets/letter-world/old-letter.webp" alt="Ivory laid-paper envelope with a small rust wax seal and a faded postmark" width="1536" height="1024"></span><strong>Old Letter</strong><small>Laid paper &amp; wax</small></button>
+        <button class="stationery" type="button" data-mood="night-thought" aria-pressed="false"><span class="object"><img src="../../apps/web/public/assets/letter-world/night-thought.webp" alt="Indigo envelope with a button-and-thread closure" width="1536" height="1024"></span><strong>Night Thought</strong><small>Ink paper &amp; thread</small></button>
+        <button class="stationery" type="button" data-mood="quiet-garden" aria-pressed="false"><span class="object"><img src="../../apps/web/public/assets/letter-world/quiet-garden.webp" alt="Sage recycled-paper envelope with a pressed fern held under a glassine band" width="1536" height="1024"></span><strong>Quiet Garden</strong><small>Pressed leaf &amp; glassine</small></button>
+        <button class="stationery" type="button" data-mood="confetti-love" aria-pressed="false"><span class="object"><img src="../../apps/web/public/assets/letter-world/confetti-love.webp" alt="Butter paper envelope sealed with torn coral tape and a few gold paper flecks" width="1536" height="1024"></span><strong>Confetti Love</strong><small>Washi tape &amp; foil</small></button>
       </div>
     </section>
 
@@ -262,8 +262,8 @@
             <p class="signature" id="letter-signature">— from someone who remembers</p>
             <p class="paper-bottom">Sealed · unsigned</p>
           </article>
-          <div class="envelope-layer envelope-front" aria-hidden="true"><img src="assets/old-letter.png" alt="" width="1536" height="1024"></div>
-          <div class="envelope-layer closed-envelope" aria-hidden="true"><img src="assets/old-letter.png" alt="" width="1536" height="1024"></div>
+          <div class="envelope-layer envelope-front" aria-hidden="true"><img src="../../apps/web/public/assets/letter-world/old-letter.webp" alt="" width="1536" height="1024"></div>
+          <div class="envelope-layer closed-envelope" aria-hidden="true"><img src="../../apps/web/public/assets/letter-world/old-letter.webp" alt="" width="1536" height="1024"></div>
           <button class="object-action" type="button" id="next-state">Seal it again</button>
         </div>
       </div>
@@ -274,7 +274,7 @@
     </section>
 
     <section class="paper-study" aria-labelledby="material-heading">
-      <figure class="paper-detail"><img src="assets/letter-paper.png" alt="Close-up of cotton fibers, a pressed fold, and the imperfect edge of the letter paper" loading="lazy"><figcaption>The fold remembers.</figcaption></figure>
+      <figure class="paper-detail"><img src="../../apps/web/public/assets/letter-world/letter-paper.webp" alt="Close-up of cotton fibers, a pressed fold, and the imperfect edge of the letter paper" loading="lazy"><figcaption>The fold remembers.</figcaption></figure>
       <div class="study-copy">
         <h2 id="material-heading">The words belong to the paper.</h2>
         <p>A quiet surface, with enough grain to catch the light. A little wear at the edge. Nothing between you and what someone wanted to say.</p>
@@ -315,7 +315,7 @@
       document.querySelectorAll('.stationery').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mood === mood)));
       for (const [id, value] of Object.entries({'room-name':item.name,'room-purpose':item.purpose,'material-title':item.title,'material-description':item.material,'salutation':item.greeting,'letter-message':item.message,'letter-signature':'— from '+item.signature})) document.getElementById(id).textContent = value;
       document.querySelector('#gesture-description').textContent = 'One gesture: ' + item.gesture;
-      document.querySelectorAll('.envelope-layer img').forEach(img => { img.src = 'assets/' + mood + '.png'; });
+      document.querySelectorAll('.envelope-layer img').forEach(img => { img.src = '../../apps/web/public/assets/letter-world/' + mood + '.webp'; });
       setState('sealed');
     }
     document.querySelectorAll('.stationery').forEach(button => button.addEventListener('click', () => setMood(button.dataset.mood)));

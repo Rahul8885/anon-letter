@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-02T18:06:11Z",
+  "generatedAt": "2026-10-02T19:08:04.623Z",
   "title": "Design System: SAYLESS",
   "extensions": {
     "colorMeta": {
@@ -234,7 +234,7 @@
       {
         "name": "d-object",
         "value": "700ms",
-        "purpose": "Photograph crossfade and recipient-paper entrance."
+        "purpose": "Photograph crossfade and photographed closure release."
       },
       {
         "name": "hero-object-transform",
@@ -245,6 +245,16 @@
         "name": "reduced-motion",
         "value": "final-open",
         "purpose": "Start with the whole letter visible; native scrolling becomes immediate and animations are removed."
+      },
+      {
+        "name": "recipient-flap",
+        "value": "850ms",
+        "purpose": "Lift the photographed flap only after a second activation."
+      },
+      {
+        "name": "recipient-unfold",
+        "value": "1100ms",
+        "purpose": "Draw out and unfold the paper after a third activation; immediately interruptible."
       }
     ],
     "breakpoints": [
@@ -337,7 +347,8 @@
     "dos": [
       "Do keep messages as selectable live DOM text over photographed material.",
       "Do preserve the five mood identities and the writer's words when switching moods.",
-      "Do provide visible focus, generous targets and a final-open reduced-motion path."
+      "Do provide visible focus, generous targets and a final-open reduced-motion path.",
+      "Do require separate closure, envelope, and letter gestures; offer immediate skip, keyboard focus progression, and replay."
     ],
     "donts": [
       "Don't add looping motion, scroll hijacking or hard home-section background cuts.",

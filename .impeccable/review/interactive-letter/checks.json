@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-10-02T19:06:06.674Z",
+  "results": [
+    {
+      "mood": "soft-bloom",
+      "width": 1440,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    },
+    {
+      "mood": "old-letter",
+      "width": 1440,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    },
+    {
+      "mood": "night-thought",
+      "width": 1440,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    },
+    {
+      "mood": "quiet-garden",
+      "width": 1440,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    },
+    {
+      "mood": "confetti-love",
+      "width": 1440,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    },
+    {
+      "mood": "soft-bloom",
+      "width": 390,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    },
+    {
+      "mood": "old-letter",
+      "width": 390,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    },
+    {
+      "mood": "night-thought",
+      "width": 390,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    },
+    {
+      "mood": "quiet-garden",
+      "width": 390,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    },
+    {
+      "mood": "confetti-love",
+      "width": 390,
+      "stages": "sealed → released → peek → read",
+      "pass": true
+    }
+  ],
+  "keyboard": true,
+  "skip": true,
+  "interruptibleUnfolding": true,
+  "replay": true,
+  "draftPreserved": true,
+  "reducedMotionAllThemes": true,
+  "liveReducedMotion": true,
+  "canvasFallback": true,
+  "horizontalOverflow": false,
+  "browserErrors": [],
+  "posts": [],
+  "assetLinksVerified": 19,
+  "lint": true,
+  "typecheck": true,
+  "productionBuild": true,
+  "unusedAssetsRemoved": 18,
+  "cleanupMB": 66.4
+}

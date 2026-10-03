@@ -1149,14 +1149,6 @@ img {
   opacity: 1;
 }
 
-.env-shard {
-  position: absolute;
-  z-index: var(--z-seal);
-  background-image: url("/assets/wax-fragments-sprite-sheet.webp");
-  background-size: 300% 300%;
-  pointer-events: none;
-}
-
 /* idle bob — cursor proximity tilt is applied in JS */
 .env-bob {
   animation: bob 3.5s ease-in-out infinite;

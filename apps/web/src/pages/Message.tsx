@@ -60,18 +60,26 @@ export function Reveal({ data, preview = false }: { data: Data; preview?: boolea
   const reduced = useReducedMotion();
   const r = room(data.template_id);
   const [opened, setOpened] = useState(reduced);
+  const [instant, setInstant] = useState(reduced);
   const [reported, setReported] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
   const handleOpened = useCallback(() => setOpened(true), []);
+  const handleSkip = useCallback(() => {
+    setInstant(true);
+    setOpened(true);
+  }, []);
 
   const typing = useTypewriter(data.message, {
     start: opened,
-    instant: reduced,
+    instant: reduced || instant,
   });
 
+  const finished = typing.done || instant || reduced;
+  const visible = instant || reduced ? data.message : typing.visible;
+
   useEffect(() => {
-    if (!opened || typing.done) return;
+    if (!opened || finished) return;
     const skip = () => typing.skip();
     window.addEventListener("pointerdown", skip, { once: true });
     window.addEventListener("keydown", skip, { once: true });
@@ -79,7 +87,7 @@ export function Reveal({ data, preview = false }: { data: Data; preview?: boolea
       window.removeEventListener("pointerdown", skip);
       window.removeEventListener("keydown", skip);
     };
-  }, [opened, typing.done, typing.skip]);
+  }, [opened, finished, typing.skip]);
 
   async function report() {
     if (preview) {
@@ -105,31 +113,27 @@ export function Reveal({ data, preview = false }: { data: Data; preview?: boolea
       className="room-tactile"
       style={data.accent ? { ["--room-accent" as string]: data.accent } : undefined}
     >
-      <TactileLetter mood={data.template_id} onOpened={handleOpened}>
+      <TactileLetter mood={data.template_id} onOpened={handleOpened} onSkip={handleSkip}>
         <div className="letter-stack">
           <LetterLead mood={data.template_id} show={opened} />
           <p className="letter-body">
-            <span aria-hidden="true">{typing.visible}</span>
+            <span aria-hidden="true">{visible}</span>
             <span className="sr-only">{data.message}</span>
-            {opened && !typing.done && <span className="caret" />}
+            {opened && !finished && <span className="caret" />}
           </p>
-          {opened && !typing.done && (
+          {opened && !finished && (
             <button type="button" className="letter-reading-skip" onClick={typing.skip}>
               Read the whole letter
             </button>
           )}
-          <hr className="letter-rule" style={{ opacity: typing.done ? 1 : 0 }} />
-          <p
-            className="letter-sign"
-            style={{ opacity: typing.done ? 1 : 0 }}
-            aria-hidden={!typing.done}
-          >
+          <hr className="letter-rule" style={{ opacity: finished ? 1 : 0 }} />
+          <p className="letter-sign" style={{ opacity: finished ? 1 : 0 }} aria-hidden={!finished}>
             — from {data.from_hint?.trim() || r.signature}
           </p>
         </div>
       </TactileLetter>
 
-      <div className="room-rail" hidden={!typing.done} style={{ opacity: typing.done ? 1 : 0 }}>
+      <div className="room-rail" hidden={!finished} style={{ opacity: finished ? 1 : 0 }}>
         <output>
           {reportError ||
             (reported
