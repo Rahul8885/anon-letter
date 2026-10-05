@@ -1,8 +1,0 @@
-Use case: product-mockup
-Asset type: photoreal transparent PNG cutout for interactive physical letter website, old-letter.png
-Subject: one closed warm ivory aged laid-paper envelope, back side with a long pointed triangular flap. A single small authentic irregular dull rust-red wax seal at the flap tip. In the upper right corner a blank perforated sepia postage stamp with no words and a very faint anonymous postal cancellation. Quiet authentic vintage correspondence, not theatrical antiquing.
-Style: true macro product photography, tactile laid paper lines and fibers, subtle age discoloration, realistic folded edges and slight imperfections, actual wax with restrained uneven sheen. Not illustration or CGI.
-Composition: landscape 3:2 canvas, strictly top-down orthographic camera, envelope perfectly horizontal axis aligned, rectangle x=5% to95%, y=12% to88%, full object visible no crop, minimal perspective.
-Background: genuinely transparent alpha background, clean mask with no white halos. Soft subtle contact shadow only, no environment or surface. Preserve transparency in output PNG.
-Lighting: soft diffuse daylight, restrained physical shading.
-Avoid: legible words, labels, logos, watermarks, border, additional objects, ribbons, flowers, staged environment.

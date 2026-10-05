@@ -1,8 +1,0 @@
-Use case: product-mockup
-Asset type: photoreal transparent PNG cutout for interactive physical letter website, night-thought.png
-Subject: one closed dark ink-indigo coarse-paper envelope seen from the back, with a straight square rectangular flap. Thin ivory thread is wrapped vertically around two small indigo paper button fasteners arranged one above the other at center, a real document-correspondence string closure that can be unwound in one gesture. One tiny understated silver star is embossed at the lower right corner. No wax seal.
-Style: true macro product photography with physical coarse paper fibers, folded edges, slight irregularities and realistic string fibers; quiet intimate stationery, not illustration or CGI.
-Composition: landscape 3:2 canvas, strictly top-down orthographic camera. Envelope horizontal and axis aligned, rectangle x5%-95%, y12%-88%. Entire envelope and all thread visible, no cropping, very little perspective. Square flap must read clearly different from a pointed triangular flap.
-Background: genuinely transparent alpha PNG, clean mask no white halos. Only faint soft contact shadow close to object, no surface or environment.
-Lighting: soft diffuse daylight revealing rich dark blue paper texture, restrained natural shadows.
-Avoid: words, labels, logos, watermarks, borders, wax, ribbons, flowers, additional objects, excessive celestial decorations.

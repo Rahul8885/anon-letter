@@ -234,7 +234,7 @@
       {
         "name": "d-object",
         "value": "700ms",
-        "purpose": "Photograph crossfade and photographed closure release."
+        "purpose": "Transparent closure layer release; envelope pixels stay fixed."
       },
       {
         "name": "hero-object-transform",
@@ -249,7 +249,7 @@
       {
         "name": "recipient-flap",
         "value": "850ms",
-        "purpose": "Lift the photographed flap only after a second activation."
+        "purpose": "Lift registered outer/inner flap images after a second activation."
       },
       {
         "name": "recipient-unfold",

@@ -1,8 +1,0 @@
-Use case: product-mockup
-Asset type: photoreal transparent PNG cutout for an interactive physical letter website, soft-bloom.png
-Subject: one closed dusty blush cotton-paper envelope, back flap visible. Rounded flap; a narrow pale satin ribbon wraps the envelope and is loosely tied once in a small natural bow centered slightly left, suggesting one simple gesture to untie. No wax.
-Style: true high-end macro product photography, real tactile cotton paper fibers, natural fold depth, slight imperfections, delicate satin sheen; not illustration or CGI.
-Composition: landscape 3:2 canvas, strictly top-down orthographic camera, envelope perfectly horizontal and axis aligned, rectangle extends from x=5% to95% and y=12% to88%. Entire object including ribbon fully visible, no crop, minimal perspective.
-Background: genuinely transparent alpha background, clean mask with no white halos. Soft subtle contact shadow only, no environment or surface.
-Lighting: soft diffuse daylight with restrained realistic paper shading.
-Avoid: additional objects, text, labels, logos, watermarks, borders, scene backgrounds, wax seals.

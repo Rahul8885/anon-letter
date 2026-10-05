@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/Button";
+import { letterPaletteStyle } from "../lib/letterPalette";
 import { useComposerStore } from "../store/composerStore";
 import { Reveal } from "./Message";
 
@@ -23,7 +24,11 @@ export function Preview() {
   }
 
   return (
-    <main className="receiver-preview">
+    <main
+      className="receiver-preview"
+      data-mood={draft.mood}
+      style={letterPaletteStyle(draft.mood)}
+    >
       <header className="preview-toolbar" data-preview-controls>
         <div>
           <strong>Recipient preview</strong>

@@ -10,7 +10,7 @@ This is the visual approval artifact requested in the September 15 brief. It doe
 
 ## Materials
 
-All five envelope photographs and the cotton-paper sheet were generated using the built-in imagegen tool. The prototype now shares the optimized WebP files in `apps/web/public/assets/letter-world`, preserving transparency without duplicate PNG sources. Exact generation prompts are embedded in the image metadata; envelope prompts are also available in `assets/prompts.json` and adjacent `.prompt.txt` files. The paper prompt is `assets/letter-paper.prompt.txt`.
+All five envelope photographs and the cotton-paper sheet were generated using the built-in imagegen tool. The prototype shares the optimized WebP files in `apps/web/public/assets/letter-world`, preserving transparency without duplicate PNG sources. Generation prompts and metadata were removed during repository cleanup.
 
 Object presentation was informed by [Trevor Noah — Books](https://www.trevornoah.com/books), especially freestanding scale and depth. AnonLetter's existing palettes, font families, room names, and sample letters were retained.
 

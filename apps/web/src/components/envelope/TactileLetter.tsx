@@ -1,9 +1,10 @@
 import type { TemplateId } from "@anonletter/shared";
 import { motion } from "framer-motion";
 import type { CSSProperties, ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
-import { type PhotoLayer, STATIONERY, photoLayers } from "./photographicLayers";
+import { LETTER_PALETTES, letterPaletteStyle, paperToneMatrix } from "../../lib/letterPalette";
+import { type PaperLayer, STATIONERY, rectStyle } from "./stationeryAssets";
 
 interface Props {
   mood: TemplateId;
@@ -12,53 +13,39 @@ interface Props {
   onSkip?: () => void;
 }
 
-const LAYERS: PhotoLayer[] = [
-  "interior",
-  "flap",
-  "flap-inner",
-  "pocket",
-  "closure-left",
-  "closure-right",
-];
+const LAYERS: PaperLayer[] = ["back", "flap-front", "flap-back", "pocket"];
 
-/** Each gesture belongs to the material already photographed for this mood. */
+/** Paper is static; only the separate fastener images move on the first click. */
 export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
   const reduced = useReducedMotion();
   const [stage, setStage] = useState(reduced ? 3 : 0);
   const [settled, setSettled] = useState(reduced);
   const [instant, setInstant] = useState(reduced);
-  const [ready, setReady] = useState(false);
-  const canvases = useRef<Partial<Record<PhotoLayer, HTMLCanvasElement>>>({});
+  const [loaded, setLoaded] = useState<Set<string>>(() => new Set());
+  const [failed, setFailed] = useState<Set<string>>(() => new Set());
   const nextAction = useRef<HTMLButtonElement>(null);
   const reading = useRef<HTMLElement>(null);
   const keyboard = useRef(false);
   const notified = useRef(false);
   const stationery = STATIONERY[mood];
-  const action =
-    stage === 0 ? stationery.action : stage === 1 ? "Lift the envelope flap" : "Unfold your letter";
+  const stockFilterId = `letter-stock-${useId()}`;
+  const assetFailed = Object.values(stationery.assets).some((src) => failed.has(src));
+  const ready = Object.values(stationery.assets).every((src) => loaded.has(src));
+  const action = assetFailed
+    ? "Read your letter"
+    : stage === 0
+      ? stationery.action
+      : stage === 1
+        ? "Lift the envelope flap"
+        : "Unfold your letter";
 
-  useEffect(() => {
-    if (reduced) return;
-    let cancelled = false;
-    photoLayers(mood)
-      .then(({ canvases: layers }) => {
-        if (cancelled) return;
-        for (const name of LAYERS) {
-          const destination = canvases.current[name];
-          if (!destination) continue;
-          destination.width = layers[name].width;
-          destination.height = layers[name].height;
-          destination.getContext("2d")?.drawImage(layers[name], 0, 0);
-        }
-        setReady(true);
-      })
-      .catch(() => {
-        // The original photo and text controls still allow every stage if canvas fails.
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [mood, reduced]);
+  function imageLoaded(src: string) {
+    setLoaded((current) => (current.has(src) ? current : new Set(current).add(src)));
+  }
+
+  function imageFailed(src: string) {
+    setFailed((current) => (current.has(src) ? current : new Set(current).add(src)));
+  }
 
   useEffect(() => {
     if (reduced) {
@@ -91,6 +78,10 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
 
   function advance(detail: number) {
     keyboard.current = detail === 0;
+    if (assetFailed) {
+      skip();
+      return;
+    }
     setStage((current) => Math.min(3, current + 1));
   }
 
@@ -117,13 +108,6 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [settled, onSkip]);
 
-  const hotspot: CSSProperties = {
-    left: `${stationery.hotspot[0] * 100}%`,
-    top: `${stationery.hotspot[1] * 100}%`,
-    width: `${stationery.hotspot[2] * 100}%`,
-    height: `${stationery.hotspot[3] * 100}%`,
-  };
-
   return (
     <section
       className="ceremony ceremony-staged"
@@ -131,11 +115,39 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
       data-open={stage === 3}
       data-settled={settled}
       data-ready={ready}
+      data-asset-failed={assetFailed}
+      data-paper-failed={failed.has("paper")}
       data-instant={instant}
       data-mood={mood}
       data-gesture={stationery.gesture}
+      style={
+        {
+          ...letterPaletteStyle(mood),
+          "--letter-stock-filter": `url("#${stockFilterId}")`,
+        } as CSSProperties
+      }
       aria-label="A private letter"
     >
+      <svg
+        className="ceremony-stock-filter"
+        width="0"
+        height="0"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <defs>
+          <filter
+            id={stockFilterId}
+            x="0"
+            y="0"
+            width="1"
+            height="1"
+            colorInterpolationFilters="sRGB"
+          >
+            <feColorMatrix type="matrix" values={paperToneMatrix(LETTER_PALETTES[mood].paper)} />
+          </filter>
+        </defs>
+      </svg>
       <div className="ceremony-intro" aria-hidden={stage === 3}>
         <p>Someone wrote this for you.</p>
         <span>Take a moment. It’s yours to open.</span>
@@ -144,42 +156,65 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
       <div className="ceremony-envelope-stage" aria-hidden={stage === 3}>
         <div
           className="ceremony-photo"
-          style={{ "--flap-hinge": `${stationery.hinge * 100}%` } as CSSProperties}
+          style={
+            {
+              "--flap-hinge": `${stationery.hinge * 100}%`,
+              "--closure-x": `${stationery.anchors.closure[0] * 100}%`,
+              "--closure-y": `${stationery.anchors.closure[1] * 100}%`,
+            } as CSSProperties
+          }
         >
-          <img
-            className="ceremony-photo-original"
-            src={`/assets/letter-world/${mood}.webp`}
-            alt=""
-          />
           {LAYERS.map((name) => (
-            // biome-ignore lint/a11y/noAriaHiddenOnFocusable: decorative canvas has no tabindex
-            <canvas
+            <img
               key={name}
               className={`ceremony-photo-layer photo-${name}`}
-              ref={(element) => {
-                if (element) canvases.current[name] = element;
-              }}
-              aria-hidden="true"
+              src={stationery.assets[name]}
+              alt=""
+              hidden={failed.has(stationery.assets[name])}
+              onLoad={() => imageLoaded(stationery.assets[name])}
+              onError={() => imageFailed(stationery.assets[name])}
             />
           ))}
-          <div className="ceremony-folded-letter" aria-hidden="true">
-            <img src="/assets/letter-world/letter-paper.webp" alt="" />
+          {stationery.cut.map((clip, index) => (
+            <img
+              key={clip}
+              className={`ceremony-photo-layer photo-closure-${index === 0 ? "left" : "right"}`}
+              src={stationery.assets.closure}
+              alt=""
+              style={{ clipPath: clip }}
+              hidden={failed.has(stationery.assets.closure)}
+              onLoad={() => imageLoaded(stationery.assets.closure)}
+              onError={() => imageFailed(stationery.assets.closure)}
+            />
+          ))}
+          <div
+            className="ceremony-folded-letter"
+            aria-hidden="true"
+            style={rectStyle(stationery.anchors.insert)}
+          >
+            <img
+              src="/assets/letter-world/letter-paper.webp"
+              alt=""
+              hidden={failed.has("paper")}
+              onError={() => imageFailed("paper")}
+            />
             <span>For you.</span>
           </div>
-          {stage === 2 && (
+          {stage === 2 && !assetFailed && (
             <button
               ref={nextAction}
               className="ceremony-hotspot letter-hotspot"
+              style={rectStyle(stationery.targets.letter)}
               type="button"
               onClick={(event) => advance(event.detail)}
               aria-label="Unfold your letter"
             />
           )}
-          {stage < 2 && (
+          {stage < 2 && !assetFailed && (
             <button
               ref={nextAction}
               className={`ceremony-hotspot ${stage === 0 ? "closure-hotspot" : "flap-hotspot"}`}
-              style={stage === 0 ? hotspot : undefined}
+              style={rectStyle(stage === 0 ? stationery.targets.closure : stationery.targets.flap)}
               type="button"
               onClick={(event) => advance(event.detail)}
               aria-label={action}
@@ -191,11 +226,13 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
       {stage < 3 && (
         <div className="ceremony-controls">
           <output className="ceremony-cue" aria-live="polite">
-            {stage === 0
-              ? "A little something, just for you."
-              : stage === 1
-                ? stationery.released
-                : "There it is. Pull the letter out."}
+            {assetFailed
+              ? "Your letter is ready to read."
+              : stage === 0
+                ? "A little something, just for you."
+                : stage === 1
+                  ? stationery.released
+                  : "There it is. Pull the letter out."}
           </output>
           <button
             type="button"
@@ -231,7 +268,12 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
           <div className="ceremony-paper-folds" aria-hidden="true">
             {[0, 1, 2].map((fold) => (
               <div key={fold} className={`ceremony-paper-panel paper-panel-${fold}`}>
-                <img src="/assets/letter-world/letter-paper.webp" alt="" />
+                <img
+                  src="/assets/letter-world/letter-paper.webp"
+                  alt=""
+                  hidden={failed.has("paper")}
+                  onError={() => imageFailed("paper")}
+                />
               </div>
             ))}
           </div>

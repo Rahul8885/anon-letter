@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-02T19:06:06.674Z",
+  "checkedAt": "2026-10-05T07:33:55.280Z",
   "results": [
     {
       "mood": "soft-bloom",
@@ -69,14 +69,11 @@
   "draftPreserved": true,
   "reducedMotionAllThemes": true,
   "liveReducedMotion": true,
-  "canvasFallback": true,
+  "assetFailureFallback": true,
+  "closureOnlyMovement": true,
+  "staticLayers": true,
+  "largerInsert": true,
   "horizontalOverflow": false,
   "browserErrors": [],
-  "posts": [],
-  "assetLinksVerified": 19,
-  "lint": true,
-  "typecheck": true,
-  "productionBuild": true,
-  "unusedAssetsRemoved": 18,
-  "cleanupMB": 66.4
+  "posts": []
 }

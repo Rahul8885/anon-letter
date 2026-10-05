@@ -35,6 +35,11 @@ ehthumbs.db
 # Editors
 .vscode/
 .idea/
+
+# Local agent skills (installation commands are in PROJECT-SKILLS.txt)
+.agents/skills/
+.claude/skills/
+skills-lock.json
 *.suo
 *.ntvs*
 *.njsproj

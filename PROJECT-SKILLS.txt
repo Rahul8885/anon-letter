@@ -1,0 +1,55 @@
+Project-local agent skills
+Recorded: 2026-10-05
+
+Run these commands from the repository root with Node.js/npm (npx) and Git installed.
+They install project-local copies for Codex and Claude Code. The skill folders and
+generated skills-lock.json are ignored by Git; this file is the tracked inventory.
+
+brandkit
+npx skills add Leonxlnx/taste-skill --skill brandkit --agent codex claude-code --copy --yes
+
+design-taste-frontend
+npx skills add Leonxlnx/taste-skill --skill design-taste-frontend --agent codex claude-code --copy --yes
+
+design-taste-frontend-v1
+npx skills add Leonxlnx/taste-skill --skill design-taste-frontend-v1 --agent codex claude-code --copy --yes
+
+full-output-enforcement
+npx skills add Leonxlnx/taste-skill --skill full-output-enforcement --agent codex claude-code --copy --yes
+
+gpt-taste
+npx skills add Leonxlnx/taste-skill --skill gpt-taste --agent codex claude-code --copy --yes
+
+high-end-visual-design
+npx skills add Leonxlnx/taste-skill --skill high-end-visual-design --agent codex claude-code --copy --yes
+
+image-to-code
+npx skills add Leonxlnx/taste-skill --skill image-to-code --agent codex claude-code --copy --yes
+
+imagegen-frontend-mobile
+npx skills add Leonxlnx/taste-skill --skill imagegen-frontend-mobile --agent codex claude-code --copy --yes
+
+imagegen-frontend-web
+npx skills add Leonxlnx/taste-skill --skill imagegen-frontend-web --agent codex claude-code --copy --yes
+
+industrial-brutalist-ui
+npx skills add Leonxlnx/taste-skill --skill industrial-brutalist-ui --agent codex claude-code --copy --yes
+
+interaction-design
+npx skills add wshobson/agents --skill interaction-design --agent codex claude-code --copy --yes
+
+interface-design
+npx skills add Dammyjay93/interface-design --skill interface-design --agent codex claude-code --copy --yes
+
+minimalist-ui
+npx skills add Leonxlnx/taste-skill --skill minimalist-ui --agent codex claude-code --copy --yes
+
+redesign-existing-projects
+npx skills add Leonxlnx/taste-skill --skill redesign-existing-projects --agent codex claude-code --copy --yes
+
+stitch-design-taste
+npx skills add Leonxlnx/taste-skill --skill stitch-design-taste --agent codex claude-code --copy --yes
+
+Commands install the source repositories' current versions.
+List local installations: npx skills list
+CLI reference: https://github.com/vercel-labs/skills#readme

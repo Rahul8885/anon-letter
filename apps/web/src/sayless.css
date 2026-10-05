@@ -989,16 +989,16 @@ svg {
   color: var(--muted);
 }
 .preview-toolbar {
-  background: var(--paper);
-  color: var(--ink-soft);
+  background: var(--room-bg);
+  color: var(--room-text);
 }
 .preview-toolbar strong {
-  color: var(--ink);
+  color: var(--room-text);
   font-family: var(--font-body);
   font-size: 1rem;
 }
 .preview-toolbar p {
-  color: var(--muted);
+  color: var(--room-muted);
 }
 .preview-link:hover {
   color: var(--rose);
@@ -1153,18 +1153,18 @@ svg {
   margin: 24px auto 0;
 }
 .ceremony-letter .letter-body {
-  color: #403b37;
+  color: var(--letter-ink);
 }
 .ceremony-letter .letter-lead {
-  color: #171514;
+  color: var(--letter-ink);
 }
 .ceremony-letter .letter-greeting,
 .ceremony-letter .letter-salutation,
 .ceremony-letter .letter-sign {
-  color: #756d67;
+  color: var(--letter-secondary);
 }
 .ceremony-letter .letter-rule {
-  background: var(--rose-deep);
+  background: var(--letter-secondary);
 }
 .room-tactile .report-btn,
 .room-tactile .rail-link {
@@ -1182,7 +1182,7 @@ svg {
   padding: 8px 0;
   background: transparent;
   border: 0;
-  color: var(--rose-deep);
+  color: var(--letter-secondary);
   font-size: .85rem;
   cursor: pointer;
   text-decoration: underline;
@@ -1197,8 +1197,8 @@ svg {
   text-transform: none;
 }
 .room[data-mood="night-thought"] .ceremony-letter {
-  --room-text: #403b37;
-  --room-muted: #756d67;
+  --room-text: var(--letter-ink);
+  --room-muted: var(--letter-secondary);
 }
 .room[data-mood="night-thought"] .ceremony-letter .letter-body {
   font-weight: 400;
@@ -1604,7 +1604,7 @@ svg {
 .ceremony-letter .letter-greeting,
 .ceremony-letter .letter-salutation,
 .ceremony-letter .letter-sign {
-  color: var(--ink-soft);
+  color: var(--letter-secondary);
 }
 .ceremony-letter .letter-sign {
   font-family: var(--font-body);
@@ -1619,7 +1619,7 @@ svg {
   }
 }
 
-/* Three recipient gestures, using the existing photographed materials. */
+/* Three recipient gestures with registered, transparent stationery assets. */
 .ceremony-staged {
   position: relative;
   isolation: isolate;
@@ -1657,10 +1657,10 @@ svg {
   position: absolute;
   inset: 0;
   perspective: 1400px;
-  transform-style: preserve-3d;
+  transform-style: flat;
   transition: transform .8s cubic-bezier(0.22, 1, 0.36, 1), opacity .65s;
 }
-.ceremony-photo-original,
+/* Alpha comes from the asset; no runtime masking or paper replacement. */
 .ceremony-photo-layer {
   position: absolute;
   inset: 0;
@@ -1669,27 +1669,17 @@ svg {
   height: 100%;
   object-fit: fill;
   pointer-events: none;
-}
-.ceremony-photo-original {
-  z-index: 55;
-  transition: opacity .1s;
-}
-.ceremony-staged[data-ready="true"]:not([data-stage="0"]) .ceremony-photo-original {
   opacity: 0;
 }
-.ceremony-photo-layer {
-  opacity: 0;
-}
-.ceremony-staged[data-ready="true"] .ceremony-photo-layer {
-  opacity: 1;
-}
-.photo-interior {
-  z-index: 10;
-}
+.ceremony-photo-layer[hidden],
+.ceremony-folded-letter img[hidden],
+.ceremony-paper-panel img[hidden] { display: none; }
+.ceremony-staged[data-ready="true"] .ceremony-photo-layer { opacity: 1; }
+.photo-back { z-index: 10; }
 .photo-pocket {
   z-index: 30;
 }
-.photo-flap {
+.photo-flap-front {
   z-index: 40;
   transform-origin: 50% var(--flap-hinge);
   transition: transform .85s cubic-bezier(0.22, 1, 0.36, 1), filter .85s;
@@ -1699,11 +1689,14 @@ svg {
 .photo-closure-left,
 .photo-closure-right {
   z-index: 50;
-  transition: transform .7s cubic-bezier(0.22, 1, 0.36, 1), opacity .55s .12s;
+  transform-origin: var(--closure-x) var(--closure-y);
 }
+.ceremony-staged[data-ready="true"][data-stage="0"][data-gesture="band"] .photo-closure-left,
+.ceremony-staged[data-ready="true"][data-stage="0"][data-gesture="band"] .photo-closure-right { opacity: .72; }
 .ceremony-staged:not([data-stage="0"]) .photo-closure-left,
 .ceremony-staged:not([data-stage="0"]) .photo-closure-right {
   opacity: 0;
+  transition: transform .7s cubic-bezier(0.22, 1, 0.36, 1), opacity .55s .12s;
 }
 .ceremony-staged[data-gesture="wax"]:not([data-stage="0"]) .photo-closure-left {
   transform: translate(-5%, 7%) rotate(-14deg);
@@ -1731,8 +1724,8 @@ svg {
 .ceremony-staged[data-gesture="tape"]:not([data-stage="0"]) .photo-closure-right {
   transform: translate(-8%, -15%) rotate(-22deg) rotateY(42deg);
 }
-.ceremony-staged[data-stage="2"] .photo-flap,
-.ceremony-staged[data-stage="3"] .photo-flap {
+.ceremony-staged[data-stage="2"] .photo-flap-front,
+.ceremony-staged[data-stage="3"] .photo-flap-front {
   z-index: 12;
   transform: rotateX(162deg);
   filter: brightness(0.92);
@@ -1764,19 +1757,19 @@ svg {
 .ceremony-folded-letter {
   position: absolute;
   z-index: 20;
-  left: 27%;
-  top: 35%;
-  width: 46%;
-  height: 56%;
+  left: 11%;
+  top: 14%;
+  width: 78%;
+  height: 72%;
   padding: 0;
   background: transparent;
   border: 0;
   opacity: 0;
-  transform: translateY(16%);
+  transform: translateY(18%);
   transition: transform .65s .15s cubic-bezier(0.22, 1, 0.36, 1), opacity .3s;
   pointer-events: none;
   cursor: pointer;
-  color: #403b37;
+  color: var(--letter-ink);
 }
 .ceremony-folded-letter img {
   display: block;
@@ -1794,7 +1787,7 @@ svg {
 }
 .ceremony-staged[data-stage="2"] .ceremony-folded-letter {
   opacity: 1;
-  transform: translateY(-21%);
+  transform: translateY(0);
   pointer-events: none;
 }
 .ceremony-controls {
@@ -1858,6 +1851,7 @@ svg {
   left: 0;
   right: 0;
   height: 33.3334%;
+  background: transparent;
   overflow: hidden;
   transform-origin: center top;
   backface-visibility: hidden;
@@ -1974,7 +1968,7 @@ svg {
   opacity: 0;
 }
 
-.ceremony-staged[data-ready="true"] .photo-flap-inner {
+.ceremony-staged[data-ready="true"] .photo-flap-back {
   z-index: 12;
   opacity: 0;
   transform: rotateX(0deg);
@@ -1982,8 +1976,8 @@ svg {
   backface-visibility: visible;
   transition: transform .85s cubic-bezier(0.22, 1, 0.36, 1), opacity .1s;
 }
-.ceremony-staged[data-ready="true"][data-stage="2"] .photo-flap-inner,
-.ceremony-staged[data-ready="true"][data-stage="3"] .photo-flap-inner {
+.ceremony-staged[data-ready="true"][data-stage="2"] .photo-flap-back,
+.ceremony-staged[data-ready="true"][data-stage="3"] .photo-flap-back {
   opacity: 1;
   transform: rotateX(162deg);
 }
@@ -2027,14 +2021,14 @@ svg {
 }
 
 .letter-hotspot {
-  left: 29%;
-  top: 24%;
-  width: 42%;
+  left: 30%;
+  top: 18%;
+  width: 40%;
   height: 18%;
   border-radius: 3px;
 }
 .ceremony-photo:has(.letter-hotspot:hover) .ceremony-folded-letter {
-  transform: translateY(-25%);
+  transform: translateY(-3%);
 }
 
 .ceremony-staged[data-instant="true"] .ceremony-letter-content * {
@@ -2043,4 +2037,27 @@ svg {
 }
 
 .ceremony-folded-letter span { text-align: center; }
-.flap-hotspot { height: 78%; }
+.ceremony-staged[data-asset-failed="true"] .ceremony-photo { opacity: 0; }
+
+.ceremony-staged[data-paper-failed="true"] .ceremony-folded-letter,
+.ceremony-staged[data-paper-failed="true"] .ceremony-paper-panel { background: var(--letter-paper); }
+
+/* The same stock and ink follow the letter from the composer to the reader. */
+.ceremony-stock-filter { position: absolute; pointer-events: none; }
+.ceremony-folded-letter img,
+.ceremony-paper-panel img { filter: var(--letter-stock-filter, none); }
+.preview-card.room-compact {
+  background: var(--letter-paper);
+}
+.receiver-preview { background: var(--room-bg); }
+.receiver-preview .preview-toolbar { border-color: var(--room-border); }
+.receiver-preview .preview-toolbar .btn-secondary {
+  color: var(--room-text);
+  border-color: var(--room-muted);
+}
+.receiver-preview .preview-toolbar .btn-secondary:hover { background: var(--room-border); }
+.ceremony-letter-content ::selection {
+  color: var(--letter-paper);
+  background: var(--letter-ink);
+}
+.ceremony-letter .caret { background: var(--letter-ink); }

@@ -1,14 +1,18 @@
-# SAYLESS stationery assets
+﻿# SAYLESS stationery assets
 
-- `soft-bloom.webp`: Pre-existing ImageGen concept artwork from prototypes/physical-letter/assets/soft-bloom.png. Exact original generation prompt recorded in adjacent soft-bloom.prompt.txt. Optimized to WebP for the SAYLESS redesign; composition and alpha preserved.
-- `old-letter.webp`: Pre-existing ImageGen concept artwork from prototypes/physical-letter/assets/old-letter.png. Exact original generation prompt recorded in adjacent old-letter.prompt.txt. Optimized to WebP for the SAYLESS redesign; composition and alpha preserved.
-- `night-thought.webp`: Pre-existing ImageGen concept artwork from prototypes/physical-letter/assets/night-thought.png. Exact original generation prompt recorded in adjacent night-thought.prompt.txt. Optimized to WebP for the SAYLESS redesign; composition and alpha preserved.
-- `quiet-garden.webp`: Pre-existing ImageGen concept artwork from prototypes/physical-letter/assets/quiet-garden.png. Exact original generation prompt recorded in adjacent quiet-garden.prompt.txt. Optimized to WebP for the SAYLESS redesign; composition and alpha preserved.
-- `confetti-love.webp`: Pre-existing ImageGen concept artwork from prototypes/physical-letter/assets/confetti-love.png. Exact original generation prompt recorded in adjacent confetti-love.prompt.txt. Optimized to WebP for the SAYLESS redesign; composition and alpha preserved.
-- `letter-paper.webp`: Pre-existing ImageGen concept artwork from prototypes/physical-letter/assets/letter-paper.png. Exact original generation prompt recorded in adjacent letter-paper.prompt.txt. Optimized to WebP for the SAYLESS redesign; composition and alpha preserved.
-- `envelope-rose.webp`: Pre-existing ImageGen concept artwork from apps/web/public/assets/editorial/blush-envelope.png. Original source record: apps/web/public/assets/editorial/GENERATED.md. Optimized to WebP; composition and alpha preserved.
-- `flower-stem.webp`: Pre-existing ImageGen concept artwork from apps/web/public/assets/quiet-garden-stem.png; original source record apps/web/public/assets/GENERATED.md. Optimized to WebP; composition and alpha preserved.
+Concept artwork was generated with the built-in ImageGen tool. Production images use
+WebP with their composition and alpha preserved. Generation prompts and metadata were
+removed during repository cleanup.
 
-- `envelope-open.webp`: matching open-flap edit made with the built-in ImageGen tool; reference `apps/web/public/assets/editorial/blush-envelope.png`; exact prompt in `envelope-open.prompt.txt`.
+- The five assembled mood envelopes are used by home, mood selection, success, and the
+  physical-letter prototype.
+- envelope-rose.webp and envelope-open.webp provide the home hero's closed/open views.
+- flower-stem.webp provides the hero botanical artwork.
+- letter-paper.webp supplies the home, editor, prototype, and recipient paper texture.
+  Recipient stock receives a native SVG color treatment per theme.
+- layers/<mood>/ contains five independent transparent components for each recipient
+  envelope. Each uses a registered 1200x800 frame. See layers/README.md for coordinates.
 
-The original PNG duplicates and abandoned editorial artwork were removed after the recipient interaction update. Original prompt records remain in `prototypes/physical-letter/assets` and adjacent `.webp.json` files. All opening layers are cut and restored in browser memory from these WebP photos; no animation frame images are shipped.
+Night Thought's pocket was revised with ImageGen to remove diagonal seams and retain
+one horizontal opening. Its material, button anchor, and gold star are preserved.
+Runtime recipient repainting and animation frame images are not used.

@@ -44,6 +44,6 @@ The mood picker uses radio semantics and roving focus; arrows, Home and End sele
 
 ## Asset provenance and acceptance
 
-Artwork source records and generation prompts: `apps/web/public/assets/letter-world/SOURCES.md` and colocated prompt sidecars. Mood samples: `soft-bloom.webp`, `old-letter.webp`, `night-thought.webp`, `quiet-garden.webp`, `confetti-love.webp`. Hero: `envelope-rose.webp`, `envelope-open.webp`, `letter-paper.webp`, `flower-stem.webp`.
+Artwork usage and provenance: `apps/web/public/assets/letter-world/SOURCES.md`. Generation prompts and metadata were removed during cleanup. Mood samples: `soft-bloom.webp`, `old-letter.webp`, `night-thought.webp`, `quiet-garden.webp`, `confetti-love.webp`. Hero: `envelope-rose.webp`, `envelope-open.webp`, `letter-paper.webp`, `flower-stem.webp`.
 
 This brief was verified against the final component/CSS sources, including the actual open-flap photograph and soft-ink text correction. Independent final reviewer verdict: **ship**. Product promises, delivery logic and drafts remain governed by existing product and application code.

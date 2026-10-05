@@ -1,5 +1,6 @@
 import type { TemplateId } from "@anonletter/shared";
 import type { CSSProperties, ReactNode } from "react";
+import { letterPaletteStyle } from "../../lib/letterPalette";
 import { room } from "../../lib/moods";
 import { AmbientField } from "../ambient/AmbientField";
 
@@ -40,7 +41,14 @@ export function LetterRoom({
   style?: CSSProperties;
 }) {
   return (
-    <div className={`room ${className ?? ""}`} data-mood={mood} style={style}>
+    <div
+      className={`room ${className ?? ""}`}
+      data-mood={mood}
+      style={{
+        ...letterPaletteStyle(mood, className?.split(/\s+/).includes("room-compact")),
+        ...style,
+      }}
+    >
       <div className="room-ambience" aria-hidden="true">
         {(mood === "night-thought" || mood === "old-letter" || mood === "confetti-love") && (
           <AmbientField mood={mood} burst={burst} density={0.6} />

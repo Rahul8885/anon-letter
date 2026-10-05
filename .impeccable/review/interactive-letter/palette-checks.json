@@ -1,0 +1,131 @@
+{
+  "checkedAt": "2026-10-05T07:32:06.998Z",
+  "results": [
+    {
+      "mood": "soft-bloom",
+      "width": 1440,
+      "canvas": "#f3e7e3",
+      "paper": "#f0dcd7",
+      "ink": "#4b2d35",
+      "secondary": "#6d4a54",
+      "text": "#4b2d35",
+      "muted": "#76535c",
+      "bodyContrast": 9.226073191086037,
+      "secondaryContrast": 5.774077698227991
+    },
+    {
+      "mood": "old-letter",
+      "width": 1440,
+      "canvas": "#f3ead8",
+      "paper": "#ead8b5",
+      "ink": "#47331d",
+      "secondary": "#6e5333",
+      "text": "#47331d",
+      "muted": "#735a3c",
+      "bodyContrast": 8.519866274939467,
+      "secondaryContrast": 5.083967439505153
+    },
+    {
+      "mood": "night-thought",
+      "width": 1440,
+      "canvas": "#171e2b",
+      "paper": "#cad5e5",
+      "ink": "#263348",
+      "secondary": "#4c5c74",
+      "text": "#d7e0ed",
+      "muted": "#a1b1c8",
+      "bodyContrast": 8.584580513252188,
+      "secondaryContrast": 4.582148736691544
+    },
+    {
+      "mood": "quiet-garden",
+      "width": 1440,
+      "canvas": "#e7ebde",
+      "paper": "#d6dfc8",
+      "ink": "#34442a",
+      "secondary": "#4e5e42",
+      "text": "#34442a",
+      "muted": "#59694d",
+      "bodyContrast": 7.60023998534184,
+      "secondaryContrast": 5.076528805842886
+    },
+    {
+      "mood": "confetti-love",
+      "width": 1440,
+      "canvas": "#f8efd6",
+      "paper": "#f4dfab",
+      "ink": "#4d3620",
+      "secondary": "#725230",
+      "text": "#4d3620",
+      "muted": "#795a36",
+      "bodyContrast": 8.577822425837804,
+      "secondaryContrast": 5.3926877725924305
+    },
+    {
+      "mood": "soft-bloom",
+      "width": 390,
+      "canvas": "#f3e7e3",
+      "paper": "#f0dcd7",
+      "ink": "#4b2d35",
+      "secondary": "#6d4a54",
+      "text": "#4b2d35",
+      "muted": "#76535c",
+      "bodyContrast": 9.226073191086037,
+      "secondaryContrast": 5.774077698227991
+    },
+    {
+      "mood": "old-letter",
+      "width": 390,
+      "canvas": "#f3ead8",
+      "paper": "#ead8b5",
+      "ink": "#47331d",
+      "secondary": "#6e5333",
+      "text": "#47331d",
+      "muted": "#735a3c",
+      "bodyContrast": 8.519866274939467,
+      "secondaryContrast": 5.083967439505153
+    },
+    {
+      "mood": "night-thought",
+      "width": 390,
+      "canvas": "#171e2b",
+      "paper": "#cad5e5",
+      "ink": "#263348",
+      "secondary": "#4c5c74",
+      "text": "#d7e0ed",
+      "muted": "#a1b1c8",
+      "bodyContrast": 8.584580513252188,
+      "secondaryContrast": 4.582148736691544
+    },
+    {
+      "mood": "quiet-garden",
+      "width": 390,
+      "canvas": "#e7ebde",
+      "paper": "#d6dfc8",
+      "ink": "#34442a",
+      "secondary": "#4e5e42",
+      "text": "#34442a",
+      "muted": "#59694d",
+      "bodyContrast": 7.60023998534184,
+      "secondaryContrast": 5.076528805842886
+    },
+    {
+      "mood": "confetti-love",
+      "width": 390,
+      "canvas": "#f8efd6",
+      "paper": "#f4dfab",
+      "ink": "#4d3620",
+      "secondary": "#725230",
+      "text": "#4d3620",
+      "muted": "#795a36",
+      "bodyContrast": 8.577822425837804,
+      "secondaryContrast": 5.3926877725924305
+    }
+  ],
+  "reducedMotion": true,
+  "previewPalettes": true,
+  "replay": true,
+  "draftPreserved": true,
+  "browserErrors": [],
+  "posts": []
+}
