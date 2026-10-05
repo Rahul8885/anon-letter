@@ -1,10 +1,12 @@
 import type { TemplateId } from "@anonletter/shared";
 import { useRef } from "react";
 import { ROOM_LIST } from "../../lib/moods";
+import { rovingIndex } from "../../lib/roving";
 
 /**
  * Photographic stationery samples retain their own materials and palettes. Hover lifts
- * the object; selection adds an underlined name and a check without recoloring the art.
+ * the object and quiets its neighbours; selection draws a check and underlines the name
+ * without recoloring the art. The check stays mounted so it can draw in and out.
  *
  * Radiogroup with roving tabindex: arrows move, space or enter selects.
  */
@@ -20,21 +22,25 @@ export function TemplatePicker({
   const listRef = useRef<HTMLDivElement>(null);
 
   function onKeyDown(event: React.KeyboardEvent, index: number) {
-    const keys = ["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp", "Home", "End"];
-    if (!keys.includes(event.key)) return;
+    const next = rovingIndex(event.key, index, ROOM_LIST.length);
+    if (next === null) return;
     event.preventDefault();
-
-    const last = ROOM_LIST.length - 1;
-    let next = index;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown")
-      next = index === last ? 0 : index + 1;
-    if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = index === 0 ? last : index - 1;
-    if (event.key === "Home") next = 0;
-    if (event.key === "End") next = last;
 
     const target = listRef.current?.querySelectorAll<HTMLButtonElement>("[role='radio']")[next];
     target?.focus();
-    onChange(ROOM_LIST[next].id);
+    select(next, target);
+  }
+
+  /** On phones the desk becomes a swipeable row; the chosen letter slides to the middle. */
+  function select(index: number, card?: HTMLElement | null) {
+    onChange(ROOM_LIST[index].id);
+    const list = listRef.current;
+    if (!card || !list || list.scrollWidth <= list.clientWidth) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    list.scrollTo({
+      left: card.offsetLeft - (list.clientWidth - card.offsetWidth) / 2,
+      behavior: reduced ? "auto" : "smooth",
+    });
   }
 
   return (
@@ -58,9 +64,9 @@ export function TemplatePicker({
             tabIndex={selected || (!value && i === 0) ? 0 : -1}
             className={`card ${selected ? "is-selected" : ""} ${r.dark ? "is-dark" : ""}`}
             data-stationery={r.id}
-            onClick={() => onChange(r.id)}
+            onClick={(e) => select(i, e.currentTarget)}
             onKeyDown={(e) => onKeyDown(e, i)}
-            onPointerEnter={() => onPreview?.(r.id)}
+            onPointerEnter={(e) => e.pointerType === "mouse" && onPreview?.(r.id)}
             onFocus={() => onPreview?.(r.id)}
           >
             <img
@@ -71,24 +77,22 @@ export function TemplatePicker({
               loading="lazy"
             />
 
-            {selected && (
-              <span className="card-check" aria-hidden="true">
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path d="M4 12l5 5 11-11" />
-                </svg>
-              </span>
-            )}
+            <span className="card-check" aria-hidden="true">
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M4 12l5 5 11-11" pathLength={1} />
+              </svg>
+            </span>
 
             <span className="card-meta">
               <span className={`card-name card-name-${r.id}`}>{r.name}</span>

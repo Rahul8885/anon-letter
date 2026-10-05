@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { useIsCompact, useReducedMotion } from "./useReducedMotion";
 
 /**
- * Magnetic pull at 0.18 of cursor offset, elastic release. Shell buttons only —
+ * Magnetic pull at 0.18 of cursor offset, eased release (design.md bans elastic motion). Shell buttons only —
  * inside a room the buttons hold still, because the room already has its one gesture.
  */
 export function useMagnetic<T extends HTMLElement>(enabled = true, strength = 0.18) {
@@ -24,7 +24,7 @@ export function useMagnetic<T extends HTMLElement>(enabled = true, strength = 0.
     };
 
     const onLeave = () => {
-      gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.5)" });
+      gsap.to(el, { x: 0, y: 0, duration: 0.3, ease: "power3.out" });
     };
 
     el.addEventListener("pointermove", onMove);

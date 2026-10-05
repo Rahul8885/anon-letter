@@ -6,7 +6,7 @@ type Variant = "primary" | "secondary" | "quiet" | "room" | "room-quiet";
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   loading?: boolean;
-  /** Magnetic pull is a shell gesture; rooms keep their buttons still. */
+  /** Opt-in cursor pull. Off by default: paper settles, it doesn't chase the pointer. */
   magnetic?: boolean;
 }
 
@@ -19,8 +19,7 @@ export function Button({
   disabled,
   ...rest
 }: PropsWithChildren<Props>) {
-  const isShell = variant === "primary" || variant === "secondary";
-  const ref = useMagnetic<HTMLButtonElement>(magnetic ?? isShell);
+  const ref = useMagnetic<HTMLButtonElement>(magnetic ?? false);
 
   return (
     <button

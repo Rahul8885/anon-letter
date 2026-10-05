@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type PointerEvent, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 
@@ -14,9 +14,41 @@ export function Arrow({ down = false }: { down?: boolean }) {
 export function LetterScene() {
   const reduced = useReducedMotion();
   const [opened, setOpened] = useState(reduced);
+  // the drop-in plays once; afterwards open/close only transitions between resting states
+  const [settled, setSettled] = useState(reduced);
+  const scene = useRef<HTMLDivElement>(null);
+  const frame = useRef(0);
   const isOpen = reduced || opened;
+
+  /** Fine pointers only: the objects drift a few pixels, nearer ones further. */
+  function onPointerMove(event: PointerEvent<HTMLDivElement>) {
+    if (reduced || event.pointerType !== "mouse") return;
+    const el = scene.current;
+    if (!el) return;
+    const { clientX, clientY } = event;
+    cancelAnimationFrame(frame.current);
+    frame.current = requestAnimationFrame(() => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--px", ((clientX - r.left) / r.width - 0.5).toFixed(3));
+      el.style.setProperty("--py", ((clientY - r.top) / r.height - 0.5).toFixed(3));
+    });
+  }
+
+  function onPointerLeave() {
+    cancelAnimationFrame(frame.current);
+    scene.current?.style.setProperty("--px", "0");
+    scene.current?.style.setProperty("--py", "0");
+  }
+
   return (
-    <div className="hero-letter-scene" data-open={isOpen}>
+    <div
+      ref={scene}
+      className="hero-letter-scene"
+      data-open={isOpen}
+      data-settled={settled}
+      onPointerMove={onPointerMove}
+      onPointerLeave={onPointerLeave}
+    >
       <img
         className="scene-botanical"
         src="/assets/letter-world/flower-stem.webp"
@@ -35,6 +67,7 @@ export function LetterScene() {
         type="button"
         className="scene-envelope"
         onClick={() => setOpened(!opened)}
+        onAnimationEnd={() => setSettled(true)}
         aria-expanded={isOpen}
         aria-label={isOpen ? "Close the example letter" : "Open the example letter"}
         disabled={reduced}
@@ -77,9 +110,11 @@ export function EditorialHero() {
     <section className="sayless-hero" aria-labelledby="hero-title">
       <div className="hero-copy">
         <h1 id="hero-title">
-          <span>For the things</span>
-          <span>you couldn’t say</span>
-          <span>out loud.</span>
+          {["For the things", "you couldn’t say", "out loud."].map((line) => (
+            <span className="hero-line" key={line}>
+              <span>{line}</span>{" "}
+            </span>
+          ))}
         </h1>
         <p>
           Write a private letter to someone.

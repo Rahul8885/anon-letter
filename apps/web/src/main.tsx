@@ -5,6 +5,7 @@ import { App } from "./App";
 import "./styles.css";
 import "./components.css";
 import "./sayless.css";
+import "./interaction.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

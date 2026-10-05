@@ -309,14 +309,15 @@ svg {
   cursor: pointer;
   transform: rotate(-9deg);
   transition: transform 1000ms var(--ease-enter), opacity 700ms;
-  animation: envelope-settle 1000ms var(--ease-enter);
 }
 .scene-envelope img {
   display: block;
   width: 100%;
 }
-.scene-envelope:hover {
-  transform: rotate(-7deg) translateY(-5px);
+@media (hover: hover) and (pointer: fine) {
+  .scene-envelope:hover {
+    transform: rotate(-7deg) translateY(-5px);
+  }
 }
 .scene-envelope:focus-visible {
   outline-offset: -35px;
@@ -356,11 +357,6 @@ svg {
   transform: translateY(-28px) rotate(-4deg);
   opacity: 1;
   z-index: 3;
-}
-.hero-letter-scene[data-open="true"] .scene-envelope {
-  transform: translateY(230px) rotate(-13deg);
-  opacity: 0.42;
-  animation: none;
 }
 .scene-invitation {
   position: absolute;
@@ -481,9 +477,14 @@ svg {
   box-shadow: none;
   transform: none;
 }
-.stationery-picker .card:hover .stationery-sample,
-.stationery-picker .card.is-selected .stationery-sample {
+.stationery-picker .card.is-selected .stationery-sample,
+.stationery-picker .card:focus-visible .stationery-sample {
   transform: translateY(-10px) rotate(0deg);
+}
+@media (hover: hover) and (pointer: fine) {
+  .stationery-picker .card:hover .stationery-sample {
+    transform: translateY(-10px) rotate(0deg);
+  }
 }
 .stationery-picker .card-meta {
   margin-top: 22px;
@@ -1246,9 +1247,6 @@ svg {
   .how-section {
     gap: 60px;
   }
-  .stationery-picker .card-use {
-    font-size: .68rem;
-  }
 }
 @media (max-width: 760px) {
   .sayless-nav,
@@ -1293,10 +1291,6 @@ svg {
   }
   .hero-reassurance {
     margin-top: 18px;
-    font-size: .72rem;
-  }
-  .hero-reassurance span {
-    margin-inline: 4px;
   }
   .hero-letter-scene {
     height: 370px;
@@ -1338,12 +1332,11 @@ svg {
     left: 50%;
     transform: translateX(-50%);
     bottom: -2px;
-    white-space: nowrap;
-    font-size: .8rem;
+    width: max-content;
+    max-width: 100%;
   }
   .desk-scroll {
     bottom: 0;
-    font-size: .75rem;
   }
   .desk-section {
     padding-block: 72px;
@@ -1375,19 +1368,8 @@ svg {
   .stationery-picker .card-meta {
     margin-top: 10px;
   }
-  .stationery-picker .card-use {
-    font-size: .7rem;
-  }
   .mood-caption {
     margin-top: 38px;
-    align-items: center;
-  }
-  .mood-caption p span {
-    font-size: .75rem;
-  }
-  .mood-caption .text-link {
-    font-size: .8rem;
-    gap: 6px;
   }
   .how-section,
   .privacy-section,
@@ -1507,9 +1489,6 @@ svg {
   .compose-actions {
     margin-top: 40px;
   }
-  .preview-toolbar .btn {
-    font-size: .8rem;
-  }
   .room-tactile .room-inner {
     width: calc(100% - 24px);
     padding: 24px 0 36px !important;
@@ -1546,15 +1525,9 @@ svg {
   .hero-copy h1 {
     font-size: 9.5vw;
   }
-  .hero-reassurance {
-    font-size: .65rem;
-  }
   .scene-envelope {
     width: 410px;
     left: calc(50% - 200px);
-  }
-  .stationery-picker .card-use {
-    font-size: .65rem;
   }
   .ceremony-letter {
     padding-inline: 32px;

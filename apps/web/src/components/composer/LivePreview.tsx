@@ -2,6 +2,7 @@ import type { TemplateId } from "@anonletter/shared";
 import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { room } from "../../lib/moods";
+import { Arrow } from "../editorial/EditorialHero";
 import { LetterLead, LetterRoom } from "../templates/LetterRoom";
 
 /**
@@ -43,8 +44,8 @@ export function LivePreview({
         </div>
       </LetterRoom>
       {message.trim() && (
-        <Link className="preview-link" to="/preview">
-          Preview the full opening <span aria-hidden="true">↗</span>
+        <Link className="btn-outline preview-open" to="/preview">
+          Preview the full opening <Arrow />
         </Link>
       )}
       <p className="t-caption" style={{ marginTop: "var(--s4)", color: "var(--text-mute)" }}>

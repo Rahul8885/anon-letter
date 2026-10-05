@@ -1,9 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LivePreview } from "../components/composer/LivePreview";
 import { MessageSheet } from "../components/composer/MessageSheet";
 import { TemplatePicker } from "../components/composer/TemplatePicker";
+import { type SealPhase, SealEnvelope } from "../components/envelope/SealEnvelope";
 import { Button } from "../components/ui/Button";
 import { Field } from "../components/ui/Field";
 import { ProgressRail } from "../components/ui/ProgressRail";
@@ -11,9 +13,20 @@ import { Toast, type ToastMessage } from "../components/ui/Toast";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { api } from "../lib/api";
 import { ROOM_LIST, SAMPLE_MESSAGE, room } from "../lib/moods";
+import { DURATION, EASE_ENTER } from "../lib/motion";
+import { rovingIndex } from "../lib/roving";
 import { useComposerStore } from "../store/composerStore";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+/** Sealing beats, in ms from the press: tuck the letter, fold the flap, press the closure. */
+const SEAL_BEATS: [SealPhase, number][] = [
+  ["tuck", 80],
+  ["close", 720],
+  ["sealed", 1480],
+];
+const SEAL_DONE = 1950;
+const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
 const HEADINGS: Record<number, [string, string]> = {
   1: [
@@ -54,6 +67,11 @@ export function Compose() {
   });
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [emailTouched, setEmailTouched] = useState(false);
+  const [seal, setSeal] = useState<SealPhase | null>(null);
+  const sealTimers = useRef<number[]>([]);
+  const swatchRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => () => sealTimers.current.forEach(window.clearTimeout), []);
 
   const r = room(store.mood);
   const emailValid = EMAIL.test(store.recipientEmail.trim());
@@ -68,12 +86,44 @@ export function Compose() {
     (store.step === 3 && (store.deliveryMethod === "link" || emailValid)) ||
     store.step === 4;
 
+  // a disabled button says why, instead of leaving the writer to guess
+  const blockedReason = canAdvance
+    ? null
+    : store.step === 2
+      ? "Write a few words first."
+      : store.recipientEmail.trim()
+        ? "Check their email address to continue."
+        : "Add their email address, or choose to share a link.";
+
+  /** The ceremony and the request run together; whichever is slower sets the pace. */
+  function playSeal() {
+    if (reduced) {
+      setSeal("sealed");
+      return Promise.resolve();
+    }
+    setSeal("open");
+    sealTimers.current = SEAL_BEATS.map(([phase, at]) =>
+      window.setTimeout(() => setSeal(phase), at),
+    );
+    return wait(SEAL_DONE);
+  }
+
+  function onSwatchKey(event: React.KeyboardEvent, index: number) {
+    const next = rovingIndex(event.key, index, ROOM_LIST.length);
+    if (next === null) return;
+    event.preventDefault();
+    swatchRefs.current[next]?.focus();
+    store.setMood(ROOM_LIST[next].id);
+  }
+
   async function send() {
     if (store.isSubmitting) return;
     store.setSubmitting(true);
     store.setSubmitError(null);
+    setToast(null);
+    const ceremony = playSeal();
     try {
-      const result = await api.createMessage({
+      const request = api.createMessage({
         template_id: store.mood,
         message: store.message.trim(),
         delivery_method: store.deliveryMethod,
@@ -81,14 +131,21 @@ export function Compose() {
         from_hint: store.fromHint.trim() || undefined,
         accent: store.accent ?? undefined,
       });
-      navigate(`/success/${result.slug}`, {
-        state: {
-          deliveryMethod: store.deliveryMethod,
-          messageUrl: result.message_url,
-          mood: store.mood,
-        },
-      });
+      const [result] = await Promise.all([request, ceremony]);
+      const receipt = {
+        deliveryMethod: store.deliveryMethod,
+        messageUrl: result.message_url,
+        mood: store.mood,
+      };
+      // a refresh on the success page loses router state; keep the receipt for this tab
+      try {
+        sessionStorage.setItem(`sayless-receipt-${result.slug}`, JSON.stringify(receipt));
+      } catch {}
+      store.finish();
+      navigate(`/success/${result.slug}`, { state: { ...receipt, sealed: true } });
     } catch (error) {
+      for (const timer of sealTimers.current) window.clearTimeout(timer);
+      setSeal(null);
       const detail = error instanceof Error ? error.message : "Could not send this letter.";
       store.setSubmitError(detail);
       setToast({
@@ -96,6 +153,7 @@ export function Compose() {
         tone: "error",
         title: store.deliveryMethod === "email" ? "That didn't send." : "The link wasn't created.",
         detail: `${detail} Your draft is still here.`,
+        action: { label: "Try again", onClick: send },
       });
     } finally {
       store.setSubmitting(false);
@@ -132,7 +190,7 @@ export function Compose() {
               initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               exit={reduced ? { opacity: 0 } : { opacity: 0, y: -16 }}
-              transition={{ duration: reduced ? 0.12 : 0.42, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: reduced ? 0.12 : 0.42, ease: EASE_ENTER }}
             >
               <h1 className="t-h1" style={{ marginBottom: "var(--s3)" }}>
                 {heading}
@@ -160,16 +218,21 @@ export function Compose() {
                       role="radiogroup"
                       aria-label="Mood"
                     >
-                      {ROOM_LIST.map((option) => (
+                      {ROOM_LIST.map((option, index) => (
                         <button
                           key={option.id}
+                          ref={(el) => {
+                            swatchRefs.current[index] = el;
+                          }}
                           type="button"
                           role="radio"
                           aria-checked={option.id === store.mood}
                           aria-label={option.name}
+                          tabIndex={option.id === store.mood ? 0 : -1}
                           className="swatch"
                           style={{ background: option.cardGradient }}
                           onClick={() => store.setMood(option.id)}
+                          onKeyDown={(event) => onSwatchKey(event, index)}
                         />
                       ))}
                     </div>
@@ -217,20 +280,31 @@ export function Compose() {
                         </span>
                       </label>
                     </fieldset>
-                    {store.deliveryMethod === "email" && (
-                      <Field
-                        label="Their email"
-                        type="email"
-                        inputMode="email"
-                        autoComplete="off"
-                        value={store.recipientEmail}
-                        error={emailError}
-                        hint="Used once, for delivery. Never stored, never shown to them as yours."
-                        onBlur={() => setEmailTouched(true)}
-                        onChange={(e) => store.setRecipientEmail(e.target.value)}
-                        placeholder="their@email.com"
-                      />
-                    )}
+                    <AnimatePresence initial={false}>
+                      {store.deliveryMethod === "email" && (
+                        <motion.div
+                          className="field-reveal"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: DURATION.ui, ease: EASE_ENTER }}
+                        >
+                          <Field
+                            label="Their email"
+                            type="email"
+                            inputMode="email"
+                            autoComplete="off"
+                            value={store.recipientEmail}
+                            error={emailError}
+                            valid={emailValid}
+                            hint="Used once, for delivery. Never stored, never shown to them as yours."
+                            onBlur={() => setEmailTouched(true)}
+                            onChange={(e) => store.setRecipientEmail(e.target.value)}
+                            placeholder="their@email.com"
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                     <Field
                       label="Sign it (optional)"
                       maxLength={60}
@@ -256,6 +330,7 @@ export function Compose() {
                       <dt>Mood</dt>
                       <dd>
                         {r.name} — {r.useCase.toLowerCase()}
+                        <EditStep step={1} label="mood" />
                       </dd>
                     </div>
                     <div className="review-row">
@@ -264,15 +339,22 @@ export function Compose() {
                         {store.deliveryMethod === "email"
                           ? store.recipientEmail.trim()
                           : "A link for you to copy and share. No email will be sent."}
+                        <EditStep step={3} label="delivery" />
                       </dd>
                     </div>
                     <div className="review-row">
                       <dt>Signed</dt>
-                      <dd>{store.fromHint.trim() || r.signature}</dd>
+                      <dd>
+                        {store.fromHint.trim() || r.signature}
+                        <EditStep step={3} label="signature" />
+                      </dd>
                     </div>
                     <div className="review-row">
                       <dt>Length</dt>
-                      <dd>{store.message.trim().length} characters</dd>
+                      <dd>
+                        {store.message.trim().length} characters
+                        <EditStep step={2} label="message" />
+                      </dd>
                     </div>
                     <div className="review-row" style={{ borderBottom: "none" }}>
                       <dt>Kept</dt>
@@ -293,6 +375,12 @@ export function Compose() {
             </motion.div>
           </AnimatePresence>
 
+          {store.step === 4 && store.submitError && !store.isSubmitting && (
+            <p className="compose-error">
+              {store.deliveryMethod === "email" ? "That didn’t send" : "The link wasn’t created"}:{" "}
+              {store.submitError} Your draft is still here.
+            </p>
+          )}
           <div className="compose-actions">
             <Button
               variant="secondary"
@@ -303,15 +391,23 @@ export function Compose() {
             </Button>
 
             {store.step < 4 ? (
-              <Button
-                disabled={!canAdvance}
-                onClick={() => {
-                  if (store.step === 3) setEmailTouched(true);
-                  store.next();
-                }}
-              >
-                Continue
-              </Button>
+              <div className="compose-next">
+                <Button
+                  disabled={!canAdvance}
+                  aria-describedby={blockedReason ? "compose-blocked" : undefined}
+                  onClick={() => {
+                    if (store.step === 3) setEmailTouched(true);
+                    store.next();
+                  }}
+                >
+                  Continue
+                </Button>
+                {blockedReason && (
+                  <p className="compose-blocked" id="compose-blocked">
+                    {blockedReason}
+                  </p>
+                )}
+              </div>
             ) : (
               <Button loading={store.isSubmitting} onClick={send}>
                 {store.deliveryMethod === "email"
@@ -327,7 +423,40 @@ export function Compose() {
         </div>
       </div>
 
+      {createPortal(
+        <AnimatePresence>
+          {seal && (
+            <motion.div
+              className="seal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: DURATION.ui, ease: EASE_ENTER }}
+            >
+              <SealEnvelope mood={store.mood} phase={seal} />
+              <output>
+                {seal !== "sealed"
+                  ? "Sealing your letter…"
+                  : store.deliveryMethod === "email"
+                    ? "Sealed. On its way…"
+                    : "Sealed. Making your link…"}
+              </output>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
+
       <Toast toast={toast} onDismiss={() => setToast(null)} />
     </div>
+  );
+}
+
+function EditStep({ step, label }: { step: 1 | 2 | 3; label: string }) {
+  const setStep = useComposerStore((s) => s.setStep);
+  return (
+    <button type="button" className="review-edit" onClick={() => setStep(step)}>
+      Edit<span className="sr-only"> {label}</span>
+    </button>
   );
 }
