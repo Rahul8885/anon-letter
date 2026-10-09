@@ -8,6 +8,10 @@
     "dev:worker": "pnpm --filter @anonletter/worker dev",
     "build": "pnpm -r build",
     "check": "pnpm -r check",
+    "test": "vitest run",
+    "db:migrate:local": "pnpm --filter @anonletter/worker db:migrate:local",
+    "db:migrate:remote": "pnpm --filter @anonletter/worker db:migrate:remote",
+    "deploy:worker": "pnpm --filter @anonletter/worker deploy",
     "format": "biome format --write .",
     "lint": "biome check ."
   },

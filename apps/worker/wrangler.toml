@@ -2,10 +2,27 @@ name = "anonletter-worker"
 main = "src/index.ts"
 compatibility_date = "2024-09-25"
 
+# Production values. `wrangler dev` overrides any of these from apps/worker/.dev.vars.
 [vars]
-PUBLIC_BASE_URL = "http://localhost:5173"
+PUBLIC_BASE_URL = "https://REPLACE-WITH-YOUR-SITE.pages.dev"
+ALLOWED_ORIGINS = "https://REPLACE-WITH-YOUR-SITE.pages.dev"
+EMAIL_FROM = "SAYLESS <letters@REPLACE-WITH-YOUR-DOMAIN>"
+EMAIL_MODE = "resend"
+
+# Secrets — never put these in this file:
+#   wrangler secret put RESEND_API_KEY
+#   wrangler secret put IP_HASH_SALT
 
 [[d1_databases]]
 binding = "DB"
 database_name = "anonletter"
 database_id = "replace-with-d1-id"
+migrations_dir = "../../migrations"
+
+# Hard-delete expired letters and stale rate-limit rows daily at 03:00 UTC.
+[triggers]
+crons = ["0 3 * * *"]
+
+# Optional: serve the API on the same domain as the site (no CORS, no VITE_API_URL needed).
+# Requires the domain to be on Cloudflare. Uncomment and edit:
+# routes = [{ pattern = "yourdomain.com/api/*", zone_name = "yourdomain.com" }]

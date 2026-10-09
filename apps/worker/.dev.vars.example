@@ -1,0 +1,13 @@
+# Copy to apps/worker/.dev.vars (gitignored). Values here override [vars] in wrangler.toml
+# during `wrangler dev` only.
+
+PUBLIC_BASE_URL=http://localhost:5173
+ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+
+# `log` prints the letter link to the worker console instead of emailing. Switch to `resend`
+# (and set RESEND_API_KEY) to send real email locally.
+EMAIL_MODE=log
+EMAIL_FROM=SAYLESS <onboarding@resend.dev>
+RESEND_API_KEY=
+
+IP_HASH_SALT=local-dev-salt

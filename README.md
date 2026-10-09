@@ -6,8 +6,10 @@ Send someone a beautiful anonymous letter in under two minutes, no account neede
 
 ```bash
 pnpm install
-pnpm dev:web
-pnpm dev:worker
+cp apps/worker/.dev.vars.example apps/worker/.dev.vars
+pnpm db:migrate:local
+pnpm dev:worker   # API on :8787 (emails are logged to the console, not sent)
+pnpm dev:web      # site on :5173, proxies /api to the worker
 ```
 
-The web app runs on Vite. The worker runs with Wrangler and expects the environment in `.env.example`.
+Run the API tests with `pnpm test`. Production setup (Cloudflare D1, Resend, Pages, CI) is in [BACKEND_SETUP.md](BACKEND_SETUP.md).
