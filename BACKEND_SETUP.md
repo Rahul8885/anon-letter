@@ -42,6 +42,7 @@ apps/worker/
   src/lib/slug.ts          # unbiased crypto slug and validator
   src/lib/cleanup.ts       # daily purge
 migrations/0001_init.sql   # D1 schema (the source of truth)
+migrations/0002_heading.sql # optional writer heading on each letter
 .github/workflows/deploy-worker.yml
 ```
 
@@ -87,7 +88,7 @@ curl "http://localhost:8787/__scheduled?cron=0+3+*+*+*"
 
 ### Sending real email locally (optional)
 
-In `apps/worker/.dev.vars`, set `EMAIL_MODE=resend` and `RESEND_API_KEY=re_...`. Without a verified domain, keep `EMAIL_FROM=SAYLESS <onboarding@resend.dev>`. Resend only lets that sender deliver to **your own Resend account email**, so use that address as the recipient.
+In `apps/worker/.dev.vars`, set `EMAIL_MODE=resend` and `RESEND_API_KEY=re_...`. Without a verified domain, keep `EMAIL_FROM=Unsaid <onboarding@resend.dev>`. Resend only lets that sender deliver to **your own Resend account email**, so use that address as the recipient.
 
 ### Inspecting the local DB
 
@@ -147,9 +148,9 @@ Edit `[vars]` in `apps/worker/wrangler.toml`:
 
 | Var | Set it to |
 |---|---|
-| `PUBLIC_BASE_URL` | The public URL of the website, with no trailing slash, e.g. `https://sayless.pages.dev` or `https://yourdomain.com`. Letter links in emails are built from this. |
+| `PUBLIC_BASE_URL` | The public URL of the website, with no trailing slash, e.g. `https://unsaid.pages.dev` or `https://yourdomain.com`. Letter links in emails are built from this. |
 | `ALLOWED_ORIGINS` | The website origin or origins, comma-separated. Only needed if the site calls the API cross-origin (option B below). |
-| `EMAIL_FROM` | `SAYLESS <letters@your-verified-domain>` |
+| `EMAIL_FROM` | `Unsaid <letters@your-verified-domain>` |
 | `EMAIL_MODE` | `resend` |
 
 Set the secrets. They are stored encrypted in Cloudflare and never go in git:

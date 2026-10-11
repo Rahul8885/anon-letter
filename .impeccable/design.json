@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-10-02T19:08:04.623Z",
-  "title": "Design System: SAYLESS",
+  "title": "Design System: Unsaid",
   "extensions": {
     "colorMeta": {
       "paper": {
@@ -300,7 +300,7 @@
       "name": "Desk navigation",
       "kind": "nav",
       "description": "Wordmark and compact anchor links on the continuous paper surface.",
-      "html": "<nav class=\"ds-nav\" aria-label=\"SAYLESS preview\"><a class=\"ds-wordmark\" href=\"#home\">SAYLESS<span>.</span></a><a href=\"#moods\">Moods</a><a href=\"#how\">How it works</a><a href=\"#privacy\">Privacy</a></nav>",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Unsaid preview\"><a class=\"ds-wordmark\" href=\"#home\">Unsaid<span>.</span></a><a href=\"#moods\">Moods</a><a href=\"#how\">How it works</a><a href=\"#privacy\">Privacy</a></nav>",
       "css": ".ds-nav{display:flex;align-items:center;flex-wrap:wrap;gap:36px;background:var(--paper,#f7f2ea);font-family:var(--font-body,Supreme,sans-serif)}.ds-nav a{display:inline-flex;align-items:center;min-height:44px;font-size:.9375rem;color:var(--ink-soft,#403b37);text-decoration:none}.ds-nav a:hover{color:var(--rose-deep,#963746)}.ds-nav .ds-wordmark{font-family:var(--font-display,Chubbo,Georgia,serif);font-size:1.65rem;font-weight:700;letter-spacing:-.035em;color:var(--ink,#171514)}.ds-wordmark span{color:var(--rose,#b94a5d)}.ds-primary:focus-visible,.ds-outline:focus-visible,.ds-link:focus-visible,.ds-nav a:focus-visible,.ds-field input:focus-visible,.ds-quiet:focus-visible{outline:2px solid var(--rose-deep,#963746);outline-offset:5px;border-radius:4px}"
     },
     {

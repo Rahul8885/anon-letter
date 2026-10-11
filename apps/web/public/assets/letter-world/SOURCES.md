@@ -1,4 +1,4 @@
-﻿# SAYLESS stationery assets
+﻿# Unsaid stationery assets
 
 Concept artwork was generated with the built-in ImageGen tool. Production images use
 WebP with their composition and alpha preserved. Generation prompts and metadata were

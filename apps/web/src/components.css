@@ -564,11 +564,13 @@
   }
 }
 
+/* flex-start, never stretch: Back keeps its own height when Continue carries a reason below */
 .compose-actions {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: var(--s3);
-  margin-top: var(--s12);
+  margin-top: var(--s16);
   padding-top: var(--s6);
   border-top: 1px solid var(--hairline);
 }

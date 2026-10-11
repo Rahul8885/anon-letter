@@ -1,4 +1,4 @@
-# AnonLetter
+# Unsaid
 
 Send someone a beautiful anonymous letter in under two minutes, no account needed.
 

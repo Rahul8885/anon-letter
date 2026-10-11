@@ -1,6 +1,7 @@
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
+import { StaggeredText } from "./components/ui/StaggeredText";
 import { DURATION, EASE_ENTER } from "./lib/motion";
 import { Compose } from "./pages/Compose";
 import { Home } from "./pages/Home";
@@ -48,7 +49,7 @@ export function App() {
 function NotFound() {
   return (
     <div className="state-page">
-      <h1 className="t-h1">Nothing was sent here.</h1>
+      <StaggeredText as="h1" className="t-h1" text="Nothing was sent here." play />
       <p className="measure-caption" style={{ color: "var(--text-dim)" }}>
         This address doesn&rsquo;t point at a letter. If someone sent you one, the link will have
         come by email or a shared link.
@@ -58,7 +59,7 @@ function NotFound() {
           Write a letter
         </Link>
         <Link className="btn btn-secondary" to="/">
-          Go to SAYLESS
+          Go to Unsaid
         </Link>
       </div>
     </div>

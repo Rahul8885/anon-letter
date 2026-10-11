@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { TactileLetter } from "../components/envelope/TactileLetter";
 import { LetterLead, LetterRoom } from "../components/templates/LetterRoom";
+import { StaggeredText } from "../components/ui/StaggeredText";
 import { useReducedMotion } from "../hooks/useReducedMotion";
-import { useTypewriter } from "../hooks/useTypewriter";
 import { RequestError, api } from "../lib/api";
 import { SAMPLE_MESSAGE, room } from "../lib/moods";
 import { useComposerStore } from "../store/composerStore";
@@ -29,6 +29,7 @@ export function Message() {
         slug,
         template_id: templateId,
         message: SAMPLE_MESSAGE[templateId],
+        heading: null,
         from_hint: null,
         bg_color: null,
         accent: null,
@@ -82,24 +83,24 @@ export function Reveal({ data, preview = false }: { data: Data; preview?: boolea
     setOpened(true);
   }, []);
 
-  const typing = useTypewriter(data.message, {
-    start: opened,
-    instant: reduced || instant,
-  });
+  const [read, setRead] = useState(false);
+  const handleRead = useCallback(() => setRead(true), []);
+  const finished = read || instant || reduced;
+  // the words arrive at reading pace: short letters linger, long ones never take over 3s
+  const words = data.message.split(/\s+/).filter(Boolean).length;
+  const wordDelay = Math.min(70, Math.max(16, 2600 / Math.max(1, words)));
 
-  const finished = typing.done || instant || reduced;
-  const visible = instant || reduced ? data.message : typing.visible;
-
+  // the ceremony is never a hostage: any tap or key while the words arrive shows them all
   useEffect(() => {
     if (!opened || finished) return;
-    const skip = () => typing.skip();
+    const skip = () => setInstant(true);
     window.addEventListener("pointerdown", skip, { once: true });
     window.addEventListener("keydown", skip, { once: true });
     return () => {
       window.removeEventListener("pointerdown", skip);
       window.removeEventListener("keydown", skip);
     };
-  }, [opened, finished, typing.skip]);
+  }, [opened, finished]);
 
   async function report() {
     if (preview) {
@@ -127,14 +128,26 @@ export function Reveal({ data, preview = false }: { data: Data; preview?: boolea
     >
       <TactileLetter mood={data.template_id} onOpened={handleOpened} onSkip={handleSkip}>
         <div className="letter-stack">
-          <LetterLead mood={data.template_id} show={opened} />
-          <p className="letter-body">
-            <span aria-hidden="true">{visible}</span>
-            <span className="sr-only">{data.message}</span>
-            {opened && !finished && <span className="caret" />}
-          </p>
+          <LetterLead
+            mood={data.template_id}
+            heading={data.heading}
+            show={opened}
+            reveal={!instant}
+          />
+          <StaggeredText
+            className="letter-body"
+            text={data.message}
+            preserveWhitespace
+            play={opened}
+            instant={instant}
+            startDelay={420}
+            delay={wordDelay}
+            duration={0.55}
+            distance={0.25}
+            onAnimationComplete={handleRead}
+          />
           {opened && !finished && (
-            <button type="button" className="letter-reading-skip" onClick={typing.skip}>
+            <button type="button" className="letter-reading-skip" onClick={() => setInstant(true)}>
               Read the whole letter
             </button>
           )}
@@ -208,7 +221,7 @@ function LetterError({ message, onRetry }: { message: string; onRetry?: () => vo
     <div className="state-page">
       {onRetry ? (
         <>
-          <h1 className="t-h1">The letter didn&rsquo;t arrive.</h1>
+          <StaggeredText as="h1" className="t-h1" text="The letter didn’t arrive." play />
           <p className="measure-caption">
             {message} It&rsquo;s still waiting for you &mdash; check your connection and try again.
           </p>
@@ -220,7 +233,7 @@ function LetterError({ message, onRetry }: { message: string; onRetry?: () => vo
         </>
       ) : (
         <>
-          <h1 className="t-h1">This letter isn&rsquo;t here.</h1>
+          <StaggeredText as="h1" className="t-h1" text="This letter isn’t here." play />
           <p className="measure-caption">
             {message} Letters expire thirty days after they are sent, and a link only works once it
             has been created.

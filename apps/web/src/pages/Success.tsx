@@ -1,8 +1,9 @@
 import type { TemplateId } from "@anonletter/shared";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { type SealPhase, SealEnvelope } from "../components/envelope/SealEnvelope";
+import { SealEnvelope, type SealPhase } from "../components/envelope/SealEnvelope";
 import { Button } from "../components/ui/Button";
+import { StaggeredText } from "../components/ui/StaggeredText";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { room } from "../lib/moods";
 import { useComposerStore } from "../store/composerStore";
@@ -18,7 +19,7 @@ interface Receipt {
 function readReceipt(slug: string | undefined, state: unknown): Receipt | null {
   if (state) return state as Receipt;
   try {
-    const stored = sessionStorage.getItem(`sayless-receipt-${slug ?? ""}`);
+    const stored = sessionStorage.getItem(`unsaid-receipt-${slug ?? ""}`);
     return stored ? (JSON.parse(stored) as Receipt) : null;
   } catch {
     return null;
@@ -114,21 +115,18 @@ export function Success() {
             {emailDelivery ? "Sent" : "Link ready"} — {time}
           </p>
 
-          <h1 className="t-h1" style={{ margin: "var(--s4) 0 var(--s4)" }}>
-            {emailDelivery ? (
-              <>
-                It&rsquo;s out of
-                <br />
-                <em className="t-em">your hands now.</em>
-              </>
-            ) : (
-              <>
-                Your letter is sealed.
-                <br />
-                <em className="t-em">Pass it along.</em>
-              </>
-            )}
-          </h1>
+          <StaggeredText
+            as="h1"
+            className="t-h1 success-title"
+            text={
+              emailDelivery
+                ? "It’s out of\nyour hands now."
+                : "Your letter is sealed.\nPass it along."
+            }
+            emphasis={[1]}
+            play
+            startDelay={240}
+          />
 
           <p
             className="measure-caption"

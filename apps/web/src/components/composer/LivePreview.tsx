@@ -13,11 +13,13 @@ import { LetterLead, LetterRoom } from "../templates/LetterRoom";
 export function LivePreview({
   mood,
   message,
+  heading,
   fromHint,
   accent,
 }: {
   mood: TemplateId;
   message: string;
+  heading: string | null;
   fromHint: string;
   accent?: string | null;
 }) {
@@ -25,9 +27,7 @@ export function LivePreview({
 
   return (
     <div>
-      <p className="t-label" style={{ color: "var(--text-dim)", marginBottom: "var(--s4)" }}>
-        What they&rsquo;ll see
-      </p>
+      <p className="preview-label">What they&rsquo;ll see</p>
       <LetterRoom
         className="preview-card room-compact"
         mood={mood}
@@ -35,7 +35,7 @@ export function LivePreview({
         style={accent ? ({ "--room-accent": accent } as CSSProperties) : undefined}
       >
         <div className="letter-stack">
-          <LetterLead mood={mood} show />
+          <LetterLead mood={mood} show heading={heading} />
           <p className="letter-body">
             {message || "Your words will settle here as you write them."}
           </p>
@@ -48,7 +48,7 @@ export function LivePreview({
           Preview the full opening <Arrow />
         </Link>
       )}
-      <p className="t-caption" style={{ marginTop: "var(--s4)", color: "var(--text-mute)" }}>
+      <p className="preview-note">
         Switch mood at any time — your words stay exactly where they are.
       </p>
     </div>

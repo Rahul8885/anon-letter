@@ -94,7 +94,7 @@ export function buildEmail(opts: {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:56px 20px;background:#0b0c1a;">
       <tr><td align="center">
         <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;background:#131525;border:1px solid rgba(139,144,208,.18);border-radius:6px;">
-          <tr><td style="padding:44px 46px 16px;text-align:center;color:${opts.accent};font:11px Arial,sans-serif;letter-spacing:.3em;text-transform:uppercase;">SAYLESS</td></tr>
+          <tr><td style="padding:44px 46px 16px;text-align:center;color:${opts.accent};font:11px Arial,sans-serif;letter-spacing:.3em;text-transform:uppercase;">Unsaid</td></tr>
           <tr><td style="padding:22px 46px 40px;">
             <h1 style="margin:0 0 16px;font-size:30px;line-height:1.25;font-weight:300;font-style:italic;color:#c8caf0;">Someone wrote you a letter.</h1>
             <p style="margin:0 0 30px;font:14px/1.8 Arial,sans-serif;color:rgba(200,202,240,.62);">It arrived ${hintHtml}. Open it when you are ready. No one will know you've read it.</p>

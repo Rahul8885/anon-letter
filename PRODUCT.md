@@ -28,7 +28,7 @@ Neither has an account. Neither will read documentation. The product gets one sh
 
 ## Product Purpose
 
-AnonLetter delivers a designed, anonymous letter to a stranger's inbox in under two minutes.
+Unsaid delivers a designed, anonymous letter to a stranger's inbox in under two minutes.
 
 The recipient's email address is passed to the delivery provider and discarded — it is never
 written to the database. That is not a feature bullet; it is the load-bearing promise, and the

@@ -4,6 +4,7 @@ import { type CSSProperties, useEffect, useId, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { TemplatePicker } from "../components/composer/TemplatePicker";
 import { Arrow, EditorialHero } from "../components/editorial/EditorialHero";
+import { StaggeredText } from "../components/ui/StaggeredText";
 import { useReveal } from "../hooks/useReveal";
 import { LETTER_PALETTES, letterPaletteStyle, paperToneMatrix } from "../lib/letterPalette";
 import { SAMPLE_MESSAGE, room } from "../lib/moods";
@@ -46,13 +47,13 @@ export function Home() {
   useReveal(site);
 
   return (
-    <div className="sayless-site" ref={site}>
+    <div className="unsaid-site" ref={site}>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="sayless-nav">
-        <Link className="sayless-wordmark" to="/" aria-label="SAYLESS home">
-          SAYLESS<span className="wordmark-period">.</span>
+      <header className="unsaid-nav">
+        <Link className="unsaid-wordmark" to="/" aria-label="Unsaid, home">
+          Unsaid<span className="wordmark-period">.</span>
         </Link>
         <nav aria-label="Main navigation">
           <a href="#moods">Moods</a>
@@ -67,7 +68,7 @@ export function Home() {
         <EditorialHero />
         <section className="desk-section mood-section" id="moods" aria-labelledby="moods-title">
           <div className="desk-heading" data-reveal>
-            <h2 id="moods-title">Choose a feeling.</h2>
+            <StaggeredText as="h2" id="moods-title" text="Choose a feeling." />
             <p>Five rooms for five different ways of saying something.</p>
           </div>
           <div className="mood-desk" data-reveal="desk">
@@ -89,13 +90,7 @@ export function Home() {
         </section>
         <section className="desk-section how-section" id="how" aria-labelledby="how-title">
           <div className="how-intro" data-reveal>
-            <h2 id="how-title">
-              Write it.
-              <br />
-              Send it.
-              <br />
-              Let it go.
-            </h2>
+            <StaggeredText as="h2" id="how-title" text={"Write it.\nSend it.\nLet it go."} />
             <p>Some things are easier to say on paper.</p>
           </div>
           <ol className="letter-steps" data-reveal="steps">
@@ -127,7 +122,7 @@ export function Home() {
             </div>
           </div>
           <div className="privacy-copy" data-reveal>
-            <h2 id="privacy-title">Anonymous means anonymous.</h2>
+            <StaggeredText as="h2" id="privacy-title" text="Anonymous means anonymous." />
             <p>
               You don’t need an account. Your name is never shown. The recipient’s email is used for
               delivery and is not saved in the database.
@@ -141,7 +136,7 @@ export function Home() {
         </section>
         <section className="desk-section recipient-section" aria-labelledby="recipient-title">
           <div className="recipient-copy" data-reveal>
-            <h2 id="recipient-title">What they receive.</h2>
+            <StaggeredText as="h2" id="recipient-title" text="What they receive." />
             <p>
               A quiet email. A private link.
               <br />A letter that opens like a moment.
@@ -194,11 +189,7 @@ export function Home() {
         </section>
         <section className="desk-section use-section" aria-labelledby="uses-title">
           <div className="desk-heading" data-reveal>
-            <h2 id="uses-title">
-              For the things that
-              <br />
-              are hard to say.
-            </h2>
+            <StaggeredText as="h2" id="uses-title" text={"For the things that\nare hard to say."} />
           </div>
           <ul className="use-fragments" data-reveal="scatter">
             {USES.map(([title, useMood], index) => (
@@ -226,11 +217,7 @@ export function Home() {
             loading="lazy"
           />
           <div>
-            <h2 id="final-title">
-              Some words deserve
-              <br />
-              to be sent.
-            </h2>
+            <StaggeredText as="h2" id="final-title" text={"Some words deserve\nto be sent."} />
             <p>Choose a feeling, write the letter, and let it go.</p>
             <Link className="letter-cta" to="/compose">
               Write a letter <Arrow />
@@ -238,9 +225,9 @@ export function Home() {
           </div>
         </section>
       </main>
-      <footer className="sayless-footer">
-        <Link className="sayless-wordmark" to="/">
-          SAYLESS<span className="wordmark-period">.</span>
+      <footer className="unsaid-footer">
+        <Link className="unsaid-wordmark" to="/">
+          Unsaid<span className="wordmark-period">.</span>
         </Link>
         <span>A little less unsaid.</span>
         <nav aria-label="Footer">
@@ -261,8 +248,8 @@ function PocketWrite() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const heroCta = document.querySelector(".sayless-hero .letter-cta");
-    const ending = [".final-letter-cta", ".sayless-footer"]
+    const heroCta = document.querySelector(".unsaid-hero .letter-cta");
+    const ending = [".final-letter-cta", ".unsaid-footer"]
       .map((selector) => document.querySelector(selector))
       .filter((el): el is Element => el !== null);
     if (!heroCta || !("IntersectionObserver" in window)) return;

@@ -1,6 +1,7 @@
 import { type PointerEvent, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { StaggeredText } from "../ui/StaggeredText";
 
 export function Arrow({ down = false }: { down?: boolean }) {
   return (
@@ -107,15 +108,18 @@ export function LetterScene() {
 
 export function EditorialHero() {
   return (
-    <section className="sayless-hero" aria-labelledby="hero-title">
+    <section className="unsaid-hero" aria-labelledby="hero-title">
       <div className="hero-copy">
-        <h1 id="hero-title">
-          {["For the things", "you couldn’t say", "out loud."].map((line) => (
-            <span className="hero-line" key={line}>
-              <span>{line}</span>{" "}
-            </span>
-          ))}
-        </h1>
+        <StaggeredText
+          as="h1"
+          id="hero-title"
+          text={"For the things\nyou couldn’t say\nout loud."}
+          play
+          startDelay={120}
+          delay={95}
+          duration={0.9}
+          distance={0.45}
+        />
         <p>
           Write a private letter to someone.
           <br />

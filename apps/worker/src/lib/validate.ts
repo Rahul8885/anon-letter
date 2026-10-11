@@ -37,6 +37,7 @@ export const CreateMessageSchema = z
       .enum(["email", "link"], { errorMap: () => ({ message: "Unknown delivery method" }) })
       .default("email"),
     recipient_email: z.string().trim().email("Invalid email address").max(254).optional(),
+    heading: optionalText(80, "The heading"),
     from_hint: optionalText(60, "The signature"),
     bg_color: hex.optional(),
     accent: hex.optional(),

@@ -8,6 +8,8 @@ interface ComposerState {
   step: Step;
   mood: TemplateId;
   message: string;
+  /** The letter's heading. Null follows the room's own, so a mood switch carries it along. */
+  heading: string | null;
   fromHint: string;
   recipientEmail: string;
   deliveryMethod: "email" | "link";
@@ -21,6 +23,7 @@ interface ComposerState {
   back: () => void;
   setMood: (mood: TemplateId) => void;
   setMessage: (message: string) => void;
+  setHeading: (heading: string | null) => void;
   setFromHint: (hint: string) => void;
   setRecipientEmail: (email: string) => void;
   setDeliveryMethod: (method: "email" | "link") => void;
@@ -36,6 +39,7 @@ const initial = {
   step: 1 as Step,
   mood: "night-thought" as TemplateId,
   message: "",
+  heading: null as string | null,
   fromHint: "",
   recipientEmail: "",
   deliveryMethod: "email" as "email" | "link",
@@ -58,6 +62,7 @@ export const useComposerStore = create<ComposerState>()(
       // switching mood never touches the message — the words stay, the room changes
       setMood: (mood) => set({ mood, accent: null }),
       setMessage: (message) => set({ message }),
+      setHeading: (heading) => set({ heading }),
       setFromHint: (fromHint) => set({ fromHint }),
       setRecipientEmail: (recipientEmail) => set({ recipientEmail }),
       setDeliveryMethod: (deliveryMethod) => set({ deliveryMethod }),
@@ -68,13 +73,14 @@ export const useComposerStore = create<ComposerState>()(
       reset: () => set(initial),
     }),
     {
-      name: "sayless-draft",
+      name: "unsaid-draft",
       storage: createJSONStorage(() => sessionStorage),
       partialize: (s) => ({
         // the address isn't kept, so a refresh on review returns to the delivery step
         step: Math.min(s.step, 3) as Step,
         mood: s.mood,
         message: s.message,
+        heading: s.heading,
         fromHint: s.fromHint,
         deliveryMethod: s.deliveryMethod,
         accent: s.accent,

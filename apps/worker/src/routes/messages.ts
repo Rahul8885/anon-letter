@@ -53,8 +53,8 @@ messages.post("/", async (c) => {
     try {
       await c.env.DB.prepare(
         `INSERT INTO messages
-          (id, slug, template_id, message, from_hint, bg_color, accent, font_key, status, expires_at, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', ?, ?)`,
+          (id, slug, template_id, message, from_hint, bg_color, accent, font_key, heading, status, expires_at, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'sent', ?, ?)`,
       )
         .bind(
           id,
@@ -65,6 +65,7 @@ messages.post("/", async (c) => {
           input.bg_color ?? null,
           input.accent ?? null,
           input.font_key ?? null,
+          input.heading ?? null,
           now + LETTER_TTL_SECONDS,
           now,
         )
@@ -105,7 +106,7 @@ messages.get("/:slug", async (c) => {
   if (!isValidSlug(slug)) return fail(c, 404, "NOT_FOUND", "Letter not found.");
 
   const row = await c.env.DB.prepare(
-    `SELECT slug, template_id, message, from_hint, bg_color, accent, font_key,
+    `SELECT slug, template_id, message, heading, from_hint, bg_color, accent, font_key,
             status, read_at, expires_at, created_at
      FROM messages WHERE slug = ?`,
   )

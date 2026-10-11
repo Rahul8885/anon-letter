@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui/Button";
+import { StaggeredText } from "../components/ui/StaggeredText";
 import { letterPaletteStyle } from "../lib/letterPalette";
 import { useComposerStore } from "../store/composerStore";
 import { Reveal } from "./Message";
@@ -14,7 +15,7 @@ export function Preview() {
   if (!draft.message.trim()) {
     return (
       <main className="state-page">
-        <h1 className="t-h1">Your words come first.</h1>
+        <StaggeredText as="h1" className="t-h1" text="Your words come first." play />
         <p>Write a letter, then preview how it opens.</p>
         <Link className="btn btn-primary" to="/compose">
           Back to your draft
@@ -57,6 +58,7 @@ export function Preview() {
           slug: "preview",
           template_id: draft.mood,
           message: draft.message.trim(),
+          heading: draft.heading,
           from_hint: draft.fromHint.trim() || null,
           accent: draft.accent,
           bg_color: null,

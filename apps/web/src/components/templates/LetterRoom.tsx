@@ -3,6 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { letterPaletteStyle } from "../../lib/letterPalette";
 import { room } from "../../lib/moods";
 import { AmbientField } from "../ambient/AmbientField";
+import { StaggeredText } from "../ui/StaggeredText";
 
 /**
  * Same skeleton every time: ambient layer, greeting, letter body at 46ch, signature, footer
@@ -74,39 +75,56 @@ export function LetterRoom({
   );
 }
 
-/** The lead — display headline, salutation, or nothing but the greeting. */
-export function LetterLead({ mood, show }: { mood: TemplateId; show: boolean }) {
-  const r = room(mood);
-  const lead = LEAD[mood];
-  const style: CSSProperties = {
-    opacity: show ? 1 : 0,
-    transform: show ? "none" : "translateY(10px)",
-    transition: "opacity 700ms var(--ease-enter), transform 700ms var(--ease-enter)",
-  };
+/** The room's own heading, with its deliberate line breaks as "\n". */
+export function defaultHeading(mood: TemplateId): string {
+  return LEAD[mood].lines?.join("\n") ?? room(mood).greeting;
+}
 
-  if (lead.kind === "display") {
-    return (
-      <h1 className="letter-lead t-room-display" style={style}>
-        {lead.lines?.map((line) => (
-          <span key={line} style={{ display: "block" }}>
-            {line}
-          </span>
-        )) ?? r.greeting}
-      </h1>
-    );
-  }
+/** The writer's heading when they changed it; otherwise the room's, line breaks intact. */
+export function resolveHeading(mood: TemplateId, heading?: string | null): string {
+  const own = heading?.replace(/\s+/g, " ").trim();
+  const fallback = defaultHeading(mood);
+  return own && own !== fallback.replace(/\n/g, " ") ? own : fallback;
+}
 
-  if (lead.kind === "salutation") {
-    return (
-      <p className="letter-salutation" style={style}>
-        {r.greeting}
-      </p>
-    );
-  }
+/**
+ * The lead — display headline, salutation, or a quiet greeting — in the writer's words when
+ * they gave some. `reveal` lets it settle in word by word once `show` flips; without it the
+ * heading is simply present, as it must be while the writer is still typing it.
+ */
+export function LetterLead({
+  mood,
+  show,
+  heading,
+  reveal = false,
+  onRevealed,
+}: {
+  mood: TemplateId;
+  show: boolean;
+  heading?: string | null;
+  reveal?: boolean;
+  onRevealed?: () => void;
+}) {
+  const kind = LEAD[mood].kind;
+  const text = resolveHeading(mood, heading);
+  const className =
+    kind === "display"
+      ? "letter-lead t-room-display"
+      : kind === "salutation"
+        ? "letter-salutation"
+        : "letter-greeting";
 
   return (
-    <p className="letter-greeting" style={style}>
-      {r.greeting}
-    </p>
+    <StaggeredText
+      as={kind === "display" ? "h1" : "p"}
+      className={className}
+      text={text}
+      play={show}
+      instant={!reveal}
+      delay={90}
+      duration={0.7}
+      distance={0.3}
+      onAnimationComplete={onRevealed}
+    />
   );
 }

@@ -30,7 +30,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       ...init,
     });
   } catch {
-    throw new RequestError("We couldn’t reach SAYLESS.", null);
+    throw new RequestError("We couldn’t reach Unsaid.", null);
   }
   let data: T | ApiError;
   try {

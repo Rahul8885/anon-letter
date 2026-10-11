@@ -6,7 +6,7 @@ compatibility_date = "2024-09-25"
 [vars]
 PUBLIC_BASE_URL = "https://REPLACE-WITH-YOUR-SITE.pages.dev"
 ALLOWED_ORIGINS = "https://REPLACE-WITH-YOUR-SITE.pages.dev"
-EMAIL_FROM = "SAYLESS <letters@REPLACE-WITH-YOUR-DOMAIN>"
+EMAIL_FROM = "Unsaid <letters@REPLACE-WITH-YOUR-DOMAIN>"
 EMAIL_MODE = "resend"
 
 # Secrets — never put these in this file:

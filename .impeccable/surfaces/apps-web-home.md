@@ -3,12 +3,12 @@ version: 1
 slug: "apps-web-home"
 primary_target: "apps/web/src/pages/Home.tsx"
 related_targets:
-  - "apps/web/src/sayless.css"
+  - "apps/web/src/unsaid.css"
   - "apps/web/src/components/editorial/EditorialHero.tsx"
   - "apps/web/src/components/composer/TemplatePicker.tsx"
 ---
 
-# SAYLESS home
+# Unsaid home
 
 Mode: **Persuade**. Target: `apps/web/src/pages/Home.tsx`, route `/`.
 Visual authority: the user's pinned root `DESIGN.md` brief; implementation tokens are in its appended Implementation notes section. This is a code-led design, with no approved flattened composition or quality-bar cards.
@@ -23,7 +23,7 @@ Headline: **For the things / you couldn't say / out loud.**
 Supporting copy: **Write a private letter to someone. We'll deliver it without your name.**
 Primary action: **Write a letter →**, linking to `/compose`.
 Reassurance: **No account · No signature · No saved email**.
-Navigation: SAYLESS, Moods, How it works, Privacy and Write a letter. At 760px and below, the anchor navigation hides while the wordmark and write action remain.
+Navigation: Unsaid, Moods, How it works, Privacy and Write a letter. At 760px and below, the anchor navigation hides while the wordmark and write action remain.
 
 One envelope gesture opens a live-text example. Closed and open photographs crossfade; a separate photograph of real paper raises with accessible HTML words. The one flower stem remains secondary. The headline retains its three-line structure. Reduced motion starts open.
 

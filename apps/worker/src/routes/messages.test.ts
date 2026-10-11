@@ -29,7 +29,7 @@ const env = {
   DB,
   EMAIL_MODE: "resend",
   RESEND_API_KEY: "test-only",
-  EMAIL_FROM: "SAYLESS <letters@example.com>",
+  EMAIL_FROM: "Unsaid <letters@example.com>",
   PUBLIC_BASE_URL: "https://letters.example/",
   ALLOWED_ORIGINS: "https://letters.example",
 };
@@ -124,6 +124,17 @@ describe("POST /messages", () => {
     expect(message).toBe("hello");
     expect(fromHint).toBeNull();
     expect(accent).toBe("#abcdef");
+    expect(inserts()[0].args[8]).toBeNull();
+  });
+
+  it("stores the writer's heading, trimmed, and rejects one past 80 characters", async () => {
+    await create({ ...letter, delivery_method: "link", heading: "  For you, finally.  " });
+    expect(inserts()[0].args[8]).toBe("For you, finally.");
+    const response = await create({ ...letter, delivery_method: "link", heading: "x".repeat(81) });
+    expect(response.status).toBe(400);
+    expect(await response.json()).toMatchObject({
+      error: "The heading must be 80 characters or fewer",
+    });
   });
 
   it("returns 429 with Retry-After when rate limited", async () => {
@@ -162,6 +173,7 @@ describe("GET /messages/:slug", () => {
     slug,
     template_id: "night-thought",
     message: "hi",
+    heading: null,
     from_hint: null,
     bg_color: null,
     accent: null,

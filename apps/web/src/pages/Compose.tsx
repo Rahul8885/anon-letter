@@ -5,10 +5,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { LivePreview } from "../components/composer/LivePreview";
 import { MessageSheet } from "../components/composer/MessageSheet";
 import { TemplatePicker } from "../components/composer/TemplatePicker";
-import { type SealPhase, SealEnvelope } from "../components/envelope/SealEnvelope";
+import { SealEnvelope, type SealPhase } from "../components/envelope/SealEnvelope";
+import { defaultHeading } from "../components/templates/LetterRoom";
 import { Button } from "../components/ui/Button";
 import { Field } from "../components/ui/Field";
 import { ProgressRail } from "../components/ui/ProgressRail";
+import { StaggeredText } from "../components/ui/StaggeredText";
 import { Toast, type ToastMessage } from "../components/ui/Toast";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { api } from "../lib/api";
@@ -74,6 +76,9 @@ export function Compose() {
   useEffect(() => () => sealTimers.current.forEach(window.clearTimeout), []);
 
   const r = room(store.mood);
+  const roomHeading = defaultHeading(store.mood).replace(/\n/g, " ");
+  const ownHeading = store.heading?.replace(/\s+/g, " ").trim() ?? "";
+  const customHeading = ownHeading && ownHeading !== roomHeading ? ownHeading : null;
   const emailValid = EMAIL.test(store.recipientEmail.trim());
   const emailError =
     emailTouched && store.recipientEmail.trim() && !emailValid
@@ -126,6 +131,7 @@ export function Compose() {
       const request = api.createMessage({
         template_id: store.mood,
         message: store.message.trim(),
+        heading: customHeading ?? undefined,
         delivery_method: store.deliveryMethod,
         recipient_email: store.deliveryMethod === "email" ? store.recipientEmail.trim() : undefined,
         from_hint: store.fromHint.trim() || undefined,
@@ -139,7 +145,7 @@ export function Compose() {
       };
       // a refresh on the success page loses router state; keep the receipt for this tab
       try {
-        sessionStorage.setItem(`sayless-receipt-${result.slug}`, JSON.stringify(receipt));
+        sessionStorage.setItem(`unsaid-receipt-${result.slug}`, JSON.stringify(receipt));
       } catch {}
       store.finish();
       navigate(`/success/${result.slug}`, { state: { ...receipt, sealed: true } });
@@ -172,15 +178,13 @@ export function Compose() {
       <div className="compose-shell">
         <header className="topbar">
           <button type="button" className="wordmark" onClick={() => navigate("/")}>
-            SAYLESS
+            Unsaid<span className="wordmark-period">.</span>
           </button>
           <span>Nothing about you is saved</span>
         </header>
 
         <div className="compose-body" id="composer">
-          <div style={{ marginBottom: "var(--s12)" }}>
-            <ProgressRail step={store.step} />
-          </div>
+          <ProgressRail step={store.step} />
 
           {/* initial={false} — the first step is present on first paint. Only step-to-step
               changes animate, so a stalled enter tween can never hide the composer. */}
@@ -192,15 +196,10 @@ export function Compose() {
               exit={reduced ? { opacity: 0 } : { opacity: 0, y: -16 }}
               transition={{ duration: reduced ? 0.12 : 0.42, ease: EASE_ENTER }}
             >
-              <h1 className="t-h1" style={{ marginBottom: "var(--s3)" }}>
-                {heading}
-              </h1>
-              <p
-                className="measure-prose"
-                style={{ color: "var(--text-dim)", marginBottom: "var(--s12)" }}
-              >
-                {sub}
-              </p>
+              <header className="compose-intro">
+                <StaggeredText as="h1" className="t-h1" text={heading} play delay={70} />
+                <p>{sub}</p>
+              </header>
 
               {store.step === 1 && <TemplatePicker value={store.mood} onChange={store.setMood} />}
 
@@ -211,13 +210,11 @@ export function Compose() {
                       value={store.message}
                       onChange={store.setMessage}
                       moodName={r.name}
+                      heading={store.heading}
+                      roomHeading={roomHeading}
+                      onHeadingChange={store.setHeading}
                     />
-                    <div
-                      className="swatches"
-                      style={{ marginTop: "var(--s6)" }}
-                      role="radiogroup"
-                      aria-label="Mood"
-                    >
+                    <div className="swatches" role="radiogroup" aria-label="Mood">
                       {ROOM_LIST.map((option, index) => (
                         <button
                           key={option.id}
@@ -240,6 +237,7 @@ export function Compose() {
                   <LivePreview
                     mood={store.mood}
                     message={store.message}
+                    heading={store.heading}
                     fromHint={store.fromHint}
                     accent={store.accent}
                   />
@@ -248,7 +246,7 @@ export function Compose() {
 
               {store.step === 3 && (
                 <div className="compose-split">
-                  <div style={{ display: "flex", flexDirection: "column", gap: "var(--s8)" }}>
+                  <div className="delivery-form">
                     <fieldset className="delivery-options">
                       <legend>How would you like to deliver it?</legend>
                       <label className="delivery-option">
@@ -317,6 +315,7 @@ export function Compose() {
                   <LivePreview
                     mood={store.mood}
                     message={store.message}
+                    heading={store.heading}
                     fromHint={store.fromHint}
                     accent={store.accent}
                   />
@@ -340,6 +339,13 @@ export function Compose() {
                           ? store.recipientEmail.trim()
                           : "A link for you to copy and share. No email will be sent."}
                         <EditStep step={3} label="delivery" />
+                      </dd>
+                    </div>
+                    <div className="review-row">
+                      <dt>Heading</dt>
+                      <dd>
+                        {customHeading ?? roomHeading}
+                        <EditStep step={2} label="heading" />
                       </dd>
                     </div>
                     <div className="review-row">
@@ -367,6 +373,7 @@ export function Compose() {
                   <LivePreview
                     mood={store.mood}
                     message={store.message}
+                    heading={store.heading}
                     fromHint={store.fromHint}
                     accent={store.accent}
                   />
@@ -382,9 +389,12 @@ export function Compose() {
             </p>
           )}
           <div className="compose-actions">
+            {/* step one has nowhere to go back to; the slot holds so Continue never jumps */}
             <Button
               variant="secondary"
-              disabled={store.step === 1 || store.isSubmitting}
+              className="compose-back"
+              hidden={store.step === 1}
+              disabled={store.isSubmitting}
               onClick={store.back}
             >
               Back

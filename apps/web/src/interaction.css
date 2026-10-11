@@ -1,5 +1,5 @@
 /*
- * SAYLESS — interaction layer. Loaded after sayless.css.
+ * Unsaid — interaction layer. Loaded after unsaid.css.
  *
  * Motion follows design.md §26–28: paper settles, nothing bounces or loops, and reduced
  * motion renders the final state. Every hidden or moving state below sits inside
@@ -102,11 +102,11 @@ html {
   transition: translate var(--d-ui) var(--ease-enter);
 }
 
-.sayless-nav nav a {
+.unsaid-nav nav a {
   position: relative;
   transition: color var(--d-micro) var(--ease-enter);
 }
-.sayless-nav nav a::after {
+.unsaid-nav nav a::after {
   content: "";
   position: absolute;
   left: 0;
@@ -118,8 +118,8 @@ html {
   transform-origin: right;
   transition: transform var(--d-ui) var(--ease-enter);
 }
-.sayless-nav nav a:hover::after,
-.sayless-nav nav a:focus-visible::after {
+.unsaid-nav nav a:hover::after,
+.unsaid-nav nav a:focus-visible::after {
   transform: scaleX(1);
   transform-origin: left;
 }
@@ -163,22 +163,6 @@ html {
 
 /* ---- 2 · Hero arrival: type is present at once, then the desk settles ---------- */
 
-.hero-line {
-  display: block;
-  overflow: clip;
-  /* room for descenders inside the mask */
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
-}
-.hero-line > span {
-  display: block;
-}
-
-@keyframes line-rise {
-  from {
-    transform: translateY(105%);
-  }
-}
 @keyframes settle-in {
   from {
     opacity: 0;
@@ -199,23 +183,14 @@ html {
 
 @media (prefers-reduced-motion: no-preference) {
   /* `backwards` holds only the start frame: once played, hover and open states own transform. */
-  .hero-line > span {
-    animation: line-rise var(--d-object) var(--ease-enter) backwards;
-  }
-  .hero-line:nth-child(2) > span {
-    animation-delay: 90ms;
-  }
-  .hero-line:nth-child(3) > span {
-    animation-delay: 180ms;
-  }
   .hero-copy > p {
-    animation: settle-in var(--d-object) var(--ease-enter) 320ms backwards;
+    animation: settle-in var(--d-object) var(--ease-enter) 620ms backwards;
   }
   .hero-copy > .letter-cta {
-    animation: settle-in var(--d-object) var(--ease-enter) 420ms backwards;
+    animation: settle-in var(--d-object) var(--ease-enter) 740ms backwards;
   }
   .hero-reassurance {
-    animation: fade-in var(--d-object) var(--ease-enter) 560ms backwards;
+    animation: fade-in var(--d-object) var(--ease-enter) 880ms backwards;
   }
   .hero-letter-scene[data-settled="false"] .scene-envelope {
     animation: envelope-arrive var(--d-scene) var(--ease-enter) 150ms backwards;
@@ -742,12 +717,12 @@ html {
 .field-control {
   position: relative;
 }
-.field-control .field-input {
-  padding-right: 32px;
+.field .field-control .field-input {
+  padding-right: 46px;
 }
 .field-check {
   position: absolute;
-  right: 4px;
+  right: 16px;
   top: 50%;
   width: 18px;
   height: 18px;
@@ -799,7 +774,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 10px;
 }
 .compose-blocked {
   margin: 0;
@@ -1190,5 +1165,204 @@ html {
   .report-btn:active:not(:disabled) {
     scale: 0.97;
     transition-duration: 90ms;
+  }
+}
+
+/* ======================================================================================
+   Staggered text: words settle out of a soft blur. Inline-block so each word can move;
+   the parent's wrapping, balance and pre-wrap still govern where lines fall.
+   ================================================================================== */
+
+.stagger-line {
+  display: block;
+}
+.stagger-seg {
+  display: inline-block;
+}
+
+/* ======================================================================================
+   Writing flow rhythm. Three distances only: 8–12 inside a group, 32–40 between groups,
+   56–64 between the regions of the page (rail, intro, work, actions).
+   ================================================================================== */
+
+.compose-body .progress {
+  margin-bottom: 56px;
+}
+.compose-intro {
+  margin-bottom: 44px;
+}
+.compose-intro .t-h1 {
+  margin: 0;
+}
+.compose-intro p {
+  max-width: 62ch;
+  margin: 14px 0 0;
+  color: var(--ink-soft);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.preview-label {
+  margin: 0 0 12px;
+  color: var(--ink-soft);
+  font-size: .875rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.preview-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: .8125rem;
+  line-height: 1.5;
+}
+
+.compose-split .swatches {
+  margin-top: 20px;
+}
+
+/* step 3: the choice, then what it needs */
+.delivery-form {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+.delivery-options legend {
+  margin-bottom: 12px;
+}
+.delivery-option {
+  gap: 14px;
+  padding: 18px 0;
+}
+.delivery-option:last-of-type {
+  border-bottom: 1px solid var(--line);
+}
+.delivery-option input {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--rose);
+}
+.delivery-option strong {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+.delivery-option span span {
+  margin-top: 4px;
+  font-size: .875rem;
+  line-height: 1.55;
+}
+.field {
+  gap: 8px;
+}
+.field-hint,
+.field-error {
+  margin: 0;
+  font-size: .8125rem;
+  line-height: 1.5;
+}
+
+/* Back holds its slot on step one so Continue never jumps sideways */
+.compose-back[hidden] {
+  display: inline-flex;
+  visibility: hidden;
+}
+.compose-back {
+  min-width: 96px;
+}
+
+/* ---- the letter's heading, written on the sheet itself ------------------------------ */
+
+.sheet-heading {
+  position: relative;
+  z-index: 1;
+  padding: 24px 30px 0;
+}
+.sheet-heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  color: var(--muted);
+  font-size: .8125rem;
+  line-height: 1.4;
+}
+.sheet-heading-row label {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.sheet-heading-reset {
+  min-height: 44px;
+  margin: -14px -4px -14px 0;
+  padding: 12px 4px;
+  border: 0;
+  background: none;
+  color: var(--rose-deep);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.sheet-heading-reset:hover {
+  text-decoration-color: currentColor;
+}
+.sheet-heading-input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 4px 0 16px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.02em;
+  transition: border-color var(--d-micro) var(--ease-enter);
+}
+.sheet-heading-input::placeholder {
+  color: var(--muted);
+}
+.sheet-heading-input:focus {
+  border-bottom-color: var(--rose-deep);
+}
+/* the sheet's own focus-within outline is the indicator */
+.sheet-heading-input:focus-visible,
+.sheet-textarea:focus-visible {
+  outline: none;
+}
+.sheet-heading + label + .sheet-textarea,
+.sheet-heading ~ .sheet-textarea {
+  padding-top: 18px;
+}
+
+.success-title {
+  margin: 16px 0;
+}
+
+@media (max-width: 760px) {
+  .compose-body .progress {
+    margin-bottom: 36px;
+  }
+  .compose-intro {
+    margin-bottom: 32px;
+  }
+  .compose-intro p {
+    font-size: 1rem;
+  }
+  .sheet-heading {
+    padding: 20px 20px 0;
+  }
+  .sheet-heading-input {
+    font-size: 1.3rem;
+  }
+  .compose-back {
+    min-width: 0;
+  }
+  .compose-back[hidden] {
+    display: none;
   }
 }

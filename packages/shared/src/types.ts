@@ -28,6 +28,8 @@ export interface Message {
   slug: string;
   template_id: TemplateId;
   message: string;
+  /** The writer's own heading. Null keeps the room's default. */
+  heading: string | null;
   from_hint: string | null;
   bg_color: string | null;
   accent: string | null;
@@ -44,6 +46,7 @@ export interface CreateMessageRequest {
   /** Email is the default; link delivery never contacts an email provider. */
   delivery_method?: "email" | "link";
   recipient_email?: string;
+  heading?: string;
   from_hint?: string;
   bg_color?: string;
   accent?: string;

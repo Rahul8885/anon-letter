@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import "./styles.css";
 import "./components.css";
-import "./sayless.css";
+import "./unsaid.css";
 import "./interaction.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

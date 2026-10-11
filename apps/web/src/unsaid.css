@@ -1,4 +1,4 @@
-/* SAYLESS — one continuous paper world, from design.md. */
+/* Unsaid — one continuous paper world, from design.md. */
 @font-face {
   font-family: Chubbo;
   src: url("/fonts/chubbo-700.woff2") format("woff2");
@@ -40,6 +40,8 @@
   --rose-deep: #963746;
   --blush: #e9b9be;
   --line: rgba(23, 21, 20, 0.12);
+  /* control boundaries clear 3:1 on paper-white */
+  --control-line: #8f7d75;
   --void: var(--paper);
   --void-raised: var(--paper-warm);
   --gold: var(--rose);
@@ -158,10 +160,10 @@ svg {
 }
 
 /* Navigation shares the desk's surface. */
-.sayless-site {
+.unsaid-site {
   overflow: clip;
 }
-.sayless-nav {
+.unsaid-nav {
   width: min(1280px, calc(100% - 112px));
   margin-inline: auto;
   display: flex;
@@ -170,7 +172,7 @@ svg {
   gap: 32px;
   min-height: 106px;
 }
-.sayless-wordmark {
+.unsaid-wordmark {
   color: var(--ink);
   font-family: var(--font-display);
   font-weight: 700;
@@ -178,27 +180,27 @@ svg {
   letter-spacing: -.035em;
   line-height: 1;
 }
-.sayless-wordmark:hover {
+.unsaid-wordmark:hover {
   color: var(--ink);
 }
 .wordmark-period {
   color: var(--rose);
 }
-.sayless-nav nav {
+.unsaid-nav nav {
   display: flex;
   align-items: center;
   gap: 36px;
   margin-left: auto;
   margin-right: 40px;
 }
-.sayless-nav nav a {
+.unsaid-nav nav a {
   display: grid;
   place-items: center;
   min-height: 44px;
   color: var(--ink-soft);
   font-size: .9375rem;
 }
-.sayless-nav nav a:hover {
+.unsaid-nav nav a:hover {
   color: var(--rose-deep);
 }
 .nav-write {
@@ -219,7 +221,7 @@ svg {
 }
 
 /* The headline leads; one photographic envelope invites a closer look. */
-.sayless-hero {
+.unsaid-hero {
   position: relative;
   width: min(1280px, calc(100% - 112px));
   min-height: 700px;
@@ -241,11 +243,8 @@ svg {
   letter-spacing: -.032em;
   margin: 0;
 }
-.hero-copy h1 span {
-  display: block;
-}
 .hero-copy p {
-  margin: 28px 0 28px;
+  margin: 28px 0 36px;
   color: var(--ink-soft);
   font-size: 1.125rem;
   line-height: 1.7;
@@ -815,7 +814,7 @@ svg {
   right: -105px;
   transform: rotate(12deg);
 }
-.sayless-footer {
+.unsaid-footer {
   width: min(1280px, calc(100% - 112px));
   margin-inline: auto;
   padding: 36px 0 44px;
@@ -825,15 +824,15 @@ svg {
   color: var(--muted);
   font-size: .8rem;
 }
-.sayless-footer > span {
+.unsaid-footer > span {
   margin-right: auto;
 }
-.sayless-footer nav {
+.unsaid-footer nav {
   display: flex;
   align-items: center;
   gap: 24px;
 }
-.sayless-footer nav a {
+.unsaid-footer nav a {
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -849,12 +848,15 @@ svg {
 .shell .glow {
   display: none;
 }
+/* One control height across the flow: 48px clears the 44px target without looking padded. */
 .btn {
-  min-height: 46px;
+  min-height: 48px;
+  padding: 12px 24px;
   border-radius: 5px;
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: .9rem;
+  font-size: .9375rem;
+  line-height: 1.2;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -871,7 +873,7 @@ svg {
 }
 .btn-secondary {
   background: transparent;
-  border-color: #b6a39a;
+  border-color: var(--control-line);
   color: var(--ink-soft);
 }
 .btn-secondary:hover:not(:disabled),
@@ -906,13 +908,14 @@ svg {
   margin-inline: auto;
 }
 .compose-body {
-  padding-top: 48px;
+  padding-top: 40px;
 }
 .compose-body .t-h1,
 .state-page .t-h1,
 .success-page .t-h1 {
-  font-size: clamp(2.4rem, 4.7vw, 4.5rem);
-  line-height: 1.1;
+  font-size: clamp(2.4rem, 4.3vw, 4rem);
+  line-height: 1.08;
+  letter-spacing: -.028em;
 }
 .t-em {
   color: var(--rose-deep);
@@ -964,19 +967,40 @@ svg {
 .delivery-options legend {
   color: var(--ink-soft);
   font-family: var(--font-body);
+  font-size: .9375rem;
   font-weight: 500;
+  line-height: 1.4;
   letter-spacing: 0;
   text-transform: none;
 }
-.field input {
-  border-color: #b6a39a;
-  border-radius: 5px;
+/* A whole box, not a lone underline on a white slab: the text gets room on both sides. */
+.field .field-input {
+  min-height: 52px;
+  padding: 14px 16px;
+  border: 1px solid var(--control-line);
+  border-radius: 6px;
   background: var(--paper-white);
   color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.4;
+  transition:
+    border-color var(--d-micro) var(--ease-enter),
+    box-shadow var(--d-micro) var(--ease-enter);
 }
-.field input:focus {
+.field .field-input:hover:not(:focus) {
+  border-color: var(--ink-soft);
+}
+.field .field-input:focus {
   border-color: var(--rose-deep);
-  box-shadow: none;
+  box-shadow: 0 0 0 1px var(--rose-deep), 0 0 0 5px rgba(150, 55, 70, 0.12);
+}
+/* the ring above is the focus indicator; the global offset outline would double it */
+.field .field-input:focus-visible {
+  outline: none;
+}
+.field .field-input[aria-invalid="true"] {
+  border-color: var(--error);
+  box-shadow: 0 0 0 1px var(--error);
 }
 .delivery-option {
   border-color: var(--line);
@@ -1206,17 +1230,17 @@ svg {
 }
 
 @media (max-width: 1100px) {
-  .sayless-nav,
-  .sayless-hero,
+  .unsaid-nav,
+  .unsaid-hero,
   .desk-section,
-  .sayless-footer {
+  .unsaid-footer {
     width: calc(100% - 72px);
   }
-  .sayless-nav nav {
+  .unsaid-nav nav {
     margin-right: 12px;
     gap: 24px;
   }
-  .sayless-hero {
+  .unsaid-hero {
     min-height: 660px;
     grid-template-columns: 57% 43%;
   }
@@ -1249,20 +1273,20 @@ svg {
   }
 }
 @media (max-width: 760px) {
-  .sayless-nav,
-  .sayless-hero,
+  .unsaid-nav,
+  .unsaid-hero,
   .desk-section,
-  .sayless-footer {
+  .unsaid-footer {
     width: calc(100% - 40px);
   }
-  .sayless-nav {
+  .unsaid-nav {
     min-height: 84px;
     gap: 16px;
   }
-  .sayless-nav nav {
+  .unsaid-nav nav {
     display: none;
   }
-  .sayless-wordmark {
+  .unsaid-wordmark {
     font-size: 1.4rem;
   }
   .nav-write {
@@ -1273,7 +1297,7 @@ svg {
   .nav-write svg {
     width: 18px;
   }
-  .sayless-hero {
+  .unsaid-hero {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -1455,15 +1479,15 @@ svg {
     margin: 20px auto 26px;
     font-size: .975rem;
   }
-  .sayless-footer {
+  .unsaid-footer {
     flex-wrap: wrap;
     gap: 20px;
     padding-top: 25px;
   }
-  .sayless-footer > span {
+  .unsaid-footer > span {
     margin-right: 0;
   }
-  .sayless-footer nav {
+  .unsaid-footer nav {
     width: 100%;
     justify-content: space-between;
     gap: 16px;

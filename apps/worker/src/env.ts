@@ -4,7 +4,7 @@ export interface Env {
   PUBLIC_BASE_URL: string;
   /** Comma-separated list of origins allowed to call the API cross-origin. */
   ALLOWED_ORIGINS: string;
-  /** Sender shown on delivery emails, e.g. `SAYLESS <letters@yourdomain.com>`. Must be a Resend-verified domain. */
+  /** Sender shown on delivery emails, e.g. `Unsaid <letters@yourdomain.com>`. Must be a Resend-verified domain. */
   EMAIL_FROM: string;
   /** `resend` sends real email; `log` prints the letter link to the console instead (local dev). */
   EMAIL_MODE?: "resend" | "log";

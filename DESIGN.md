@@ -1,6 +1,6 @@
-# SAYLESS --- Design Direction
+# Unsaid --- Design Direction
 
-> **Working brand name:** SAYLESS\
+> **Working brand name:** Unsaid\
 > **Status:** Creative direction / naming is not yet legally or
 > commercially cleared.\
 > **Product:** A private anonymous letter experience for sending a
@@ -10,7 +10,7 @@
 
 ## 1. Product North Star
 
-SAYLESS is not an anonymous-messaging app, a greeting-card site, or a
+Unsaid is not an anonymous-messaging app, a greeting-card site, or a
 SaaS product.
 
 It is a **digital letter ritual**.
@@ -151,7 +151,7 @@ collection of floating website decorations.
 ``` text
 ┌──────────────────────────────────────────────────────────────┐
 │                                                              │
-│  SAYLESS                 Moods   How it works   Privacy      │
+│  Unsaid                 Moods   How it works   Privacy      │
 │                                                     [Write]  │
 │                                                              │
 │                                                              │
@@ -943,7 +943,7 @@ Do not simply shrink the desktop composition.
 Use:
 
 ``` text
-SAYLESS
+Unsaid
 
 For the things
 you couldn't say
@@ -1167,7 +1167,7 @@ The interface should make the visitor curious enough to open the letter.
 
 ### Brand
 
-**SAYLESS**
+**Unsaid**
 
 ### Hero headline
 
@@ -1242,12 +1242,12 @@ The goal is not to make the page more decorated.
 
 The goal is to make the **letter more believable**.
 
-## Implementation notes — shipped SAYLESS system
+## Implementation notes — shipped Unsaid system
 
-Recorded from `apps/web/src/sayless.css` and the shipped React components on 2026-10-02. The pinned brief above is preserved. The following YAML records observed implementation tokens; it is deliberately appended rather than inserted as frontmatter so the original brief remains intact. CSS remains the implementation source of truth. Extensions and component previews live in `.impeccable/design.json`; home composition lives in `.impeccable/surfaces/apps-web-home.md`.
+Recorded from `apps/web/src/unsaid.css` and the shipped React components on 2026-10-02. The pinned brief above is preserved. The following YAML records observed implementation tokens; it is deliberately appended rather than inserted as frontmatter so the original brief remains intact. CSS remains the implementation source of truth. Extensions and component previews live in `.impeccable/design.json`; home composition lives in `.impeccable/surfaces/apps-web-home.md`.
 
 ```yaml
-name: SAYLESS
+name: Unsaid
 description: A private letter left on a desk.
 colors:
   paper: "#f7f2ea"
@@ -1358,4 +1358,4 @@ Primary write links use rose fill, white-paper text and a drawn SVG arrow. Hover
 - **Don't** add looping motion, scroll hijacking or hard home-section background cuts.
 - **Don't** synthesize physical envelope or paper geometry with CSS.
 
-Verification: values and behavior were checked against `sayless.css`, `Home.tsx`, `EditorialHero.tsx`, `TactileLetter.tsx`, `TemplatePicker.tsx` and `index.html`. The independent final reviewer verdict is **ship**. Pre-existing PRODUCT.md retains the older AnonLetter product name; the existing prototype surface brief records its separate dark-house study. Neither is changed or promoted into this shell's visual rules.
+Verification: values and behavior were checked against `unsaid.css`, `Home.tsx`, `EditorialHero.tsx`, `TactileLetter.tsx`, `TemplatePicker.tsx` and `index.html`. The independent final reviewer verdict is **ship**. PRODUCT.md and this file both use the product name Unsaid; the existing prototype surface brief records its separate dark-house study. Neither is changed or promoted into this shell's visual rules.
