@@ -16,7 +16,7 @@ EMAIL_MODE = "resend"
 [[d1_databases]]
 binding = "DB"
 database_name = "anonletter"
-database_id = "replace-with-d1-id"
+database_id = "af0badaf-2a49-44fa-a5e3-6dcb062ad1af"
 migrations_dir = "../../migrations"
 
 # Hard-delete expired letters and stale rate-limit rows daily at 03:00 UTC.
