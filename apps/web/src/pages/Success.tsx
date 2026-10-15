@@ -4,6 +4,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import { SealEnvelope, type SealPhase } from "../components/envelope/SealEnvelope";
 import { Button } from "../components/ui/Button";
 import { StaggeredText } from "../components/ui/StaggeredText";
+import { Toast, type ToastMessage } from "../components/ui/Toast";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { room } from "../lib/moods";
 import { useComposerStore } from "../store/composerStore";
@@ -14,6 +15,8 @@ interface Receipt {
   mood?: TemplateId;
   /** True when the composer already played the sealing; the envelope arrives closed. */
   sealed?: boolean;
+  /** The letter was saved but their inbox refused it; the link is now the only way in. */
+  emailFailed?: boolean;
 }
 
 function readReceipt(slug: string | undefined, state: unknown): Receipt | null {
@@ -35,7 +38,8 @@ export function Success() {
   const { slug } = useParams<{ slug: string }>();
   const location = useLocation();
   const [receipt] = useState(() => readReceipt(slug, location.state));
-  const emailDelivery = receipt?.deliveryMethod === "email";
+  const emailFailed = receipt?.deliveryMethod === "email" && receipt.emailFailed === true;
+  const emailDelivery = receipt?.deliveryMethod === "email" && !emailFailed;
   const reduced = useReducedMotion();
   const storeMood = useComposerStore((s) => s.mood);
   const mood = receipt?.mood ?? storeMood;
@@ -44,6 +48,19 @@ export function Success() {
   const [copied, setCopied] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
   const linkInput = useRef<HTMLInputElement>(null);
+  // a refused inbox is said once, out loud, as the page arrives; the page itself keeps saying it
+  const copyRef = useRef(() => {});
+  const [toast, setToast] = useState<ToastMessage | null>(() =>
+    emailFailed
+      ? {
+          id: 1,
+          tone: "error",
+          title: "Their inbox didn’t accept it.",
+          detail: "Nothing reached them. The link below still works.",
+          action: { label: "Copy link", onClick: () => copyRef.current() },
+        }
+      : null,
+  );
   const canShare = typeof navigator.share === "function";
   // on phones sharing is the likelier gesture, so it leads there; desks copy first
   const [shareFirst] = useState(() => canShare && window.matchMedia("(pointer: coarse)").matches);
@@ -82,6 +99,8 @@ export function Success() {
     }
   }
 
+  copyRef.current = copy;
+
   async function share() {
     try {
       await navigator.share({ title: "A letter for you", url });
@@ -112,16 +131,18 @@ export function Success() {
 
         <div className="success-copy">
           <p className="t-label" style={{ color: "rgba(200,169,110,0.62)" }}>
-            {emailDelivery ? "Sent" : "Link ready"} — {time}
+            {emailFailed ? "Not delivered" : emailDelivery ? "Sent" : "Link ready"} — {time}
           </p>
 
           <StaggeredText
             as="h1"
             className="t-h1 success-title"
             text={
-              emailDelivery
-                ? "It’s out of\nyour hands now."
-                : "Your letter is sealed.\nPass it along."
+              emailFailed
+                ? "It didn’t reach\ntheir inbox."
+                : emailDelivery
+                  ? "It’s out of\nyour hands now."
+                  : "Your letter is sealed.\nPass it along."
             }
             emphasis={[1]}
             play
@@ -132,10 +153,13 @@ export function Success() {
             className="measure-caption"
             style={{ color: "var(--text-dim)", marginBottom: "var(--s8)" }}
           >
-            {emailDelivery
-              ? "Their address was used for delivery and discarded. You can also share the link below."
-              : "Copy the link and send it wherever you like. Anyone with the link can open your letter."}{" "}
-            The letter expires in thirty days.
+            {emailFailed
+              ? "Your letter is sealed and safe. Only the delivery failed. Their address was used once and let go, so we can’t try again from here. Send them the link yourself. It opens the same letter, the same way. It stays for thirty days."
+              : `${
+                  emailDelivery
+                    ? "Their address was used for delivery and discarded. You can also share the link below."
+                    : "Copy the link and send it wherever you like. Anyone with the link can open your letter."
+                } The letter expires in thirty days.`}
           </p>
 
           <div className="link-row" data-copied={copied}>
@@ -173,6 +197,8 @@ export function Success() {
           </div>
         </div>
       </main>
+
+      <Toast toast={toast} onDismiss={() => setToast(null)} />
     </div>
   );
 }

@@ -90,12 +90,25 @@ describe("POST /messages", () => {
     expect(calls.flatMap((call) => call.args)).not.toContain("reader@example.com");
   });
 
-  it("removes the stored letter and returns 502 when delivery fails", async () => {
+  it("reports a sent email", async () => {
+    const response = await create({ ...letter, recipient_email: "reader@example.com" });
+    expect(await response.json()).toMatchObject({ email_delivery: "sent" });
+  });
+
+  it("keeps the letter and reports failed delivery so the writer can share the link", async () => {
     vi.mocked(sendLetterEmail).mockResolvedValue({ ok: false, reason: "Resend 403: domain" });
     const response = await create({ ...letter, recipient_email: "reader@example.com" });
-    expect(response.status).toBe(502);
-    const id = inserts()[0].args[0];
-    expect(calls.at(-1)).toEqual({ sql: "DELETE FROM messages WHERE id = ?", args: [id] });
+    expect(response.status).toBe(201);
+    const result = (await response.json()) as { slug: string; email_delivery: string };
+    expect(result.email_delivery).toBe("failed");
+    expect(result.slug).toMatch(/^[a-z0-9]{8}$/);
+    expect(calls.some((call) => call.sql.startsWith("DELETE"))).toBe(false);
+    expect(calls.flatMap((call) => call.args)).not.toContain("reader@example.com");
+  });
+
+  it("omits email_delivery for a share link", async () => {
+    const response = await create({ ...letter, delivery_method: "link" });
+    expect(await response.json()).not.toHaveProperty("email_delivery");
   });
 
   it("retries with a new slug when one collides", async () => {

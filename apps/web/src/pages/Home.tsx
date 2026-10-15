@@ -229,7 +229,7 @@ export function Home() {
         <Link className="unsaid-wordmark" to="/">
           Unsaid<span className="wordmark-period">.</span>
         </Link>
-        <span>A little less unsaid.</span>
+        {/* <span>A little less unsaid.</span> */}
         <nav aria-label="Footer">
           <a href="#privacy">Privacy</a>
           <span>Open source · MIT License</span>
