@@ -1,9 +1,7 @@
-import { AnimatePresence, MotionConfig, motion } from "framer-motion";
-import { useEffect, useRef } from "react";
-import { Link, Route, Routes, useLocation } from "react-router-dom";
+import { MotionConfig } from "framer-motion";
+import { Link, Route, Routes } from "react-router-dom";
 import { StaggeredText } from "./components/ui/StaggeredText";
-import { RouteScrollAnchor, useScrollMemory } from "./hooks/useRouteScroll";
-import { DURATION, EASE_ENTER } from "./lib/motion";
+import { useRouteScroll } from "./hooks/useRouteScroll";
 import { Compose } from "./pages/Compose";
 import { Home } from "./pages/Home";
 import { Message } from "./pages/Message";
@@ -11,38 +9,18 @@ import { Preview } from "./pages/Preview";
 import { Success } from "./pages/Success";
 
 export function App() {
-  const location = useLocation();
-  // the first page is already painted by the time React runs; only later pages enter
-  const firstPage = useRef(true);
-
-  useScrollMemory();
-
-  useEffect(() => {
-    firstPage.current = false;
-  }, []);
+  useRouteScroll();
 
   return (
     <MotionConfig reducedMotion="user">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={location.pathname}
-          initial={firstPage.current ? false : { opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: DURATION.ui, ease: EASE_ENTER }}
-        >
-          {/* scroll is set as each page arrives — never while the previous one fades out */}
-          <RouteScrollAnchor />
-          <Routes location={location}>
-            <Route path="/" element={<Home />} />
-            <Route path="/compose" element={<Compose />} />
-            <Route path="/preview" element={<Preview />} />
-            <Route path="/success/:slug" element={<Success />} />
-            <Route path="/m/:slug" element={<Message />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </motion.div>
-      </AnimatePresence>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/compose" element={<Compose />} />
+        <Route path="/preview" element={<Preview />} />
+        <Route path="/success/:slug" element={<Success />} />
+        <Route path="/m/:slug" element={<Message />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </MotionConfig>
   );
 }

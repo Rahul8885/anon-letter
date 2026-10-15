@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { LivePreview } from "../components/composer/LivePreview";
 import { MessageSheet } from "../components/composer/MessageSheet";
 import { TemplatePicker } from "../components/composer/TemplatePicker";
@@ -10,7 +10,6 @@ import { defaultHeading } from "../components/templates/LetterRoom";
 import { Button } from "../components/ui/Button";
 import { Field } from "../components/ui/Field";
 import { ProgressRail } from "../components/ui/ProgressRail";
-import { StaggeredText } from "../components/ui/StaggeredText";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { RequestError, api } from "../lib/api";
 import { ROOM_LIST, SAMPLE_MESSAGE, room } from "../lib/moods";
@@ -86,9 +85,8 @@ export function Compose() {
   const [params] = useSearchParams();
 
   // Dev-only: ?step=2&mood=old-letter jumps straight to a step so each can be reviewed in
-  // isolation. Seeded before first paint, not in an effect — changing `step` after mount
-  // restarts the AnimatePresence swap and the step renders mid-transition. Stripped from
-  // production builds; the real flow is always gated by validation.
+  // isolation. Seeded before first paint so the requested step is visible immediately.
+  // Stripped from production builds; the real flow is always gated by validation.
   useState(() => {
     if (!import.meta.env.DEV) return null;
     const devMood = params.get("mood") as typeof store.mood | null;
@@ -105,22 +103,61 @@ export function Compose() {
   });
   const [emailTouched, setEmailTouched] = useState(false);
   const [seal, setSeal] = useState<SealPhase | null>(null);
+  const isSealing = seal !== null;
   const [failure, setFailure] = useState<SendFailure | null>(null);
   const sealTimers = useRef<number[]>([]);
   const swatchRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const stepHeading = useRef<HTMLHeadingElement>(null);
+  const previousStep = useRef(store.step);
+
+  // A new task starts at its heading. Route returns keep their restored scroll position.
+  useLayoutEffect(() => {
+    if (previousStep.current === store.step) return;
+    previousStep.current = store.step;
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    stepHeading.current?.focus({ preventScroll: true });
+    const composer = document.getElementById("composer");
+    window.scrollTo({
+      top: composer ? composer.getBoundingClientRect().top + window.scrollY - 24 : 0,
+      behavior: "instant",
+    });
+  }, [store.step]);
 
   useEffect(() => () => sealTimers.current.forEach(window.clearTimeout), []);
+
+  useEffect(() => {
+    if (!isSealing) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [isSealing]);
 
   // the failure is a dialog: its first action takes focus as it arrives (after the progress
   // line has left), and Escape returns to the letter
   const focusFirstAction = useCallback((el: HTMLDivElement | null) => {
-    el?.querySelector("button")?.focus();
+    el?.querySelector("button")?.focus({ preventScroll: true });
   }, []);
 
   useEffect(() => {
     if (!failure) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") backToLetter();
+      if (event.key === "Tab") {
+        const actions = document.querySelectorAll<HTMLButtonElement>(
+          ".seal-failure-actions button",
+        );
+        const first = actions[0];
+        const last = actions[actions.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -243,159 +280,173 @@ export function Compose() {
         <div className="compose-body" id="composer">
           <ProgressRail step={store.step} />
 
-          {/* initial={false} — the first step is present on first paint. Only step-to-step
-              changes animate, so a stalled enter tween can never hide the composer. */}
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={store.step}
-              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? { opacity: 0 } : { opacity: 0, y: -16 }}
-              transition={{ duration: reduced ? 0.12 : 0.42, ease: EASE_ENTER }}
-            >
-              <header className="compose-intro">
-                <StaggeredText as="h1" className="t-h1" text={heading} play delay={70} />
-                <p>{sub}</p>
-              </header>
+          <div className="compose-step" data-step={store.step}>
+            <header className="compose-intro">
+              <h1 className="t-h1" ref={stepHeading} tabIndex={-1}>
+                {heading}
+              </h1>
+              <p>{sub}</p>
+            </header>
 
-              {store.step === 1 && <TemplatePicker value={store.mood} onChange={store.setMood} />}
+            {store.step === 1 && <TemplatePicker value={store.mood} onChange={store.setMood} />}
 
-              {store.step === 2 && (
-                <div className="compose-split">
-                  <div>
-                    <MessageSheet
-                      value={store.message}
-                      onChange={store.setMessage}
-                      moodName={r.name}
-                      heading={store.heading}
-                      roomHeading={roomHeading}
-                      onHeadingChange={store.setHeading}
-                    />
-                    <div className="mood-switch">
-                      <p className="mood-switch-label">
-                        <span id="mood-switch-label">Mood</span>
-                        <span className="mood-switch-name">{r.name}</span>
-                      </p>
-                      <div
-                        className="swatches"
-                        role="radiogroup"
-                        aria-labelledby="mood-switch-label"
-                        aria-describedby="mood-switch-note"
-                      >
-                        {ROOM_LIST.map((option, index) => (
-                          <button
-                            key={option.id}
-                            ref={(el) => {
-                              swatchRefs.current[index] = el;
-                            }}
-                            type="button"
-                            role="radio"
-                            aria-checked={option.id === store.mood}
-                            aria-label={option.name}
-                            tabIndex={option.id === store.mood ? 0 : -1}
-                            className="swatch"
-                            style={{ background: option.cardGradient }}
-                            onClick={() => store.setMood(option.id)}
-                            onKeyDown={(event) => onSwatchKey(event, index)}
-                          />
-                        ))}
-                      </div>
-                      <p className="mood-switch-note" id="mood-switch-note">
-                        Switch any time. Your words stay exactly where they are.
-                      </p>
+            {store.step === 2 && (
+              <div className="compose-split compose-work">
+                <div>
+                  <MessageSheet
+                    value={store.message}
+                    onChange={store.setMessage}
+                    moodName={r.name}
+                    heading={store.heading}
+                    roomHeading={roomHeading}
+                    onHeadingChange={store.setHeading}
+                  />
+                  <div className="mood-switch">
+                    <p className="mood-switch-label">
+                      <span id="mood-switch-label">Mood</span>
+                      <span className="mood-switch-name">{r.name}</span>
+                    </p>
+                    <div
+                      className="swatches"
+                      role="radiogroup"
+                      aria-labelledby="mood-switch-label"
+                      aria-describedby="mood-switch-note"
+                    >
+                      {ROOM_LIST.map((option, index) => (
+                        <button
+                          key={option.id}
+                          ref={(el) => {
+                            swatchRefs.current[index] = el;
+                          }}
+                          type="button"
+                          role="radio"
+                          aria-checked={option.id === store.mood}
+                          aria-label={option.name}
+                          tabIndex={option.id === store.mood ? 0 : -1}
+                          className="swatch"
+                          style={{ background: option.cardGradient }}
+                          onClick={() => store.setMood(option.id)}
+                          onKeyDown={(event) => onSwatchKey(event, index)}
+                        />
+                      ))}
                     </div>
+                    <p className="mood-switch-note" id="mood-switch-note">
+                      Switch any time. Your words stay exactly where they are.
+                    </p>
                   </div>
-                  <LivePreview
-                    mood={store.mood}
-                    message={store.message}
-                    heading={store.heading}
-                    fromHint={store.fromHint}
-                    accent={store.accent}
-                  />
+                  <Link
+                    className="compose-mobile-preview"
+                    to="/preview"
+                    state={{ fromComposer: true }}
+                    aria-disabled={!store.message.trim()}
+                    onClick={(event) => {
+                      if (!store.message.trim()) event.preventDefault();
+                    }}
+                  >
+                    Preview letter <span aria-hidden="true">↗</span>
+                  </Link>
                 </div>
-              )}
+                <LivePreview
+                  mood={store.mood}
+                  message={store.message}
+                  heading={store.heading}
+                  fromHint={store.fromHint}
+                  accent={store.accent}
+                />
+              </div>
+            )}
 
-              {store.step === 3 && (
-                <div className="compose-split">
-                  <div className="delivery-form">
-                    <fieldset className="delivery-options">
-                      <legend>How would you like to deliver it?</legend>
-                      <label className="delivery-option">
-                        <input
-                          type="radio"
-                          name="delivery"
-                          value="email"
-                          checked={store.deliveryMethod === "email"}
-                          onChange={() => store.setDeliveryMethod("email")}
+            {store.step === 3 && (
+              <div className="compose-split compose-work">
+                <div className="delivery-form">
+                  <fieldset className="delivery-options">
+                    <legend>How would you like to deliver it?</legend>
+                    <label className="delivery-option">
+                      <input
+                        type="radio"
+                        name="delivery"
+                        value="email"
+                        checked={store.deliveryMethod === "email"}
+                        onChange={() => store.setDeliveryMethod("email")}
+                      />
+                      <span>
+                        <strong>
+                          Send by email <small>Recommended</small>
+                        </strong>
+                        <span>We deliver the letter straight to their inbox.</span>
+                      </span>
+                    </label>
+                    <label className="delivery-option">
+                      <input
+                        type="radio"
+                        name="delivery"
+                        value="link"
+                        checked={store.deliveryMethod === "link"}
+                        onChange={() => store.setDeliveryMethod("link")}
+                      />
+                      <span>
+                        <strong>Share a link</strong>
+                        <span>No email needed. Copy the link and share it yourself.</span>
+                      </span>
+                    </label>
+                  </fieldset>
+                  <AnimatePresence initial={false}>
+                    {store.deliveryMethod === "email" && (
+                      <motion.div
+                        className="field-reveal"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: DURATION.ui, ease: EASE_ENTER }}
+                      >
+                        <Field
+                          label="Their email"
+                          type="email"
+                          inputMode="email"
+                          autoComplete="off"
+                          value={store.recipientEmail}
+                          error={emailError}
+                          valid={emailValid}
+                          hint="Used once, for delivery. Never stored, never shown to them as yours."
+                          onBlur={() => setEmailTouched(true)}
+                          onChange={(e) => store.setRecipientEmail(e.target.value)}
+                          placeholder="their@email.com"
                         />
-                        <span>
-                          <strong>
-                            Send by email <small>Recommended</small>
-                          </strong>
-                          <span>We deliver the letter straight to their inbox.</span>
-                        </span>
-                      </label>
-                      <label className="delivery-option">
-                        <input
-                          type="radio"
-                          name="delivery"
-                          value="link"
-                          checked={store.deliveryMethod === "link"}
-                          onChange={() => store.setDeliveryMethod("link")}
-                        />
-                        <span>
-                          <strong>Share a link</strong>
-                          <span>No email needed. Copy the link and share it yourself.</span>
-                        </span>
-                      </label>
-                    </fieldset>
-                    <AnimatePresence initial={false}>
-                      {store.deliveryMethod === "email" && (
-                        <motion.div
-                          className="field-reveal"
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: DURATION.ui, ease: EASE_ENTER }}
-                        >
-                          <Field
-                            label="Their email"
-                            type="email"
-                            inputMode="email"
-                            autoComplete="off"
-                            value={store.recipientEmail}
-                            error={emailError}
-                            valid={emailValid}
-                            hint="Used once, for delivery. Never stored, never shown to them as yours."
-                            onBlur={() => setEmailTouched(true)}
-                            onChange={(e) => store.setRecipientEmail(e.target.value)}
-                            placeholder="their@email.com"
-                          />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                    <Field
-                      label="Sign it (optional)"
-                      maxLength={60}
-                      value={store.fromHint}
-                      hint="A hint, not a name. Left blank, it signs itself."
-                      onChange={(e) => store.setFromHint(e.target.value)}
-                      placeholder={r.signature}
-                    />
-                  </div>
-                  <LivePreview
-                    mood={store.mood}
-                    message={store.message}
-                    heading={store.heading}
-                    fromHint={store.fromHint}
-                    accent={store.accent}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                  <Field
+                    label="Sign it (optional)"
+                    maxLength={60}
+                    value={store.fromHint}
+                    hint="A hint, not a name. Left blank, it signs itself."
+                    onChange={(e) => store.setFromHint(e.target.value)}
+                    placeholder={r.signature}
                   />
+                  <Link
+                    className="compose-mobile-preview"
+                    to="/preview"
+                    state={{ fromComposer: true }}
+                  >
+                    View letter <span aria-hidden="true">↗</span>
+                  </Link>
                 </div>
-              )}
+                <LivePreview
+                  mood={store.mood}
+                  message={store.message}
+                  heading={store.heading}
+                  fromHint={store.fromHint}
+                  accent={store.accent}
+                />
+              </div>
+            )}
 
-              {store.step === 4 && (
-                <div className="compose-split">
-                  <dl style={{ margin: 0 }}>
+            {store.step === 4 && (
+              <div className="compose-split compose-review">
+                <section className="review-summary" aria-label="Delivery summary">
+                  <h2>Ready to send?</h2>
+                  <p className="review-note">Your words, just as you wrote them.</p>
+                  <dl>
                     <div className="review-row">
                       <dt>Mood</dt>
                       <dd>
@@ -413,24 +464,10 @@ export function Compose() {
                       </dd>
                     </div>
                     <div className="review-row">
-                      <dt>Heading</dt>
-                      <dd>
-                        {customHeading ?? roomHeading}
-                        <EditStep step={2} label="heading" />
-                      </dd>
-                    </div>
-                    <div className="review-row">
                       <dt>Signed</dt>
                       <dd>
                         {store.fromHint.trim() || r.signature}
                         <EditStep step={3} label="signature" />
-                      </dd>
-                    </div>
-                    <div className="review-row">
-                      <dt>Length</dt>
-                      <dd>
-                        {store.message.trim().length} characters
-                        <EditStep step={2} label="message" />
                       </dd>
                     </div>
                     <div className="review-row" style={{ borderBottom: "none" }}>
@@ -441,17 +478,22 @@ export function Compose() {
                       </dd>
                     </div>
                   </dl>
-                  <LivePreview
-                    mood={store.mood}
-                    message={store.message}
-                    heading={store.heading}
-                    fromHint={store.fromHint}
-                    accent={store.accent}
-                  />
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+                  <div className="review-edit-letter">
+                    <EditStep step={2} label="letter">
+                      Edit letter
+                    </EditStep>
+                  </div>
+                </section>
+                <LivePreview
+                  mood={store.mood}
+                  message={store.message}
+                  heading={store.heading}
+                  fromHint={store.fromHint}
+                  accent={store.accent}
+                />
+              </div>
+            )}
+          </div>
 
           <div className="compose-actions">
             {/* step one has nowhere to go back to; the slot holds so Continue never jumps */}
@@ -475,7 +517,11 @@ export function Compose() {
                     store.next();
                   }}
                 >
-                  Continue
+                  {store.step === 1
+                    ? "Write your letter"
+                    : store.step === 2
+                      ? "Choose delivery"
+                      : "Review letter"}
                 </Button>
                 {blockedReason && (
                   <p className="compose-blocked" id="compose-blocked">
@@ -513,7 +559,9 @@ export function Compose() {
               exit={{ opacity: 0 }}
               transition={{ duration: DURATION.ui, ease: EASE_ENTER }}
             >
-              <SealEnvelope mood={store.mood} phase={seal} />
+              <div className="seal-artwork">
+                <SealEnvelope mood={store.mood} phase={seal} />
+              </div>
               <AnimatePresence mode="wait" initial={false}>
                 {failure ? (
                   <motion.div
@@ -560,11 +608,19 @@ export function Compose() {
   );
 }
 
-function EditStep({ step, label }: { step: 1 | 2 | 3; label: string }) {
+function EditStep({
+  step,
+  label,
+  children,
+}: { step: 1 | 2 | 3; label: string; children?: string }) {
   const setStep = useComposerStore((s) => s.setStep);
   return (
     <button type="button" className="review-edit" onClick={() => setStep(step)}>
-      Edit<span className="sr-only"> {label}</span>
+      {children ?? (
+        <>
+          Edit<span className="sr-only"> {label}</span>
+        </>
+      )}
     </button>
   );
 }

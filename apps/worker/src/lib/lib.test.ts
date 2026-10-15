@@ -21,13 +21,16 @@ describe("buildEmail", () => {
     const email = buildEmail({
       slug: "abcd1234",
       accent: "#8b90d0",
-      fromHint: `<script>alert("x")</script>`,
+      fromHint: `<script>alert("x")</script> & <script>'y'</script> & "z"`,
       baseUrl: "https://letters.example/",
     });
     expect(email.url).toBe("https://letters.example/m/abcd1234");
     expect(email.html).toContain('href="https://letters.example/m/abcd1234"');
     expect(email.html).not.toContain("<script>");
     expect(email.html).toContain("&lt;script&gt;");
+    expect(email.html).toContain(
+      "&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt; &amp; &lt;script&gt;&#39;y&#39;&lt;/script&gt; &amp; &quot;z&quot;",
+    );
     expect(email.text).toContain(email.url);
   });
 });

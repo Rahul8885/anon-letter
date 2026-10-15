@@ -14,16 +14,14 @@ import { StaggeredText } from "../ui/StaggeredText";
 interface LeadConfig {
   /** How the room opens: a display headline, or a quiet inline greeting. */
   kind: "display" | "inline" | "salutation";
-  /** Display headlines break deliberately; the room's voice lives in the line break. */
-  lines?: string[];
 }
 
 const LEAD: Record<TemplateId, LeadConfig> = {
-  "soft-bloom": { kind: "display", lines: ["Be gentle", "with this one."] },
+  "soft-bloom": { kind: "display" },
   "old-letter": { kind: "salutation" },
   "night-thought": { kind: "inline" },
-  "quiet-garden": { kind: "display", lines: ["Grown quietly,", "and on purpose."] },
-  "confetti-love": { kind: "display", lines: ["You did the", "whole thing."] },
+  "quiet-garden": { kind: "display" },
+  "confetti-love": { kind: "display" },
 };
 
 export function LetterRoom({
@@ -75,9 +73,9 @@ export function LetterRoom({
   );
 }
 
-/** The room's own heading, with its deliberate line breaks as "\n". */
+/** Short, shared default for the editor, stationery previews and delivered letter. */
 export function defaultHeading(mood: TemplateId): string {
-  return LEAD[mood].lines?.join("\n") ?? room(mood).greeting;
+  return room(mood).greeting;
 }
 
 /** The writer's heading when they changed it; otherwise the room's, line breaks intact. */

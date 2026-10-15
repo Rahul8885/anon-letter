@@ -27,7 +27,7 @@ export function LivePreview({
   const r = room(mood);
 
   return (
-    <div>
+    <div className="compose-letter-preview">
       <p className="preview-label">What they&rsquo;ll see</p>
       <LetterSheet
         mood={mood}
@@ -43,7 +43,7 @@ export function LivePreview({
         </div>
       </LetterSheet>
       {message.trim() && (
-        <Link className="btn-outline preview-open" to="/preview">
+        <Link className="btn-outline preview-open" to="/preview" state={{ fromComposer: true }}>
           Preview the full opening <Arrow />
         </Link>
       )}

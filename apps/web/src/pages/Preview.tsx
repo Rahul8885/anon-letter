@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { StaggeredText } from "../components/ui/StaggeredText";
 import { letterPaletteStyle } from "../lib/letterPalette";
@@ -9,6 +9,8 @@ import { Reveal } from "./Message";
 /** Uses the actual receiver ceremony with local draft data; never calls the API. */
 export function Preview() {
   const draft = useComposerStore();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [replay, setReplay] = useState(0);
   const [createdAt] = useState(() => Math.floor(Date.now() / 1000));
 
@@ -46,7 +48,16 @@ export function Preview() {
           >
             Replay opening
           </Button>
-          <Link className="btn btn-primary" to="/compose">
+          <Link
+            className="btn btn-primary"
+            to="/compose"
+            onClick={(event) => {
+              if (location.state?.fromComposer) {
+                event.preventDefault();
+                navigate(-1);
+              }
+            }}
+          >
             Back to your draft
           </Link>
         </nav>
