@@ -25,4 +25,6 @@ crons = ["0 3 * * *"]
 
 # Optional: serve the API on the same domain as the site (no CORS, no VITE_API_URL needed).
 # Requires the domain to be on Cloudflare. Uncomment and edit:
-# routes = [{ pattern = "yourdomain.com/api/*", zone_name = "yourdomain.com" }]
+routes = [
+  { pattern = "unsaidletters.in/api/*", zone_name = "unsaidletters.in" }
+]
