@@ -3,12 +3,13 @@ import type { CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import { room } from "../../lib/moods";
 import { Arrow } from "../editorial/EditorialHero";
-import { LetterLead, LetterRoom } from "../templates/LetterRoom";
+import { LetterSheet } from "../envelope/LetterSheet";
+import { LetterLead } from "../templates/LetterRoom";
 
 /**
- * What they'll see. Types in sync at 1:1 — no debounce beyond a frame — so the writer feels
- * the room forming under their hands. Mood switch re-skins by tweening CSS variables; the
- * words never re-mount.
+ * What they'll see: the reader's opened sheet, not a sketch of the room. Types in sync at
+ * 1:1 — no debounce beyond a frame — so the writer feels the letter forming under their
+ * hands. Mood switch re-tints by CSS variables; the words never re-mount.
  */
 export function LivePreview({
   mood,
@@ -28,10 +29,8 @@ export function LivePreview({
   return (
     <div>
       <p className="preview-label">What they&rsquo;ll see</p>
-      <LetterRoom
-        className="preview-card room-compact"
+      <LetterSheet
         mood={mood}
-        burst={false}
         style={accent ? ({ "--room-accent": accent } as CSSProperties) : undefined}
       >
         <div className="letter-stack">
@@ -42,15 +41,12 @@ export function LivePreview({
           <hr className="letter-rule" />
           <p className="letter-sign">— from {fromHint.trim() || r.signature}</p>
         </div>
-      </LetterRoom>
+      </LetterSheet>
       {message.trim() && (
         <Link className="btn-outline preview-open" to="/preview">
           Preview the full opening <Arrow />
         </Link>
       )}
-      <p className="preview-note">
-        Switch mood at any time — your words stay exactly where they are.
-      </p>
     </div>
   );
 }

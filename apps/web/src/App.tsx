@@ -2,6 +2,7 @@ import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { Link, Route, Routes, useLocation } from "react-router-dom";
 import { StaggeredText } from "./components/ui/StaggeredText";
+import { RouteScrollAnchor, useScrollMemory } from "./hooks/useRouteScroll";
 import { DURATION, EASE_ENTER } from "./lib/motion";
 import { Compose } from "./pages/Compose";
 import { Home } from "./pages/Home";
@@ -14,13 +15,11 @@ export function App() {
   // the first page is already painted by the time React runs; only later pages enter
   const firstPage = useRef(true);
 
-  // route changes start at the top; the reveal in particular must never open mid-scroll.
-  // `instant` overrides the page's smooth scroll-behavior for this jump.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the intended trigger
+  useScrollMemory();
+
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
     firstPage.current = false;
-  }, [location.pathname]);
+  }, []);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -32,6 +31,8 @@ export function App() {
           exit={{ opacity: 0 }}
           transition={{ duration: DURATION.ui, ease: EASE_ENTER }}
         >
+          {/* scroll is set as each page arrives — never while the previous one fades out */}
+          <RouteScrollAnchor />
           <Routes location={location}>
             <Route path="/" element={<Home />} />
             <Route path="/compose" element={<Compose />} />

@@ -57,6 +57,11 @@ export interface CreateMessageResponse {
   success: true;
   slug: string;
   message_url: string;
+  /**
+   * Email delivery only. "failed" means the letter was stored but the inbox refused it —
+   * the writer gets the link to share themselves. Absent for link delivery.
+   */
+  email_delivery?: "sent" | "failed";
 }
 
 export interface GetMessageResponse {

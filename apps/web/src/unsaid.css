@@ -286,6 +286,7 @@ svg {
   height: 500px;
   isolation: isolate;
 }
+/* The stem lies across the envelope, nearest to the viewer; an opened letter lifts above it. */
 .scene-botanical {
   position: absolute;
   width: 200px;
@@ -293,7 +294,9 @@ svg {
   top: -12px;
   right: -18px;
   transform: rotate(18deg);
-  z-index: -1;
+  z-index: 3;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 14px rgba(60, 40, 30, 0.16));
 }
 .scene-envelope {
   position: absolute;
@@ -1028,10 +1031,6 @@ svg {
 .preview-link:hover {
   color: var(--rose);
 }
-.preview-card {
-  border: 0;
-  border-radius: 6px;
-}
 .swatch {
   width: 44px;
   height: 44px;
@@ -1153,13 +1152,18 @@ svg {
   text-underline-offset: 5px;
   cursor: pointer;
 }
-.ceremony-letter {
+/* The sheet the reader holds. The composer's preview is this same sheet, so stock, ink,
+   measure and line breaks are what will arrive. */
+.letter-sheet {
   position: relative;
   width: min(700px, 100%);
   min-height: 740px;
   padding: 76px 85px 90px;
   margin-inline: auto;
   background: transparent;
+  /* ink sits on paper in every room — the dark room's light text belongs to its desk */
+  --room-text: var(--letter-ink);
+  --room-muted: var(--letter-secondary);
 }
 .ceremony-paper-image {
   position: absolute;
@@ -1169,7 +1173,7 @@ svg {
   z-index: 0;
   pointer-events: none;
 }
-.ceremony-letter-content {
+.letter-sheet-content {
   position: relative;
   z-index: 1;
 }
@@ -1177,18 +1181,18 @@ svg {
   width: min(700px, 100%);
   margin: 24px auto 0;
 }
-.ceremony-letter .letter-body {
+.letter-sheet .letter-body {
   color: var(--letter-ink);
 }
-.ceremony-letter .letter-lead {
+.letter-sheet .letter-lead {
   color: var(--letter-ink);
 }
-.ceremony-letter .letter-greeting,
-.ceremony-letter .letter-salutation,
-.ceremony-letter .letter-sign {
+.letter-sheet .letter-greeting,
+.letter-sheet .letter-salutation,
+.letter-sheet .letter-sign {
   color: var(--letter-secondary);
 }
-.ceremony-letter .letter-rule {
+.letter-sheet .letter-rule {
   background: var(--letter-secondary);
 }
 .room-tactile .report-btn,
@@ -1197,7 +1201,7 @@ svg {
   display: inline-flex;
   align-items: center;
 }
-.ceremony-letter .letter-stack {
+.letter-sheet .letter-stack {
   justify-content: flex-start;
 }
 .letter-reading-skip {
@@ -1221,11 +1225,7 @@ svg {
   letter-spacing: 0;
   text-transform: none;
 }
-.room[data-mood="night-thought"] .ceremony-letter {
-  --room-text: var(--letter-ink);
-  --room-muted: var(--letter-secondary);
-}
-.room[data-mood="night-thought"] .ceremony-letter .letter-body {
+.letter-sheet[data-mood="night-thought"] .letter-body {
   font-weight: 400;
 }
 
@@ -1527,14 +1527,14 @@ svg {
   .ceremony-envelope {
     margin-block: 25px;
   }
-  .ceremony-letter {
+  .letter-sheet {
     min-height: 660px;
     padding: 58px 40px 70px;
   }
-  .ceremony-letter .letter-lead {
+  .letter-sheet .letter-lead {
     font-size: 2rem;
   }
-  .ceremony-letter .letter-body {
+  .letter-sheet .letter-body {
     font-size: 1rem;
   }
   .room-tactile .room-rail {
@@ -1553,7 +1553,7 @@ svg {
     width: 410px;
     left: calc(50% - 200px);
   }
-  .ceremony-letter {
+  .letter-sheet {
     padding-inline: 32px;
   }
 }
@@ -1598,12 +1598,7 @@ svg {
 .recipient-letter small {
   color: var(--ink-soft);
 }
-.ceremony-letter .letter-greeting,
-.ceremony-letter .letter-salutation,
-.ceremony-letter .letter-sign {
-  color: var(--letter-secondary);
-}
-.ceremony-letter .letter-sign {
+.letter-sheet .letter-sign {
   font-family: var(--font-body);
   font-size: .875rem;
   font-style: normal;
@@ -1902,6 +1897,10 @@ svg {
 .ceremony-staged[data-instant="true"] .ceremony-paper-panel::after {
   animation: none;
 }
+/* skipping lands on the unfold's last frame: the fold light has already faded */
+.ceremony-staged[data-instant="true"] .ceremony-paper-panel::after {
+  opacity: 0;
+}
 .ceremony-staged[data-instant="true"] .ceremony-letter-content {
   transition: none;
 }
@@ -2043,9 +2042,6 @@ svg {
 .ceremony-stock-filter { position: absolute; pointer-events: none; }
 .ceremony-folded-letter img,
 .ceremony-paper-panel img { filter: var(--letter-stock-filter, none); }
-.preview-card.room-compact {
-  background: var(--letter-paper);
-}
 .receiver-preview { background: var(--room-bg); }
 .receiver-preview .preview-toolbar { border-color: var(--room-border); }
 .receiver-preview .preview-toolbar .btn-secondary {
@@ -2053,8 +2049,43 @@ svg {
   border-color: var(--room-muted);
 }
 .receiver-preview .preview-toolbar .btn-secondary:hover { background: var(--room-border); }
-.ceremony-letter-content ::selection {
+.letter-sheet-content ::selection {
   color: var(--letter-paper);
   background: var(--letter-ink);
 }
-.ceremony-letter .caret { background: var(--letter-ink); }
+.letter-sheet .caret { background: var(--letter-ink); }
+
+/* One full sheet of stock: the three fold panels at rest, without the folds. */
+.letter-sheet-paper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.letter-sheet-paper img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  filter: var(--letter-stock-filter, none);
+}
+.letter-sheet-paper img[hidden] { display: none; }
+.letter-sheet-paper:has(img[hidden]) { background: var(--letter-paper); }
+
+/* The composer lays the sheet on the reader's desk colour, and nothing else from the room:
+   the reader never sees petals, seals or ambient fields around the paper. */
+.preview-desk {
+  /* a thin margin of desk: every pixel given to the sheet is a pixel less zoom */
+  padding: clamp(12px, 1.6vw, 20px);
+  border-radius: 6px;
+  background: var(--room-bg);
+  transition: background-color 600ms var(--ease-enter);
+}
+.preview-desk-sizer {
+  min-width: 0;
+}
+/* a 700px sheet, zoomed to the column, keeps the reader's exact line breaks */
+.preview-desk .letter-sheet[data-fit="scaled"] {
+  width: 700px;
+  max-width: none;
+}

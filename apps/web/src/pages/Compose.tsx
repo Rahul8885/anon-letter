@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { LivePreview } from "../components/composer/LivePreview";
@@ -11,9 +11,8 @@ import { Button } from "../components/ui/Button";
 import { Field } from "../components/ui/Field";
 import { ProgressRail } from "../components/ui/ProgressRail";
 import { StaggeredText } from "../components/ui/StaggeredText";
-import { Toast, type ToastMessage } from "../components/ui/Toast";
 import { useReducedMotion } from "../hooks/useReducedMotion";
-import { api } from "../lib/api";
+import { RequestError, api } from "../lib/api";
 import { ROOM_LIST, SAMPLE_MESSAGE, room } from "../lib/moods";
 import { DURATION, EASE_ENTER } from "../lib/motion";
 import { rovingIndex } from "../lib/roving";
@@ -29,6 +28,43 @@ const SEAL_BEATS: [SealPhase, number][] = [
 ];
 const SEAL_DONE = 1950;
 const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+/**
+ * Failures where no letter exists yet. The sealing overlay stays and unseals — the writer is
+ * never bounced back to the form mid-ceremony. (A refused inbox is not one of these: that
+ * letter is sealed and saved, and goes on to the success page with its link.)
+ */
+interface SendFailure {
+  title: string;
+  detail: string;
+  retry: boolean;
+}
+
+function sendFailure(error: unknown): SendFailure {
+  const status = error instanceof RequestError ? error.status : null;
+  if (status === 429) {
+    return {
+      title: "That’s enough letters for now.",
+      detail: "Nothing was sent. Your letter will wait here. Try again in a little while.",
+      retry: false,
+    };
+  }
+  if (status !== null && status < 500) {
+    return {
+      title: "Something in the letter needs a look.",
+      detail: `${error instanceof Error ? error.message : ""} Nothing was sent.`.trim(),
+      retry: false,
+    };
+  }
+  return {
+    title: "It didn’t leave your hands.",
+    detail:
+      status === null
+        ? "We couldn’t reach Unsaid, so nothing was sent. Your letter is still here, word for word."
+        : "Something went wrong on our side, so nothing was sent. Your letter is still here, word for word.",
+    retry: true,
+  };
+}
 
 const HEADINGS: Record<number, [string, string]> = {
   1: [
@@ -67,13 +103,37 @@ export function Compose() {
     }
     return null;
   });
-  const [toast, setToast] = useState<ToastMessage | null>(null);
   const [emailTouched, setEmailTouched] = useState(false);
   const [seal, setSeal] = useState<SealPhase | null>(null);
+  const [failure, setFailure] = useState<SendFailure | null>(null);
   const sealTimers = useRef<number[]>([]);
   const swatchRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => () => sealTimers.current.forEach(window.clearTimeout), []);
+
+  // the failure is a dialog: its first action takes focus as it arrives (after the progress
+  // line has left), and Escape returns to the letter
+  const focusFirstAction = useCallback((el: HTMLDivElement | null) => {
+    el?.querySelector("button")?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (!failure) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") backToLetter();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [failure]);
+
+  function backToLetter() {
+    setFailure(null);
+    setSeal(null);
+    // the send button is the natural place to pick up again
+    window.requestAnimationFrame(() =>
+      document.querySelector<HTMLButtonElement>(".compose-actions .btn-primary")?.focus(),
+    );
+  }
 
   const r = room(store.mood);
   const roomHeading = defaultHeading(store.mood).replace(/\n/g, " ");
@@ -125,7 +185,7 @@ export function Compose() {
     if (store.isSubmitting) return;
     store.setSubmitting(true);
     store.setSubmitError(null);
-    setToast(null);
+    setFailure(null);
     const ceremony = playSeal();
     try {
       const request = api.createMessage({
@@ -142,6 +202,8 @@ export function Compose() {
         deliveryMethod: store.deliveryMethod,
         messageUrl: result.message_url,
         mood: store.mood,
+        // the letter is sealed and saved, but their inbox refused it: the writer passes it on
+        emailFailed: result.email_delivery === "failed",
       };
       // a refresh on the success page loses router state; keep the receipt for this tab
       try {
@@ -150,17 +212,11 @@ export function Compose() {
       store.finish();
       navigate(`/success/${result.slug}`, { state: { ...receipt, sealed: true } });
     } catch (error) {
+      // nothing was created: the overlay stays and the envelope visibly comes open again
       for (const timer of sealTimers.current) window.clearTimeout(timer);
-      setSeal(null);
-      const detail = error instanceof Error ? error.message : "Could not send this letter.";
-      store.setSubmitError(detail);
-      setToast({
-        id: Date.now(),
-        tone: "error",
-        title: store.deliveryMethod === "email" ? "That didn't send." : "The link wasn't created.",
-        detail: `${detail} Your draft is still here.`,
-        action: { label: "Try again", onClick: send },
-      });
+      setSeal("open");
+      store.setSubmitError(error instanceof Error ? error.message : "Could not send this letter.");
+      setFailure(sendFailure(error));
     } finally {
       store.setSubmitting(false);
     }
@@ -175,7 +231,8 @@ export function Compose() {
       </a>
       <div className="glow" />
 
-      <div className="compose-shell">
+      {/* while the envelope is on screen the form behind it is out of reach */}
+      <div className="compose-shell" {...(seal ? { inert: "" } : {})}>
         <header className="topbar">
           <button type="button" className="wordmark" onClick={() => navigate("/")}>
             Unsaid<span className="wordmark-period">.</span>
@@ -214,24 +271,38 @@ export function Compose() {
                       roomHeading={roomHeading}
                       onHeadingChange={store.setHeading}
                     />
-                    <div className="swatches" role="radiogroup" aria-label="Mood">
-                      {ROOM_LIST.map((option, index) => (
-                        <button
-                          key={option.id}
-                          ref={(el) => {
-                            swatchRefs.current[index] = el;
-                          }}
-                          type="button"
-                          role="radio"
-                          aria-checked={option.id === store.mood}
-                          aria-label={option.name}
-                          tabIndex={option.id === store.mood ? 0 : -1}
-                          className="swatch"
-                          style={{ background: option.cardGradient }}
-                          onClick={() => store.setMood(option.id)}
-                          onKeyDown={(event) => onSwatchKey(event, index)}
-                        />
-                      ))}
+                    <div className="mood-switch">
+                      <p className="mood-switch-label">
+                        <span id="mood-switch-label">Mood</span>
+                        <span className="mood-switch-name">{r.name}</span>
+                      </p>
+                      <div
+                        className="swatches"
+                        role="radiogroup"
+                        aria-labelledby="mood-switch-label"
+                        aria-describedby="mood-switch-note"
+                      >
+                        {ROOM_LIST.map((option, index) => (
+                          <button
+                            key={option.id}
+                            ref={(el) => {
+                              swatchRefs.current[index] = el;
+                            }}
+                            type="button"
+                            role="radio"
+                            aria-checked={option.id === store.mood}
+                            aria-label={option.name}
+                            tabIndex={option.id === store.mood ? 0 : -1}
+                            className="swatch"
+                            style={{ background: option.cardGradient }}
+                            onClick={() => store.setMood(option.id)}
+                            onKeyDown={(event) => onSwatchKey(event, index)}
+                          />
+                        ))}
+                      </div>
+                      <p className="mood-switch-note" id="mood-switch-note">
+                        Switch any time. Your words stay exactly where they are.
+                      </p>
                     </div>
                   </div>
                   <LivePreview
@@ -382,12 +453,6 @@ export function Compose() {
             </motion.div>
           </AnimatePresence>
 
-          {store.step === 4 && store.submitError && !store.isSubmitting && (
-            <p className="compose-error">
-              {store.deliveryMethod === "email" ? "That didn’t send" : "The link wasn’t created"}:{" "}
-              {store.submitError} Your draft is still here.
-            </p>
-          )}
           <div className="compose-actions">
             {/* step one has nowhere to go back to; the slot holds so Continue never jumps */}
             <Button
@@ -438,26 +503,59 @@ export function Compose() {
           {seal && (
             <motion.div
               className="seal-overlay"
+              data-failed={Boolean(failure)}
+              role={failure ? "alertdialog" : undefined}
+              aria-modal={failure ? true : undefined}
+              aria-labelledby={failure ? "seal-failure-title" : undefined}
+              aria-describedby={failure ? "seal-failure-detail" : undefined}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: DURATION.ui, ease: EASE_ENTER }}
             >
               <SealEnvelope mood={store.mood} phase={seal} />
-              <output>
-                {seal !== "sealed"
-                  ? "Sealing your letter…"
-                  : store.deliveryMethod === "email"
-                    ? "Sealed. On its way…"
-                    : "Sealed. Making your link…"}
-              </output>
+              <AnimatePresence mode="wait" initial={false}>
+                {failure ? (
+                  <motion.div
+                    key="failure"
+                    className="seal-failure"
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: DURATION.ui, ease: EASE_ENTER }}
+                  >
+                    <h2 id="seal-failure-title">{failure.title}</h2>
+                    <p id="seal-failure-detail">{failure.detail}</p>
+                    <div className="seal-failure-actions" ref={focusFirstAction}>
+                      {failure.retry && <Button onClick={send}>Try again</Button>}
+                      <Button
+                        variant={failure.retry ? "secondary" : "primary"}
+                        onClick={backToLetter}
+                      >
+                        Back to your letter
+                      </Button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.output
+                    key="progress"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: DURATION.micro }}
+                  >
+                    {seal !== "sealed"
+                      ? "Sealing your letter…"
+                      : store.deliveryMethod === "email"
+                        ? "Sealed. On its way…"
+                        : "Sealed. Making your link…"}
+                  </motion.output>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
         </AnimatePresence>,
         document.body,
       )}
-
-      <Toast toast={toast} onDismiss={() => setToast(null)} />
     </div>
   );
 }

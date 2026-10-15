@@ -259,7 +259,8 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
         <motion.article
           ref={reading}
           tabIndex={-1}
-          className="ceremony-letter"
+          className="ceremony-letter letter-sheet"
+          data-mood={mood}
           aria-label="Your letter"
           initial={instant ? false : { y: 145, scale: 0.72, opacity: 0.3 }}
           animate={{ y: 0, scale: 1, opacity: 1 }}
@@ -278,7 +279,7 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
             ))}
           </div>
           <div
-            className="ceremony-letter-content"
+            className="ceremony-letter-content letter-sheet-content"
             aria-hidden={!settled}
             {...(!settled ? { inert: "" } : {})}
           >

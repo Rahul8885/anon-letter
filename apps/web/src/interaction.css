@@ -205,8 +205,9 @@ html {
 
 /* ---- 3 · Hero letter: a peek invites the one gesture; depth follows the cursor --- */
 
+/* nearest object, so it drifts furthest */
 .scene-botanical {
-  translate: calc(var(--px, 0) * -6px) calc(var(--py, 0) * -6px);
+  translate: calc(var(--px, 0) * 22px) calc(var(--py, 0) * 18px);
   transition: translate 600ms var(--ease-enter);
 }
 .scene-letter {
@@ -634,7 +635,8 @@ html {
     gap: 0;
     overflow-x: auto;
     overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity;
+    /* mandatory: a swipe always rests on one letter, and that letter is the choice */
+    scroll-snap-type: x mandatory;
     scrollbar-width: none;
     padding: 22px 21vw 14px;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
@@ -781,14 +783,6 @@ html {
   color: var(--muted);
   font-size: .875rem;
   text-align: right;
-}
-.compose-error {
-  margin: 28px 0 0;
-  padding: 12px 16px;
-  border-left: 2px solid var(--error);
-  background: color-mix(in srgb, var(--error) 6%, transparent);
-  color: var(--ink-soft);
-  font-size: .9375rem;
 }
 /* Disabled primary stays rose, only quieter: the dark-theme beige left its label unreadable. */
 .btn-primary:disabled {
@@ -1209,15 +1203,73 @@ html {
   font-weight: 500;
   line-height: 1.4;
 }
-.preview-note {
-  margin: 14px 0 0;
+/* step 2: the swatches carry their own name and promise, under the writer's hand */
+.mood-switch {
+  margin-top: 32px;
+}
+.mood-switch-label {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 12px;
+  color: var(--ink-soft);
+  font-size: .875rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.mood-switch-name {
+  color: var(--muted);
+  font-weight: 400;
+}
+.mood-switch-note {
+  margin: 12px 0 0;
   color: var(--muted);
   font-size: .8125rem;
   line-height: 1.5;
 }
 
-.compose-split .swatches {
-  margin-top: 20px;
+/* A send that never left: the envelope comes open again and says so, in place. */
+.seal-overlay[data-failed="true"] {
+  /* short phones: the actions scroll into reach instead of being cut off at the top */
+  overflow-y: auto;
+  align-content: safe center;
+}
+.seal-failure {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  max-width: 34rem;
+}
+.seal-failure h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 400;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.seal-failure p {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.seal-failure-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+@media (max-width: 480px) {
+  .seal-failure-actions {
+    flex-direction: column;
+    align-self: stretch;
+    width: 100%;
+  }
 }
 
 /* step 3: the choice, then what it needs */

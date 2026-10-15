@@ -1,4 +1,9 @@
-import { type ApiError, type Message, TEMPLATES } from "@anonletter/shared";
+import {
+  type ApiError,
+  type CreateMessageResponse,
+  type Message,
+  TEMPLATES,
+} from "@anonletter/shared";
 import { type Context, Hono } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { Env } from "../env";
@@ -77,6 +82,7 @@ messages.post("/", async (c) => {
     }
   }
 
+  let emailDelivery: CreateMessageResponse["email_delivery"];
   if (input.delivery_method === "email" && input.recipient_email) {
     const sent = await sendLetterEmail({
       mode: c.env.EMAIL_MODE === "log" ? "log" : "resend",
@@ -89,15 +95,21 @@ messages.post("/", async (c) => {
       baseUrl: baseUrl(c.env),
     });
 
-    if (!sent.ok) {
-      // an undelivered letter has no reader; don't leave it behind
-      console.error(`[email] delivery failed for ${slug}: ${sent.reason}`);
-      await c.env.DB.prepare("DELETE FROM messages WHERE id = ?").bind(id).run();
-      return fail(c, 502, "INTERNAL_ERROR", "We couldn't deliver that letter. Nothing was sent.");
-    }
+    // the letter is sealed either way; when the inbox refuses it the writer still gets the
+    // link to pass on themselves. The address is gone by now, so there is no retry from here.
+    if (!sent.ok) console.error(`[email] delivery failed for ${slug}: ${sent.reason}`);
+    emailDelivery = sent.ok ? "sent" : "failed";
   }
 
-  return c.json({ success: true, slug, message_url: `${baseUrl(c.env)}/m/${slug}` }, 201);
+  return c.json<CreateMessageResponse>(
+    {
+      success: true,
+      slug,
+      message_url: `${baseUrl(c.env)}/m/${slug}`,
+      email_delivery: emailDelivery,
+    },
+    201,
+  );
 });
 
 // GET /api/messages/:slug — the recipient opens the letter; first open marks it read

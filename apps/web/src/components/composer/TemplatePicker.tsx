@@ -1,5 +1,5 @@
 import type { TemplateId } from "@anonletter/shared";
-import { useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { ROOM_LIST } from "../../lib/moods";
 import { rovingIndex } from "../../lib/roving";
 
@@ -30,6 +30,52 @@ export function TemplatePicker({
     target?.focus();
     select(next, target);
   }
+
+  // On phones the desk is a swipeable row: the chosen letter starts in the middle...
+  // biome-ignore lint/correctness/useExhaustiveDependencies: placed once, before first paint
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    const index = ROOM_LIST.findIndex((r) => r.id === value);
+    const card = list?.querySelectorAll<HTMLElement>("[role='radio']")[index];
+    if (!list || !card || list.scrollWidth <= list.clientWidth) return;
+    list.scrollLeft = card.offsetLeft - (list.clientWidth - card.offsetWidth) / 2;
+  }, []);
+
+  // ...and whichever letter a swipe comes to rest on is the one chosen. A tap's own scroll
+  // settles on the card it already chose, so the two never disagree.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    let timer = 0;
+
+    function settle() {
+      window.clearTimeout(timer);
+      if (!list || list.scrollWidth <= list.clientWidth) return;
+      const centre = list.scrollLeft + list.clientWidth / 2;
+      const cards = Array.from(list.querySelectorAll<HTMLElement>("[role='radio']"));
+      let nearest = 0;
+      cards.forEach((card, i) => {
+        const distance = (c: HTMLElement) => Math.abs(c.offsetLeft + c.offsetWidth / 2 - centre);
+        if (distance(card) < distance(cards[nearest])) nearest = i;
+      });
+      if (ROOM_LIST[nearest].id !== value) onChange(ROOM_LIST[nearest].id);
+    }
+
+    // browsers without `scrollend` settle once the scroll has been quiet for a moment
+    function quiet() {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(settle, 140);
+    }
+
+    const native = "onscrollend" in window;
+    const type = native ? "scrollend" : "scroll";
+    const handler = native ? settle : quiet;
+    list.addEventListener(type, handler, { passive: true });
+    return () => {
+      list.removeEventListener(type, handler);
+      window.clearTimeout(timer);
+    };
+  }, [value, onChange]);
 
   /** On phones the desk becomes a swipeable row; the chosen letter slides to the middle. */
   function select(index: number, card?: HTMLElement | null) {
