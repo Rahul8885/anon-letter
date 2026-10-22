@@ -6,7 +6,7 @@ compatibility_date = "2024-09-25"
 [vars]
 PUBLIC_BASE_URL = "https://unsaidletters.in"
 ALLOWED_ORIGINS = "https://unsaidletters.in"
-EMAIL_FROM = "Unsaid letters@mail.unsaidletters.in"
+EMAIL_FROM = "Unsaid <letters@mail.unsaidletters.in>"
 EMAIL_MODE = "resend"
 
 # Secrets — never put these in this file:
