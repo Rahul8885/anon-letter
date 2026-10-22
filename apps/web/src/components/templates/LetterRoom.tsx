@@ -55,10 +55,10 @@ export function LetterRoom({
       </div>
       <div className="room-decoration" aria-hidden="true">
         {mood === "soft-bloom" && (
-          <img className="room-art room-art-petals" src="/assets/soft-bloom-petals.png" alt="" />
+          <img className="room-art room-art-petals" src="/assets/soft-bloom-petals.webp" alt="" />
         )}
         {mood === "quiet-garden" && (
-          <img className="room-art room-art-stem" src="/assets/quiet-garden-stem.png" alt="" />
+          <img className="room-art room-art-stem" src="/assets/quiet-garden-stem.webp" alt="" />
         )}
         {mood === "old-letter" && (
           <img className="room-art room-art-seal" src="/assets/wax-seal.webp" alt="" />

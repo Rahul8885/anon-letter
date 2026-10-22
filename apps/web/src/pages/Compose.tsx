@@ -14,6 +14,7 @@ import { useReducedMotion } from "../hooks/useReducedMotion";
 import { RequestError, api } from "../lib/api";
 import { ROOM_LIST, SAMPLE_MESSAGE, room } from "../lib/moods";
 import { DURATION, EASE_ENTER } from "../lib/motion";
+import { whenStationeryReady } from "../lib/preloadImages";
 import { rovingIndex } from "../lib/roving";
 import { useComposerStore } from "../store/composerStore";
 
@@ -26,6 +27,8 @@ const SEAL_BEATS: [SealPhase, number][] = [
   ["sealed", 1480],
 ];
 const SEAL_DONE = 1950;
+/** Longest the beats wait for undecoded layers; past this they play and the envelope fades in late. */
+const SEAL_ASSET_WAIT = 1500;
 const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
 /**
@@ -123,7 +126,22 @@ export function Compose() {
     });
   }, [store.step]);
 
-  useEffect(() => () => sealTimers.current.forEach(window.clearTimeout), []);
+  // bumped whenever a ceremony is abandoned, so a late layer decode can't restart its beats
+  const sealRun = useRef(0);
+
+  useEffect(
+    () => () => {
+      sealRun.current++;
+      sealTimers.current.forEach(window.clearTimeout);
+    },
+    [],
+  );
+
+  // fetch and decode the chosen envelope while they write, not when they press send
+  useEffect(() => {
+    const timer = window.setTimeout(() => whenStationeryReady(store.mood), 250);
+    return () => window.clearTimeout(timer);
+  }, [store.mood]);
 
   useEffect(() => {
     if (!isSealing) return;
@@ -197,17 +215,23 @@ export function Compose() {
         ? "Check their email address to continue."
         : "Add their email address, or choose to share a link.";
 
-  /** The ceremony and the request run together; whichever is slower sets the pace. */
-  function playSeal() {
+  /**
+   * The ceremony and the request run together; whichever is slower sets the pace. The beats
+   * wait (briefly) for the envelope's layers so the fold is never played to an empty stage.
+   */
+  async function playSeal() {
+    const run = ++sealRun.current;
     if (reduced) {
       setSeal("sealed");
-      return Promise.resolve();
+      return;
     }
     setSeal("open");
+    await whenStationeryReady(store.mood, SEAL_ASSET_WAIT);
+    if (run !== sealRun.current) return;
     sealTimers.current = SEAL_BEATS.map(([phase, at]) =>
       window.setTimeout(() => setSeal(phase), at),
     );
-    return wait(SEAL_DONE);
+    await wait(SEAL_DONE);
   }
 
   function onSwatchKey(event: React.KeyboardEvent, index: number) {
@@ -250,6 +274,7 @@ export function Compose() {
       navigate(`/success/${result.slug}`, { state: { ...receipt, sealed: true } });
     } catch (error) {
       // nothing was created: the overlay stays and the envelope visibly comes open again
+      sealRun.current++;
       for (const timer of sealTimers.current) window.clearTimeout(timer);
       setSeal("open");
       store.setSubmitError(error instanceof Error ? error.message : "Could not send this letter.");

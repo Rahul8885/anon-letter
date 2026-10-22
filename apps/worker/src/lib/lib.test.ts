@@ -20,7 +20,7 @@ describe("buildEmail", () => {
   it("escapes the sender hint and builds the letter link", () => {
     const email = buildEmail({
       slug: "abcd1234",
-      accent: "#8b90d0",
+      templateId: "night-thought",
       fromHint: `<script>alert("x")</script> & <script>'y'</script> & "z"`,
       baseUrl: "https://letters.example/",
     });
