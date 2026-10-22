@@ -910,6 +910,14 @@ html {
   width: min(520px, 86vw);
   aspect-ratio: 3 / 2;
   perspective: 1400px;
+  transition: opacity var(--d-ui, 300ms) var(--ease-enter, ease-out);
+}
+/* the space is held while layers decode; the envelope arrives whole or not at all */
+.seal-envelope[data-ready="false"] {
+  opacity: 0;
+}
+.seal-envelope img[hidden] {
+  display: none;
 }
 .seal-layer {
   position: absolute;
