@@ -154,12 +154,12 @@ export function Success() {
             style={{ color: "var(--text-dim)", marginBottom: "var(--s8)" }}
           >
             {emailFailed
-              ? "Your letter is sealed and safe. Only the delivery failed. Their address was used once and let go, so we can’t try again from here. Send them the link yourself. It opens the same letter, the same way. It stays for thirty days."
+              ? "Your letter is sealed and safe. Only the delivery failed. Their address was used once and let go, so we can’t try again from here. Send them the link yourself. It opens the same letter, the same way. It stays for six months."
               : `${
                   emailDelivery
                     ? "Their address was used for delivery and discarded. You can also share the link below."
                     : "Copy the link and send it wherever you like. Anyone with the link can open your letter."
-                } The letter expires in thirty days.`}
+                } The letter expires in six months.`}
           </p>
 
           <div className="link-row" data-copied={copied}>

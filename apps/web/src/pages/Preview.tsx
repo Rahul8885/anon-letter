@@ -1,3 +1,4 @@
+import { LETTER_TTL_SECONDS } from "@anonletter/shared";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
@@ -77,7 +78,7 @@ export function Preview() {
           status: "sent",
           read_at: null,
           created_at: createdAt,
-          expires_at: createdAt + 30 * 86400,
+          expires_at: createdAt + LETTER_TTL_SECONDS,
         }}
       />
     </main>

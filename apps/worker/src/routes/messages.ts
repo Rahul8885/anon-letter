@@ -1,6 +1,7 @@
 import {
   type ApiError,
   type CreateMessageResponse,
+  LETTER_TTL_SECONDS,
   type Message,
   TEMPLATES,
 } from "@anonletter/shared";
@@ -12,7 +13,6 @@ import { checkRateLimit } from "../lib/ratelimit";
 import { generateSlug, isValidSlug } from "../lib/slug";
 import { CreateMessageSchema, firstIssue } from "../lib/validate";
 
-const LETTER_TTL_SECONDS = 30 * 24 * 60 * 60;
 const SLUG_ATTEMPTS = 3;
 
 export const messages = new Hono<{ Bindings: Env }>();
