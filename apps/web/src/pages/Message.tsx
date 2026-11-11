@@ -7,6 +7,7 @@ import { StaggeredText } from "../components/ui/StaggeredText";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { RequestError, api } from "../lib/api";
 import { SAMPLE_MESSAGE, room } from "../lib/moods";
+import { whenRoomFontsReady } from "../lib/roomFonts";
 import { useComposerStore } from "../store/composerStore";
 
 type Data = Omit<MessageData, "id">;
@@ -25,7 +26,7 @@ export function Message() {
     if (slug === "demo" || slug.startsWith("demo-")) {
       const mood = (slug.replace("demo-", "") || "night-thought") as TemplateId;
       const templateId = SAMPLE_MESSAGE[mood] ? mood : "night-thought";
-      setData({
+      const demo: Data = {
         slug,
         template_id: templateId,
         message: SAMPLE_MESSAGE[templateId],
@@ -38,8 +39,12 @@ export function Message() {
         read_at: null,
         expires_at: Math.floor(Date.now() / 1000) + 86400,
         created_at: Math.floor(Date.now() / 1000),
+      };
+      setLoading(true);
+      whenRoomFontsReady(templateId).then(() => {
+        setData(demo);
+        setLoading(false);
       });
-      setLoading(false);
       return;
     }
 
@@ -47,7 +52,11 @@ export function Message() {
     setError(null);
     api
       .getMessage(slug)
-      .then((result) => setData(result.data))
+      .then(async (result) => {
+        // Hold the loading state until the room's typeface is in, so the reveal never re-sets mid-ceremony.
+        await whenRoomFontsReady(result.data.template_id);
+        setData(result.data);
+      })
       .catch((err) =>
         setError({
           message: err instanceof Error ? err.message : "This letter could not be opened.",
@@ -235,7 +244,7 @@ function LetterError({ message, onRetry }: { message: string; onRetry?: () => vo
         <>
           <StaggeredText as="h1" className="t-h1" text="This letter isn’t here." play />
           <p className="measure-caption">
-            {message} Letters expire thirty days after they are sent, and a link only works once it
+            {message} Letters expire six months after they are sent, and a link only works once it
             has been created.
           </p>
           <div className="state-actions">

@@ -9,18 +9,52 @@
       content="Send someone a beautiful anonymous letter in under two minutes. No account. Their address is never stored."
     />
     <title>Unsaid — for the things you couldn’t say out loud</title>
+    <link rel="canonical" href="https://unsaidletters.in/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/wax-seal.webp" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Unsaid" />
+    <meta property="og:url" content="https://unsaidletters.in/" />
+    <meta property="og:title" content="Unsaid — for the things you couldn’t say out loud" />
+    <meta
+      property="og:description"
+      content="Write a designed, anonymous letter and send it to someone’s inbox. No account. Their address is never stored."
+    />
+    <meta property="og:image" content="https://unsaidletters.in/assets/letter-world/envelope-rose.webp" />
+    <meta property="og:image:alt" content="A blush paper envelope with a pressed rose" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Unsaid",
+        "url": "https://unsaidletters.in/",
+        "description": "Send a designed, anonymous letter to someone’s inbox. No account. The recipient’s address is never stored.",
+        "applicationCategory": "CommunicationApplication",
+        "operatingSystem": "Any",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+      }
+    </script>
     <!-- Reveal states hide content only when JavaScript is running to show it again. -->
     <script>document.documentElement.classList.add("js");</script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lato:wght@300;400;700&family=Inter:wght@300;400;500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Archivo:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Room typefaces load without blocking first paint; the shell uses self-hosted Chubbo/Supreme. -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lato:wght@300;400;700&family=Inter:wght@300;400;500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Archivo:wght@400;500;600&display=swap" />
+    <link data-room-fonts rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lato:wght@300;400;700&family=Inter:wght@300;400;500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Archivo:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lato:wght@300;400;700&family=Inter:wght@300;400;500&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Archivo:wght@400;500;600&display=swap" /></noscript>
 
     <link rel="preload" as="font" href="/fonts/chubbo-700.woff2" type="font/woff2" crossorigin />
     <link rel="preload" as="font" href="/fonts/supreme-400.woff2" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      as="image"
+      href="/assets/letter-world/envelope-rose.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
   </head>
   <body>
     <noscript>

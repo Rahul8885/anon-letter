@@ -236,7 +236,7 @@ export function buildEmail(opts: {
                 <p style="margin:24px 0 0;${sans}font-size:13px;line-height:1.6;">Or paste this into your browser:<br><a href="${safeUrl}" style="color:${room.link};text-decoration:underline;word-break:break-all;">${safeUrl}</a></p>
               </td></tr>
             </table>
-            <p style="margin:22px 4px 0;${sans}font-size:13px;line-height:1.7;">The letter disappears in 30 days. The sender stays anonymous. Your address was used to deliver this and was not saved.<br>If it was unwanted, open it and use Report.</p>
+            <p style="margin:22px 4px 0;${sans}font-size:13px;line-height:1.7;">The letter disappears in six months. The sender stays anonymous. Your address was used to deliver this and was not saved.<br>If it was unwanted, open it and use Report.</p>
           </div>
           <!--[if mso]></td></tr></table><![endif]-->
         </td></tr>
@@ -252,7 +252,7 @@ export function buildEmail(opts: {
     `${arrivalText} Open it when you're ready:`,
     url,
     "",
-    "The letter disappears in 30 days. The sender stays anonymous.",
+    "The letter disappears in six months. The sender stays anonymous.",
     "If it was unwanted, open it and use Report.",
   ].join("\n");
 

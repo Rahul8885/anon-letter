@@ -1,10 +1,30 @@
 # Cloudflare Pages response headers.
 # Public images keep stable names, so they revalidate weekly instead of being immutable;
-# Vite's hashed bundles share /assets/ and are safe under the same rule.
+# Vite's hashed bundles are emitted to /static/ and are immutable.
 /assets/*
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/static/*
+  Cache-Control: public, max-age=31536000, immutable
 
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
   Access-Control-Allow-Origin: *
 
+
+# Letters, receipts and drafts are private: never indexed, even if a link leaks.
+/m/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+
+/success/*
+  X-Robots-Tag: noindex, nofollow
+
+/preview
+  X-Robots-Tag: noindex, nofollow
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8

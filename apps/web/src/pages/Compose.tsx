@@ -498,7 +498,7 @@ export function Compose() {
                     <div className="review-row" style={{ borderBottom: "none" }}>
                       <dt>Kept</dt>
                       <dd>
-                        The letter and its link, for 30 days. Not their address, and nothing about
+                        The letter and its link, for six months. Not their address, and nothing about
                         you.
                       </dd>
                     </div>
