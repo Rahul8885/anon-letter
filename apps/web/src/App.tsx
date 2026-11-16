@@ -1,9 +1,11 @@
-import { MotionConfig } from "framer-motion";
+import { LazyMotion, MotionConfig, domAnimation } from "framer-motion";
 import { Suspense, lazy, useEffect } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import { StaggeredText } from "./components/ui/StaggeredText";
 import { usePageMeta } from "./hooks/usePageMeta";
 import { useRouteScroll } from "./hooks/useRouteScroll";
+import { afterPageLoad } from "./lib/images";
+import { loadRoomFontSheet } from "./lib/roomFonts";
 import { Home } from "./pages/Home";
 
 // Only the landing page ships in the first bundle; the rest are fetched once the browser is idle,
@@ -18,32 +20,57 @@ const Message = lazy(() => loadMessage().then((m) => ({ default: m.Message })));
 const Preview = lazy(() => loadPreview().then((m) => ({ default: m.Preview })));
 const Success = lazy(() => loadSuccess().then((m) => ({ default: m.Success })));
 
-function prefetchRooms() {
-  const run = () => {
-    for (const load of [loadCompose, loadPreview, loadSuccess, loadMessage]) load().catch(() => {});
+/**
+ * After the page has fully loaded (so nothing competes with the hero), fetch the room fonts and
+ * the other pages in idle time. Hovering or focusing a "write" link fetches Compose at once.
+ */
+function warmUpAfterLoad() {
+  const onIntent = (event: Event) => {
+    const link = (event.target as Element | null)?.closest?.('a[href="/compose"]');
+    if (link) loadCompose().catch(() => {});
   };
-  if ("requestIdleCallback" in window) window.requestIdleCallback(run, { timeout: 4000 });
-  else setTimeout(run, 2000);
+  document.addEventListener("pointerover", onIntent, { passive: true });
+  document.addEventListener("focusin", onIntent);
+
+  afterPageLoad(() => {
+    const run = () => {
+      loadRoomFontSheet();
+      for (const load of [loadCompose, loadPreview, loadSuccess, loadMessage]) {
+        load().catch(() => {});
+      }
+    };
+    if ("requestIdleCallback" in window) window.requestIdleCallback(run, { timeout: 3000 });
+    else setTimeout(run, 1000);
+  });
+
+  return () => {
+    document.removeEventListener("pointerover", onIntent);
+    document.removeEventListener("focusin", onIntent);
+  };
 }
 
 export function App() {
   useRouteScroll();
   usePageMeta();
-  useEffect(prefetchRooms, []);
+  useEffect(warmUpAfterLoad, []);
 
   return (
-    <MotionConfig reducedMotion="user">
-      <Suspense fallback={null}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/compose" element={<Compose />} />
-          <Route path="/preview" element={<Preview />} />
-          <Route path="/success/:slug" element={<Success />} />
-          <Route path="/m/:slug" element={<Message />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
-    </MotionConfig>
+    // domAnimation, not the full bundle: the site uses no layout/drag animations. Loaded
+    // synchronously so the hero's word reveal never waits on a second chunk.
+    <LazyMotion features={domAnimation} strict>
+      <MotionConfig reducedMotion="user">
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/compose" element={<Compose />} />
+            <Route path="/preview" element={<Preview />} />
+            <Route path="/success/:slug" element={<Success />} />
+            <Route path="/m/:slug" element={<Message />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </MotionConfig>
+    </LazyMotion>
   );
 }
 

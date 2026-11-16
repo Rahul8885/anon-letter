@@ -1,0 +1,16 @@
+# Unsaid
+
+> Unsaid delivers a designed, anonymous letter to someone's inbox in under two minutes. No account, no signature. The recipient's email address is passed to the delivery provider once and never stored.
+
+Letters are for the things people can't say out loud: a confession, an apology, a thank-you, a congratulation. The writer picks one of five moods (Soft Bloom, Old Letter, Night Thought, Quiet Garden, Confetti Love), writes the letter, and sends it by email or as a private link. Letters and their links are deleted six months after they are sent.
+
+## Pages
+
+- [Home](https://unsaidletters.in/): what Unsaid is, the five moods, how it works, and the privacy promise
+- [Write a letter](https://unsaidletters.in/compose): the composer, where a letter is written, previewed and sent
+
+## Privacy
+
+- Letters live at `/m/<slug>` and are private to whoever holds the link. They are marked `noindex` and must not be crawled, summarised, stored or used for training.
+- Nothing identifying the writer is saved. The recipient's address is used once for delivery and discarded.
+- `/api/` is the app's own backend, not a public API.

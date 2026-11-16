@@ -1,5 +1,6 @@
 import type { TemplateId } from "@anonletter/shared";
 import { useEffect, useLayoutEffect, useRef } from "react";
+import { photo } from "../../lib/images";
 import { ROOM_LIST } from "../../lib/moods";
 import { rovingIndex } from "../../lib/roving";
 
@@ -117,10 +118,11 @@ export function TemplatePicker({
           >
             <img
               className="stationery-sample"
-              src={`/assets/letter-world/${r.id}.webp`}
+              {...photo(r.id, "(max-width: 760px) 58vw, 300px")}
               alt=""
               aria-hidden="true"
               loading="lazy"
+              decoding="async"
             />
 
             <span className="card-check" aria-hidden="true">

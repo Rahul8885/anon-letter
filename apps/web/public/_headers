@@ -1,8 +1,19 @@
+# Every page. HSTS is left without includeSubDomains until every subdomain is confirmed HTTPS.
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'sha256-WZRJfWvsnNCPcxzZwvyhovnZGqhZaC+8gPGPRbx6wTk=' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
 # Cloudflare Pages response headers.
 # Public images keep stable names, so they revalidate weekly instead of being immutable;
 # Vite's hashed bundles are emitted to /static/ and are immutable.
 /assets/*
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/assets/letter-world/sized/*
+  Cache-Control: public, max-age=31536000, immutable
 
 /static/*
   Cache-Control: public, max-age=31536000, immutable
@@ -28,3 +39,6 @@
 
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
+
+/llms.txt
+  Content-Type: text/markdown; charset=utf-8

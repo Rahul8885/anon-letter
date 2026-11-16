@@ -1,5 +1,5 @@
 import type { TemplateId } from "@anonletter/shared";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
@@ -256,7 +256,7 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
         </button>
       )}
       {stage === 3 && (
-        <motion.article
+        <m.article
           ref={reading}
           tabIndex={-1}
           className="ceremony-letter letter-sheet"
@@ -285,7 +285,7 @@ export function TactileLetter({ mood, children, onOpened, onSkip }: Props) {
           >
             {children}
           </div>
-        </motion.article>
+        </m.article>
       )}
     </section>
   );
