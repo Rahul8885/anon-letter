@@ -1,11 +1,12 @@
 import type { TemplateId } from "@anonletter/shared";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { type CSSProperties, useEffect, useId, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { TemplatePicker } from "../components/composer/TemplatePicker";
 import { Arrow, EditorialHero } from "../components/editorial/EditorialHero";
 import { StaggeredText } from "../components/ui/StaggeredText";
 import { useReveal } from "../hooks/useReveal";
+import { photo } from "../lib/images";
 import { LETTER_PALETTES, letterPaletteStyle, paperToneMatrix } from "../lib/letterPalette";
 import { SAMPLE_MESSAGE, room } from "../lib/moods";
 import { DURATION, EASE_ENTER } from "../lib/motion";
@@ -77,10 +78,10 @@ export function Home() {
           <div className="mood-caption">
             <p aria-live="polite">
               <AnimatePresence mode="wait" initial={false}>
-                <motion.span className="mood-caption-text" key={shown} {...swap}>
+                <m.span className="mood-caption-text" key={shown} {...swap}>
                   <strong>{room(shown).name}</strong>
                   <span>{room(shown).useCase}</span>
-                </motion.span>
+                </m.span>
               </AnimatePresence>
             </p>
             <Link className="btn-outline" to="/compose" onClick={() => writeIn(mood)}>
@@ -109,10 +110,11 @@ export function Home() {
         >
           <div className="privacy-note" data-reveal="paper">
             <img
-              src="/assets/letter-world/letter-paper.webp"
+              {...photo("letter-paper", "(max-width: 760px) 330px, 420px")}
               alt=""
               aria-hidden="true"
               loading="lazy"
+              decoding="async"
             />
             <div>
               <p>This letter is from</p>
@@ -157,7 +159,7 @@ export function Home() {
               </defs>
             </svg>
             <AnimatePresence mode="popLayout" initial={false}>
-              <motion.article
+              <m.article
                 key={mood}
                 className="recipient-letter"
                 data-mood={mood}
@@ -173,17 +175,18 @@ export function Home() {
                 transition={{ duration: DURATION.object, ease: EASE_ENTER }}
               >
                 <img
-                  src="/assets/letter-world/letter-paper.webp"
+                  {...photo("letter-paper", "(max-width: 760px) min(360px, 95vw), 440px")}
                   alt=""
                   aria-hidden="true"
                   loading="lazy"
+                  decoding="async"
                 />
                 <div>
                   <span>Someone wrote this for you.</span>
                   <p>{SAMPLE_MESSAGE[mood]}</p>
                   <small>— {room(mood).signature}</small>
                 </div>
-              </motion.article>
+              </m.article>
             </AnimatePresence>
           </div>
         </section>
@@ -211,10 +214,11 @@ export function Home() {
           data-reveal="final"
         >
           <img
-            src="/assets/letter-world/envelope-rose.webp"
+            {...photo("envelope-rose", "(max-width: 760px) 225px, 310px")}
             alt=""
             aria-hidden="true"
             loading="lazy"
+            decoding="async"
           />
           <div>
             <StaggeredText as="h2" id="final-title" text={"Some words deserve\nto be sent."} />

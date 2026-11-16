@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -417,7 +417,7 @@ export function Compose() {
                   </fieldset>
                   <AnimatePresence initial={false}>
                     {store.deliveryMethod === "email" && (
-                      <motion.div
+                      <m.div
                         className="field-reveal"
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
@@ -437,7 +437,7 @@ export function Compose() {
                           onChange={(e) => store.setRecipientEmail(e.target.value)}
                           placeholder="their@email.com"
                         />
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
                   <Field
@@ -498,8 +498,8 @@ export function Compose() {
                     <div className="review-row" style={{ borderBottom: "none" }}>
                       <dt>Kept</dt>
                       <dd>
-                        The letter and its link, for six months. Not their address, and nothing about
-                        you.
+                        The letter and its link, for six months. Not their address, and nothing
+                        about you.
                       </dd>
                     </div>
                   </dl>
@@ -572,7 +572,7 @@ export function Compose() {
       {createPortal(
         <AnimatePresence>
           {seal && (
-            <motion.div
+            <m.div
               className="seal-overlay"
               data-failed={Boolean(failure)}
               role={failure ? "alertdialog" : undefined}
@@ -589,7 +589,7 @@ export function Compose() {
               </div>
               <AnimatePresence mode="wait" initial={false}>
                 {failure ? (
-                  <motion.div
+                  <m.div
                     key="failure"
                     className="seal-failure"
                     initial={{ opacity: 0, y: 8 }}
@@ -607,9 +607,9 @@ export function Compose() {
                         Back to your letter
                       </Button>
                     </div>
-                  </motion.div>
+                  </m.div>
                 ) : (
-                  <motion.output
+                  <m.output
                     key="progress"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -621,10 +621,10 @@ export function Compose() {
                       : store.deliveryMethod === "email"
                         ? "Sealed. On its way…"
                         : "Sealed. Making your link…"}
-                  </motion.output>
+                  </m.output>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>,
         document.body,

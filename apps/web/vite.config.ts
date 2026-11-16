@@ -6,6 +6,8 @@ export default defineConfig({
   build: {
     // Hashed bundles live apart from public/assets so they can be cached forever (see _headers).
     assetsDir: "static",
+    // Every browser that runs this app supports ES2022; skip needless down-levelling.
+    target: "es2022",
     rollupOptions: {
       output: {
         manualChunks: {

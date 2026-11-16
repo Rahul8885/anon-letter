@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { m, useInView } from "framer-motion";
 import { type CSSProperties, type ElementType, useEffect, useMemo, useRef } from "react";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
 import { EASE_ENTER } from "../../lib/motion";
@@ -120,7 +120,7 @@ export function StaggeredText({
               );
             }
             return (
-              <motion.span
+              <m.span
                 // biome-ignore lint/suspicious/noArrayIndexKey: tokens are positional
                 key={tokenIndex}
                 className="stagger-seg"
@@ -133,7 +133,7 @@ export function StaggeredText({
                 }}
               >
                 {token.text}
-              </motion.span>
+              </m.span>
             );
           });
           if (preserveWhitespace) return words;

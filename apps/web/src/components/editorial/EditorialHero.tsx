@@ -1,6 +1,8 @@
 import { type PointerEvent, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAfterPageLoad } from "../../hooks/useAfterPageLoad";
 import { useReducedMotion } from "../../hooks/useReducedMotion";
+import { photo } from "../../lib/images";
 import { StaggeredText } from "../ui/StaggeredText";
 
 export function Arrow({ down = false }: { down?: boolean }) {
@@ -20,6 +22,10 @@ export function LetterScene() {
   const scene = useRef<HTMLDivElement>(null);
   const frame = useRef(0);
   const isOpen = reduced || opened;
+  // The open envelope and letter sit hidden until a click; they load after the closed envelope
+  // (the LCP image) so they never compete with it, and are decoded long before anyone can click.
+  const pageLoaded = useAfterPageLoad();
+  const loadHidden = pageLoaded || isOpen;
 
   /** Fine pointers only: the objects drift a few pixels, nearer ones further. */
   function onPointerMove(event: PointerEvent<HTMLDivElement>) {
@@ -52,12 +58,21 @@ export function LetterScene() {
     >
       <img
         className="scene-botanical"
-        src="/assets/letter-world/flower-stem.webp"
+        {...photo("flower-stem", "(max-width: 1100px) 170px, 200px")}
         alt=""
+        fetchPriority="low"
+        decoding="async"
         aria-hidden="true"
       />
       <div className="scene-letter" aria-hidden={!isOpen}>
-        <img src="/assets/letter-world/letter-paper.webp" alt="" aria-hidden="true" />
+        {loadHidden && (
+          <img
+            {...photo("letter-paper", "(max-width: 760px) 270px, (max-width: 1100px) 310px, 340px")}
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+          />
+        )}
         <div className="scene-letter-words">
           <span>For you,</span>
           <p>Some people make the world feel a little softer. You are one of them.</p>
@@ -75,17 +90,26 @@ export function LetterScene() {
       >
         <img
           className="envelope-photo-closed"
-          src="/assets/letter-world/envelope-rose.webp"
+          {...photo(
+            "envelope-rose",
+            "(max-width: 360px) 410px, (max-width: 760px) 460px, (max-width: 1100px) 500px, 620px",
+          )}
           alt=""
           aria-hidden="true"
           fetchPriority="high"
         />
-        <img
-          className="envelope-photo-open"
-          src="/assets/letter-world/envelope-open.webp"
-          alt=""
-          aria-hidden="true"
-        />
+        {loadHidden && (
+          <img
+            className="envelope-photo-open"
+            {...photo(
+              "envelope-open",
+              "(max-width: 360px) 410px, (max-width: 760px) 460px, (max-width: 1100px) 500px, 620px",
+            )}
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+          />
+        )}
       </button>
       <button
         className="scene-invitation"

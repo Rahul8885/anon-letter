@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useState } from "react";
 import { DURATION, EASE_ENTER } from "../../lib/motion";
 
@@ -31,7 +31,7 @@ export function Toast({ toast, onDismiss }: { toast: ToastMessage | null; onDism
   return (
     <AnimatePresence>
       {toast && (
-        <motion.div
+        <m.div
           key={toast.id}
           className={`toast toast-${toast.tone}`}
           role={toast.tone === "error" ? "alert" : "status"}
@@ -66,7 +66,7 @@ export function Toast({ toast, onDismiss }: { toast: ToastMessage | null; onDism
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>
           </button>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

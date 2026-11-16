@@ -1,1 +1,3 @@
+# Well-known paths are real files or nothing: never the app shell (agents/validators expect JSON, not HTML).
+/.well-known/* /404.html 404
 /* /index.html 200
